@@ -1,0 +1,6 @@
+id=evox_contextual_search_fix
+name=EvoX Contextual Search Feature
+version=1.0.0
+versionCode=1
+author=Codex
+description=Systemlessly declares com.google.android.feature.CONTEXTUAL_SEARCH for EvoX Quick Fix.

@@ -1,0 +1,6 @@
+id=evox_overview_transparency
+name=EvoX Overview Transparency
+version=1.0.0
+versionCode=1
+author=Codex
+description=Re-applies the two EvoX Quick Fix overview transparency overlays after boot.

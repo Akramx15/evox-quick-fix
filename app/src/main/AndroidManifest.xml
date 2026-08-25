@@ -3,6 +3,7 @@
 
     <queries>
         <package android:name="com.tk.quicksearch" />
+        <package android:name="com.android.documentsui" />
         <package android:name="com.android.launcher3" />
         <package android:name="com.google.android.googlequicksearchbox" />
     </queries>

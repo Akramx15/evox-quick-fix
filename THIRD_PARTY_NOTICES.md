@@ -8,7 +8,7 @@ EvoX Quick Fix is licensed under Apache-2.0. The following projects are dependen
 
 - Projects: https://github.com/libxposed/api and https://github.com/libxposed/service
 - License: Apache License 2.0
-- Use: the APK compiles against the libxposed API and includes the service client needed to register the narrow Back Guard module.
+- Use: the APK compiles against the libxposed API and includes the service client needed to register the narrowly scoped Quick Search hooks for Back Guard and the safe APK-result folder fix.
 
 ## External software not bundled
 
@@ -16,7 +16,7 @@ EvoX Quick Fix is licensed under Apache-2.0. The following projects are dependen
 
 - Project: https://github.com/JingMatrix/Vector
 - License: GNU General Public License v3.0
-- Use: optional external module manager/runtime for Back Guard. Vector binaries and source are not bundled.
+- Use: optional external module manager/runtime for the exact-build Quick Search hooks. These hooks provide Back Guard and route Quick Search external-storage containing-folder intents, including APK results, to DocumentsUI without changing package handlers. Vector binaries and source are not bundled.
 
 ### KernelSU
 

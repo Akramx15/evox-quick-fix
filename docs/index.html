@@ -98,14 +98,15 @@
             <a class="button primary" href="https://github.com/Akramx15/evox-quick-fix/releases">Download from Releases</a>
             <a class="button" href="https://github.com/Akramx15/evox-quick-fix">View source</a>
           </div>
-          <div class="notice"><strong>Root can break a phone.</strong> Keep a real backup and ADB/Recovery access. Installing the APK alone applies nothing and disables nothing.</div>
+          <div class="notice"><strong>Root can break a phone.</strong> Keep a real backup and ADB/Recovery access. Installing the APK never disables a package or edits a system setting. Existing Vector scope may load the exact-build Quick Search hooks when Quick Search next starts.</div>
         </div>
       </section>
 
       <section>
         <div class="wrap grid">
           <article class="card"><span class="tag">Recents</span><h3>Transparent overview</h3><p>Dark and light Launcher3 scrims, with a small KernelSU persistence module.</p></article>
-          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>A hash-locked libxposed hook scoped by Vector to the verified HomeActivity only.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>An exact-build libxposed hook scoped by Vector to the verified HomeActivity only.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>Safe APK/file folder fix</h3><p>Repairs external-storage containing-folder intents, including APK results, by routing them to DocumentsUI without the invalid URI grant. It never silently installs an APK and changes no default handler.</p></article>
           <article class="card"><span class="tag">Google</span><h3>Circle to Search</h3><p>Adds the missing feature declaration only when needed. It never changes HOME or ASSISTANT.</p></article>
           <article class="card"><span class="tag">Optional</span><h3>Debloat Profiles</h3><p>No Disable All, no uninstall, no clear-data. Explicit batches, health checks and exact rollback.</p></article>
         </div>
@@ -123,7 +124,7 @@
               <tr><td>Magisk, work profiles, secondary users</td><td>Unsupported</td></tr>
             </tbody>
           </table>
-          <p>Transparency and Back Guard remain locked to the verified SM-S918B setup. Circle independently requires Launcher3, Google contextual search, the contextual_search service and KernelSU. Magic Mount-rs is additionally required only when the ROM is missing the feature declaration.</p>
+          <p>Transparency and both Quick Search hooks remain locked to the exact verified SM-S918B/Quick Search setup. The folder hook repairs Quick Search external-storage containing-folder intents, including APK results, through DocumentsUI without changing any registered handler or default app. Circle independently requires Launcher3, Google contextual search, the contextual_search service and KernelSU. Magic Mount-rs is additionally required only when the ROM is missing the feature declaration.</p>
         </div>
       </section>
 
@@ -133,7 +134,7 @@
           <ol>
             <li>Verify the release SHA-256 and install the signed APK.</li>
             <li>Read onboarding and Help. Grant root only after the diagnostics match.</li>
-            <li>Apply one feature at a time. Back Guard intentionally switches to Home while Quick Search restarts; this is not a crash.</li>
+            <li>Apply one feature at a time. The Quick Search hooks intentionally switch to Home while Quick Search restarts; this is not a crash.</li>
             <li>For debloat, select up to five normal packages—or one dangerous package and type its exact ID.</li>
             <li>Test calls, messages, data, Wi-Fi, Bluetooth, camera, biometrics, alarms, Google notifications, Recents and Circle.</li>
           </ol>
@@ -155,7 +156,7 @@
           <h2>Verification</h2>
           <div class="card">
             <strong>v1.1.0-beta.1 signed APK SHA-256</strong>
-            <p class="hash">0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53</p>
+            <p class="hash">Pending final signed build</p>
             <strong>v1.0.1 signed APK SHA-256</strong>
             <p class="hash">f53819d94114e634537a510806f52cc158f88f2d5f2badc764b248a2dd841172</p>
             <strong>Debloat package-set SHA-256</strong>
@@ -169,7 +170,8 @@
         <div class="wrap">
           <h2>FAQ</h2>
           <details><summary>Does installing the beta disable 104 packages?</summary><p>No. The initial selection is empty and every package displays Keep until you explicitly select it.</p></details>
-          <details><summary>Why did the app send me to Home?</summary><p>Back Guard must restart Quick Search. The tool stores the operation before doing so; reopen it for the result and restart prompt.</p></details>
+          <details><summary>Why did the app send me to Home?</summary><p>The Quick Search hooks must restart Quick Search. The tool stores the operation before doing so; reopen it for the result and restart prompt.</p></details>
+          <details><summary>Does the APK-result fix install APKs automatically?</summary><p>No. On the exact supported Quick Search build it repairs external-storage containing-folder actions, including APK results, through DocumentsUI without the invalid URI grant. It opens the folder, installs nothing, and changes no package handler or default app.</p></details>
           <details><summary>Why is a package marked External?</summary><p>It was disabled before EvoX Quick Fix owned it. The restore action will not enable it.</p></details>
           <details><summary>Why is Circle available without Quick Search or Vector?</summary><p>Circle checks Launcher3, Google contextual search, the system service and KernelSU independently. It checks Magic Mount-rs only when a systemless feature declaration is needed.</p></details>
         </div>
@@ -186,14 +188,15 @@
             <a class="button primary" href="https://github.com/Akramx15/evox-quick-fix/releases">التحميل من Releases</a>
             <a class="button" href="https://github.com/Akramx15/evox-quick-fix">المصدر</a>
           </div>
-          <div class="notice"><strong>Root قد يعطل الهاتف.</strong> احتفظ بنسخة احتياطية حقيقية ووصول ADB/Recovery. تثبيت APK وحده لا يطبق إصلاحًا ولا يعطل حزمة.</div>
+          <div class="notice"><strong>Root قد يعطل الهاتف.</strong> احتفظ بنسخة احتياطية حقيقية ووصول ADB/Recovery. تثبيت APK لا يعطل أي حزمة ولا يغيّر إعداد نظام. قد يحمّل نطاق Vector الموجود Hooks ‏Quick Search المطابقة عند تشغيله لاحقًا.</div>
         </div>
       </section>
 
       <section>
         <div class="wrap grid">
           <article class="card"><span class="tag">Recents</span><h3>خلفية شفافة</h3><p>شفافية الوضعين الداكن والفاتح مع وحدة KernelSU صغيرة للاستمرار.</p></article>
-          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>Hook مقفل على hash النسخة المجربة ونطاق HomeActivity عبر Vector فقط.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>Hook مقفل على الإصدار والبصمة المطابقين ونطاق HomeActivity عبر Vector فقط.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>إصلاح آمن لمجلدات APK والملفات</h3><p>يصلح فتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، بتوجيهها إلى DocumentsUI دون URI grant غير الصالح. لا يثبت APK بصمت ولا يغيّر التطبيق الافتراضي.</p></article>
           <article class="card"><span class="tag">Google</span><h3>Circle to Search</h3><p>يضيف تعريف الميزة المفقودة فقط عند الحاجة، ولا يغيّر HOME أو ASSISTANT.</p></article>
           <article class="card"><span class="tag">اختياري</span><h3>خيارات الدبلوت</h3><p>لا Disable All ولا حذف ولا مسح بيانات؛ اختيار صريح وفحص صحة واسترجاع دقيق.</p></article>
         </div>
@@ -211,7 +214,7 @@
               <tr><td>Magisk وملفات العمل والمستخدمون الإضافيون</td><td>غير مدعوم</td></tr>
             </tbody>
           </table>
-          <p>الشفافية وBack Guard مقفلان على بيئة SM-S918B المجربة. Circle مستقل ويتطلب Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُطلب Magic Mount-rs فقط إذا كان تعريف الميزة مفقودًا من الروم.</p>
+          <p>الشفافية وHookا Quick Search مقفلة على بيئة SM-S918B ونسخة Quick Search المطابقتين. يصلح Hook المجلد محاولات Quick Search لفتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، عبر DocumentsUI دون تغيير أي Handler مسجل أو تطبيق افتراضي. Circle مستقل ويتطلب Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُطلب Magic Mount-rs فقط إذا كان تعريف الميزة مفقودًا من الروم.</p>
         </div>
       </section>
 
@@ -221,7 +224,7 @@
           <ol>
             <li>تحقق من SHA-256 وثبت APK الموقع.</li>
             <li>اقرأ شاشة البداية وHelp، ولا تمنح Root إلا بعد تطابق الفحص.</li>
-            <li>طبق خيارًا واحدًا كل مرة. ينقلك Back Guard إلى Home عمدًا أثناء إعادة تشغيل Quick Search؛ هذا ليس crash.</li>
+            <li>طبق خيارًا واحدًا كل مرة. ينقلك Hookا Quick Search إلى Home عمدًا أثناء إعادة تشغيل Quick Search؛ هذا ليس crash.</li>
             <li>للدبلوت: خمس حزم عادية كحد أقصى، أو حزمة خطرة واحدة مع كتابة Package ID.</li>
             <li>اختبر المكالمات والرسائل والبيانات والواي فاي والبلوتوث والكاميرا والبصمة والمنبه والإشعارات وRecents وCircle.</li>
           </ol>
@@ -243,7 +246,7 @@
           <h2>التحقق</h2>
           <div class="card">
             <strong>SHA-256 لـAPK v1.1.0-beta.1 الموقع</strong>
-            <p class="hash">0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53</p>
+            <p class="hash">Pending final signed build</p>
             <strong>SHA-256 لـAPK v1.0.1 الموقع</strong>
             <p class="hash">f53819d94114e634537a510806f52cc158f88f2d5f2badc764b248a2dd841172</p>
             <strong>SHA-256 لمجموعة حزم الدبلوت</strong>
@@ -257,7 +260,8 @@
         <div class="wrap">
           <h2>أسئلة شائعة</h2>
           <details><summary>هل تثبيت beta يعطل 104 حزم؟</summary><p>لا. التحديد يبدأ فارغًا وكل حزمة تظهر Keep حتى تختارها بنفسك.</p></details>
-          <details><summary>لماذا نقلني التطبيق إلى Home؟</summary><p>يحتاج Back Guard إلى إعادة تشغيل Quick Search. تحفظ الأداة العملية أولًا؛ افتحها مجددًا لرؤية النتيجة وطلب Restart.</p></details>
+          <details><summary>لماذا نقلني التطبيق إلى Home؟</summary><p>يحتاج Hookا Quick Search إلى إعادة تشغيل Quick Search. تحفظ الأداة العملية أولًا؛ افتحها مجددًا لرؤية النتيجة وطلب Restart.</p></details>
+          <details><summary>هل يثبت إصلاح نتائج APK الملفات تلقائيًا؟</summary><p>لا. في نسخة Quick Search المطابقة يصلح فتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، عبر DocumentsUI دون URI grant غير الصالح. يفتح المجلد ولا يثبت شيئًا ولا يغيّر Handler الحزم أو التطبيق الافتراضي.</p></details>
           <details><summary>لماذا تظهر حزمة External؟</summary><p>كانت معطلة قبل أن تملكها الأداة، ولذلك لن يقوم الاسترجاع بتفعيلها.</p></details>
           <details><summary>لماذا Circle مستقل عن Quick Search وVector؟</summary><p>يفحص Circle ‏Launcher3 ومزود Google وخدمة النظام وKernelSU بصورة مستقلة، ولا يفحص Magic Mount-rs إلا عند الحاجة لإضافة تعريف الميزة systemless.</p></details>
         </div>

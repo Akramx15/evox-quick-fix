@@ -2,14 +2,15 @@
 
 [العربية](#العربية) · [English](#english) · [صفحة المشروع / Project page](https://akramx15.github.io/evox-quick-fix/) · [Releases](https://github.com/Akramx15/evox-quick-fix/releases)
 
-> **Root utility — read the risks before using it.** Installing or updating the APK does not apply a fix and does not disable a package.
+> **Root utility — read the risks before using it.** Installing or updating the APK never disables a package or edits a system setting. If Vector is already configured, the exact-build Quick Search hooks load when Quick Search next starts.
 
 ## العربية
 
-EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
+EvoX Quick Fix أداة مفتوحة المصدر لمعالجة أربع مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
 
 - شفافية خلفية Recent Apps في الوضعين الداكن والفاتح.
 - منع زر Back من إخراج شاشة Home في نسخة Quick Search المجربة.
+- إصلاح آمن لفتح مجلدات التخزين الخارجي في نسخة Quick Search المطابقة، ومنها مجلد نتائج APK: يوجّهها إلى DocumentsUI بعد إزالة URI grant غير الصالح، ولا يثبت APK بصمت ولا يغيّر تطبيق الفتح الافتراضي.
 - تعريف ميزة Google Circle to Search المفقودة بصورة systemless.
 - ملف دبلوت ثابت من 104 حزم، باختيار يدوي وLedger ملكية واسترجاع دقيق.
 
@@ -18,8 +19,8 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشك
 - **Root / KernelSU:** يمنح الأداة صلاحية تنفيذ تغييرات النظام. لا تدعم النسخة Magisk.
 - **Magic Mount-rs:** تستخدمه الشفافية، ويحتاجه Circle فقط إذا كانت ميزة النظام مفقودة؛ لا تُثبت وحدة Circle زائدة إذا كانت الميزة أصلية في الروم.
 - **Launcher3 / Quickstep:** يوفر Recents وتكامل Circle.
-- **Quick Search:** تطبيق Home المستخدم في البيئة المجربة؛ مطلوب فقط لـBack Guard.
-- **Vector:** يحمّل Back Guard داخل عملية Quick Search فقط؛ غير مطلوب لـCircle أو الدبلوت.
+- **Quick Search:** تطبيق Home المستخدم في البيئة المجربة؛ مطلوب فقط لإصلاحي Quick Search المقفلين على الإصدار والبصمة المطابقين.
+- **Vector:** يحمّل Hookي Back Guard وفتح مجلد نتائج APK داخل عملية Quick Search فقط؛ غير مطلوب لـCircle أو الدبلوت.
 - **Google app:** مزود Circle to Search، وهو محمي دائمًا ولا يظهر كهدف دبلوت.
 
 ### التوافق
@@ -31,7 +32,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشك
 | S23 FE / SM-S711* | غير مدعوم |
 | Magisk، ملفات العمل، المستخدمون الإضافيون | غير مدعوم |
 
-تبقى الشفافية وBack Guard مقفلتين على بيئة SM-S918B وQuick Search المطابقة التي اختُبرت فعليًا. يعمل Circle بصورة مستقلة على أجهزة S23 المتوافقة عند توفر Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُشترط Magic Mount-rs عند الحاجة إلى إضافة تعريف الميزة المفقود.
+تبقى الشفافية وإصلاحات Quick Search مقفلة على بيئة SM-S918B ونسخة Quick Search المطابقة التي اختُبرت فعليًا. يصلح Hook المجلد محاولات Quick Search لفتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، ويوجّهها صراحة إلى DocumentsUI بعد إزالة URI grant غير الصالح؛ لا يغيّر أي Handler أو تطبيق افتراضي. يعمل Circle بصورة مستقلة على أجهزة S23 المتوافقة عند توفر Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُشترط Magic Mount-rs عند الحاجة إلى إضافة تعريف الميزة المفقود.
 
 ### التثبيت
 
@@ -39,7 +40,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشك
 2. حمّل APK من [صفحة Releases](https://github.com/Akramx15/evox-quick-fix/releases).
 3. قارن SHA-256 قبل التثبيت.
 4. ثبّت APK وافتحه واقرأ شاشة البداية وHelp.
-5. نفّذ كل إصلاح بصورة مستقلة. Back Guard و«الإصلاحات الثلاثة» يعيدان تشغيل Quick Search وينقلانك إلى Home عمدًا؛ هذا ليس crash.
+5. نفّذ كل مجموعة إصلاح بصورة مستقلة؛ إصلاحا Quick Search يشتركان في زر Vector واحد. هذا الزر و«الإصلاحات الأربعة» يعيدان تشغيل Quick Search وينقلانك إلى Home عمدًا؛ هذا ليس crash.
 6. أعد فتح الأداة لرؤية نتيجة العملية المحفوظة وطلب Restart.
 
 ### Debloat Profiles
@@ -58,7 +59,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشك
 
 ### الاسترجاع
 
-- زر **استرجاع وضع الروم** يخص الشفافية وBack Guard وCircle فقط.
+- زر **استرجاع وضع الروم** يخص الشفافية وHookي Quick Search وCircle فقط.
 - زر **استرجاع تغييرات الدبلوت** يعيد فقط الحزم التي عطلتها الأداة، إلى حالة PackageManager الأصلية الدقيقة 0..4.
 - الاسترجاع الطارئ للدبلوت:
 
@@ -81,7 +82,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ثلاث مشك
 
 v1.1.0-beta.1 APK SHA-256:
 
-**0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53**
+**Pending final signed build**
 
 v1.0.1 APK SHA-256:
 
@@ -89,10 +90,11 @@ v1.0.1 APK SHA-256:
 
 ## English
 
-EvoX Quick Fix is an open-source root utility for three narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
+EvoX Quick Fix is an open-source root utility for four narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
 
 - Transparent Recent Apps scrim in dark and light modes.
 - A narrowly scoped Back Guard for the verified Quick Search Home build.
+- A safe external-storage folder fix for the exact Quick Search build, including APK results: containing-folder intents are routed to DocumentsUI after the invalid URI grant is removed, with no silent APK installation and no default-handler change.
 - A systemless declaration for the missing Google Circle to Search feature.
 - A fixed 104-package debloat profile with explicit selection, ownership ledger and exact rollback.
 
@@ -101,8 +103,8 @@ EvoX Quick Fix is an open-source root utility for three narrow Android 16 custom
 - **Root / KernelSU:** authorizes system changes. Magisk is not supported.
 - **Magic Mount-rs:** is used by transparency and is required by Circle only when the system feature is missing; no redundant Circle module is installed when the ROM already declares it.
 - **Launcher3 / Quickstep:** supplies Recents and Circle integration.
-- **Quick Search:** the Home app in the verified setup; only Back Guard requires it.
-- **Vector:** loads Back Guard only in Quick Search; Circle and Debloat do not require it.
+- **Quick Search:** the Home app in the verified setup; only the exact-version/hash Quick Search hooks require it.
+- **Vector:** loads the Back Guard and APK-result folder hooks only inside Quick Search; Circle and Debloat do not require it.
 - **Google app:** the Circle provider. It is hard-protected and never offered as a debloat target.
 
 ### Compatibility
@@ -114,7 +116,7 @@ EvoX Quick Fix is an open-source root utility for three narrow Android 16 custom
 | S23 FE / SM-S711* | Unsupported |
 | Magisk, work profiles, secondary users | Unsupported |
 
-Transparency and Back Guard remain locked to the exact verified SM-S918B/Quick Search environment. Circle is independent and can run on a compatible S23 with Launcher3, the Google provider, contextual_search and KernelSU; Magic Mount-rs is additionally required only when the missing feature declaration must be supplied.
+Transparency and the Quick Search hooks remain locked to the exact verified SM-S918B/Quick Search environment. The folder hook repairs Quick Search external-storage containing-folder intents, including APK results, by routing them to DocumentsUI after removing the invalid URI grant; it changes no registered handler or default app. Circle is independent and can run on a compatible S23 with Launcher3, the Google provider, contextual_search and KernelSU; Magic Mount-rs is additionally required only when the missing feature declaration must be supplied.
 
 ### Install
 
@@ -122,7 +124,7 @@ Transparency and Back Guard remain locked to the exact verified SM-S918B/Quick S
 2. Download the APK from [Releases](https://github.com/Akramx15/evox-quick-fix/releases).
 3. Verify SHA-256 before installing.
 4. Install, open the app, and read onboarding and Help.
-5. Apply features independently. Back Guard and “Apply the three fixes” intentionally restart Quick Search and switch to Home; that is not a crash.
+5. Apply each fix group independently; both Quick Search hooks share one Vector action. That action and “Apply the four fixes” intentionally restart Quick Search and switch to Home; that is not a crash.
 6. Reopen the app for the persisted result and restart prompt.
 
 ### Debloat safety model
@@ -140,7 +142,7 @@ Transparency and Back Guard remain locked to the exact verified SM-S918B/Quick S
 
 ### Recovery
 
-- **Restore ROM behavior** affects the three core fixes only.
+- **Restore ROM behavior** affects transparency, both Quick Search hooks, and Circle only.
 - **Restore changes made by this app** restores only ledger-owned packages to their exact original PackageManager state 0..4.
 - Emergency debloat restore:
 
@@ -162,7 +164,7 @@ Transparency and Back Guard remain locked to the exact verified SM-S918B/Quick S
 
 v1.1.0-beta.1 APK SHA-256:
 
-**0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53**
+**Pending final signed build**
 
 v1.0.1 APK SHA-256:
 

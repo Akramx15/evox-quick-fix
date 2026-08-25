@@ -1,5 +1,6 @@
 package com.codex.evoxquickfix;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -59,6 +60,10 @@ final class DeviceDiagnostics {
         report.launcherPresent = packageEnabled(pm, AppConstants.LAUNCHER_PACKAGE);
         report.quickSearchPresent = packageEnabled(pm, AppConstants.QUICK_SEARCH_PACKAGE);
         report.quickSearchIsHome = isQuickSearchHome();
+        report.documentsUiReady = DocumentsUiTarget.isEligible(pm,
+                AppConstants.QUICK_SEARCH_PACKAGE, new ComponentName(
+                        AppConstants.DOCUMENTS_UI_PACKAGE,
+                        AppConstants.DOCUMENTS_UI_FILES_ACTIVITY));
         report.contextualProviderPackage = contextualProvider(pm);
         report.googleProvider = AppConstants.GOOGLE_PACKAGE.equals(report.contextualProviderPackage);
 
@@ -176,7 +181,8 @@ final class DeviceDiagnostics {
     static boolean supportsBackGuard(DiagnosticReport report) {
         return report.root && report.exactEnvironmentGate && report.kernelSuReady
                 && !report.magiskPresent && report.quickSearchCompatible
-                && report.quickSearchIsHome && report.vectorReady;
+                && report.quickSearchIsHome && report.documentsUiReady
+                && report.vectorReady;
     }
 
     static boolean supportsCircle(DiagnosticReport report) {

@@ -261,6 +261,8 @@ public final class MainActivity extends Activity {
     private String featureCards(DiagnosticReport report) {
         return featureLine(R.string.feature_transparency, report.transparencySupported)
                 + "\n" + featureLine(R.string.feature_back_guard, report.backGuardSupported)
+                + "\n" + featureLine(R.string.feature_apk_results,
+                report.backGuardSupported)
                 + "\n" + featureLine(R.string.feature_circle, report.circleSupported)
                 + "\n" + featureLine(R.string.feature_debloat, report.debloatSupported);
     }

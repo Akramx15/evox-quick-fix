@@ -10,6 +10,12 @@ final class AppConstants {
             "673da366c7b3eaeca8f959bc80b757bb428a500597bb54f51c2ecd6a46567ff2";
     static final String QUICK_SEARCH_CERT_SHA256 =
             "2149d96b24b9f51467893c9bbc859d6c1833607e0a326e431af8e023ae075b8a";
+    static final String DOCUMENTS_UI_PACKAGE = "com.android.documentsui";
+    static final String DOCUMENTS_UI_FILES_ACTIVITY =
+            "com.android.documentsui.files.FilesActivity";
+    static final String EXTERNAL_STORAGE_DOCUMENTS_AUTHORITY =
+            "com.android.externalstorage.documents";
+    static final String DIRECTORY_MIME = "vnd.android.document/directory";
 
     static final String LAUNCHER_PACKAGE = "com.android.launcher3";
     static final String GOOGLE_PACKAGE = "com.google.android.googlequicksearchbox";

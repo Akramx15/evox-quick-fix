@@ -19,6 +19,7 @@ final class DiagnosticReport {
     boolean quickSearchPresent;
     boolean quickSearchCompatible;
     boolean quickSearchIsHome;
+    boolean documentsUiReady;
     boolean googleProvider;
     boolean vectorReady;
     boolean magicMountReady;
@@ -62,6 +63,7 @@ final class DiagnosticReport {
         append(text, quickSearchPresent, context.getString(R.string.check_quicksearch));
         append(text, quickSearchCompatible, context.getString(R.string.check_quicksearch_build));
         append(text, quickSearchIsHome, context.getString(R.string.check_quicksearch_home));
+        append(text, documentsUiReady, context.getString(R.string.check_documentsui));
         append(text, vectorReady, context.getString(R.string.check_vector));
         append(text, magicMountReady || contextualFeature,
                 context.getString(R.string.check_magic_mount));
@@ -84,6 +86,8 @@ final class DiagnosticReport {
                 context.getString(R.string.feature_transparency));
         appendFeature(context, text, backGuardSupported,
                 context.getString(R.string.feature_back_guard));
+        appendFeature(context, text, backGuardSupported,
+                context.getString(R.string.feature_apk_results));
         appendFeature(context, text, circleSupported,
                 context.getString(R.string.feature_circle));
         appendFeature(context, text, debloatSupported,

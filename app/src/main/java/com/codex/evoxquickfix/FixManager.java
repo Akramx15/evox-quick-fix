@@ -43,7 +43,8 @@ final class FixManager {
     }
 
     OperationResult applyBackGuard() throws Exception {
-        return runTransactional("Back Guard", BACK_SCOPE, this::applyBackGuardInternal);
+        return runTransactional("Quick Search hooks", BACK_SCOPE,
+                this::applyBackGuardInternal);
     }
 
     OperationResult applyCircleToSearch() throws Exception {
@@ -56,7 +57,7 @@ final class FixManager {
             DiagnosticReport before = diagnostics.inspect();
             if (!before.transparencySupported || !before.backGuardSupported
                     || !before.circleSupported) {
-                throw new IllegalStateException("الفحص الشامل لم ينجح؛ لم يتم تطبيق أي تغيير");
+                throw new IllegalStateException(context.getString(R.string.error_all_checks));
             }
             OperationResult transparency = applyTransparencyInternal();
             applyBackGuardInternal();
@@ -64,8 +65,8 @@ final class FixManager {
             return transparency.status == FeatureStatus.REBOOT_REQUIRED
                     || circle.status == FeatureStatus.REBOOT_REQUIRED
                     ? OperationResult.reboot(
-                    "اكتملت الإصلاحات الثلاثة. يلزم Restart لتثبيت الاستمرار systemless.")
-                    : OperationResult.applied("اكتملت الإصلاحات الثلاثة وتم التحقق منها.");
+                    context.getString(R.string.result_all_reboot))
+                    : OperationResult.applied(context.getString(R.string.result_all_applied));
         });
     }
 
@@ -247,8 +248,8 @@ final class FixManager {
         DiagnosticReport report = diagnostics.inspect();
         requireDeviceAndRoot(report);
         if (!report.backGuardSupported) {
-            throw new IllegalStateException(
-                    "Back Guard requires the verified Quick Search build, HOME role and Vector");
+            throw new IllegalStateException(context.getString(
+                    R.string.error_quicksearch_requirements));
         }
 
         setVectorModuleEnabled(true);
@@ -258,9 +259,11 @@ final class FixManager {
 
         DiagnosticReport verified = diagnostics.inspect();
         if (!verified.vectorModuleEnabled || !verified.vectorScopeReady) {
-            throw new IllegalStateException("Vector لم يؤكد تفعيل الوحدة والنطاق");
+            throw new IllegalStateException(context.getString(
+                    R.string.error_vector_scope_confirmation));
         }
-        return OperationResult.applied("تم تفعيل Back Guard على HomeActivity فقط عبر Vector.");
+        return OperationResult.applied(context.getString(
+                R.string.result_quicksearch_hooks_applied));
     }
 
     private OperationResult applyCircleToSearchInternal() throws Exception {

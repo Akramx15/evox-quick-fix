@@ -82,7 +82,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة أربع مشك
 
 v1.1.0-beta.1 APK SHA-256:
 
-**Pending final signed build**
+**41371910bafd15d5954afc21be223991b650e6fb3b06c010161e57e1e966acd1**
 
 v1.0.1 APK SHA-256:
 
@@ -164,7 +164,7 @@ Transparency and the Quick Search hooks remain locked to the exact verified SM-S
 
 v1.1.0-beta.1 APK SHA-256:
 
-**Pending final signed build**
+**41371910bafd15d5954afc21be223991b650e6fb3b06c010161e57e1e966acd1**
 
 v1.0.1 APK SHA-256:
 

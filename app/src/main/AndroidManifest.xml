@@ -14,8 +14,17 @@
         android:description="@string/app_description"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".HelpActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".DebloatActivity"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"

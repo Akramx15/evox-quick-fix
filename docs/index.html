@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="EvoX Quick Fix — recoverable KernelSU fixes and explicit debloat controls for Galaxy S23 custom ROMs.">
+  <title>EvoX Quick Fix</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1215;
+      --card: #172126;
+      --card-2: #1e2c32;
+      --text: #eff7f7;
+      --muted: #b6c8ca;
+      --accent: #80cbc4;
+      --danger: #ffb7b1;
+      --line: #314349;
+      --max: 72rem;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(128,203,196,.12), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      font: 16px/1.7 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent); }
+    a:focus-visible, button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .wrap { width: min(calc(100% - 2rem), var(--max)); margin-inline: auto; }
+    header { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { font-weight: 800; letter-spacing: .02em; }
+    .language { display: flex; gap: .5rem; }
+    button, .button {
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+      padding: .65rem 1rem;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .primary { background: var(--accent); color: #071311; border-color: transparent; }
+    .hero { padding: 5rem 0 3.2rem; }
+    .eyebrow { color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+    h1 { font-size: clamp(2.4rem, 7vw, 5.4rem); line-height: 1.03; margin: .4rem 0 1rem; max-width: 12ch; }
+    .lede { max-width: 48rem; color: var(--muted); font-size: 1.2rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+    .notice { margin: 2rem 0; border-inline-start: .35rem solid var(--danger); background: #2a2022; padding: 1rem 1.2rem; border-radius: .6rem; }
+    section { padding: 2.4rem 0; }
+    h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin-bottom: .7rem; }
+    h3 { margin-bottom: .3rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+    .card { background: linear-gradient(145deg, var(--card-2), var(--card)); border: 1px solid var(--line); border-radius: 1rem; padding: 1.2rem; }
+    .card p { color: var(--muted); }
+    .tag { display: inline-block; border: 1px solid var(--line); border-radius: 99rem; padding: .15rem .6rem; color: var(--accent); font-size: .85rem; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); }
+    th, td { text-align: start; border: 1px solid var(--line); padding: .75rem; }
+    code, pre { font-family: ui-monospace, "Cascadia Code", monospace; }
+    pre { overflow-x: auto; background: #070a0c; border: 1px solid var(--line); border-radius: .8rem; padding: 1rem; direction: ltr; text-align: left; }
+    details { background: var(--card); border: 1px solid var(--line); border-radius: .8rem; padding: .8rem 1rem; margin: .65rem 0; }
+    summary { cursor: pointer; font-weight: 800; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0 4rem; color: var(--muted); }
+    [hidden] { display: none !important; }
+    .hash { overflow-wrap: anywhere; }
+    @media (max-width: 38rem) {
+      .hero { padding-top: 3rem; }
+      nav { align-items: flex-start; }
+      table { font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="wrap" aria-label="Language and project links">
+      <div class="brand">EvoX Quick Fix</div>
+      <div class="language">
+        <button type="button" id="show-en" aria-pressed="true">English</button>
+        <button type="button" id="show-ar" aria-pressed="false">العربية</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div id="en" lang="en" dir="ltr">
+      <section class="hero">
+        <div class="wrap">
+          <div class="eyebrow">KernelSU · Android 16 · Galaxy S23</div>
+          <h1>Fix less. Verify more.</h1>
+          <p class="lede">Recoverable Recent Apps, Quick Search and Circle to Search fixes, plus a 104-package debloat profile where every item starts on Keep.</p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/Akramx15/evox-quick-fix/releases">Download from Releases</a>
+            <a class="button" href="https://github.com/Akramx15/evox-quick-fix">View source</a>
+          </div>
+          <div class="notice"><strong>Root can break a phone.</strong> Keep a real backup and ADB/Recovery access. Installing the APK alone applies nothing and disables nothing.</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap grid">
+          <article class="card"><span class="tag">Recents</span><h3>Transparent overview</h3><p>Dark and light Launcher3 scrims, with a small KernelSU persistence module.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>A hash-locked libxposed hook scoped by Vector to the verified HomeActivity only.</p></article>
+          <article class="card"><span class="tag">Google</span><h3>Circle to Search</h3><p>Adds the missing feature declaration only when needed. It never changes HOME or ASSISTANT.</p></article>
+          <article class="card"><span class="tag">Optional</span><h3>Debloat Profiles</h3><p>No Disable All, no uninstall, no clear-data. Explicit batches, health checks and exact rollback.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Compatibility</h2>
+          <table>
+            <thead><tr><th>Environment</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>SM-S918B · Android 16 · user 0 · KernelSU</td><td>Fully tested</td></tr>
+              <tr><td>SM-S911* / SM-S916* · Android 16 · user 0 · KernelSU</td><td>Experimental</td></tr>
+              <tr><td>S23 FE / SM-S711*</td><td>Unsupported</td></tr>
+              <tr><td>Magisk, work profiles, secondary users</td><td>Unsupported</td></tr>
+            </tbody>
+          </table>
+          <p>Transparency and Back Guard remain locked to the verified SM-S918B setup. Circle independently requires Launcher3, Google contextual search, the contextual_search service and KernelSU. Magic Mount-rs is additionally required only when the ROM is missing the feature declaration.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Safe workflow</h2>
+          <ol>
+            <li>Verify the release SHA-256 and install the signed APK.</li>
+            <li>Read onboarding and Help. Grant root only after the diagnostics match.</li>
+            <li>Apply one feature at a time. Back Guard intentionally switches to Home while Quick Search restarts; this is not a crash.</li>
+            <li>For debloat, select up to five normal packages—or one dangerous package and type its exact ID.</li>
+            <li>Test calls, messages, data, Wi-Fi, Bluetooth, camera, biometrics, alarms, Google notifications, Recents and Circle.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Recovery</h2>
+          <p>The core restore and Debloat restore are deliberately separate. Debloat restores only ledger-owned packages to their original PackageManager state 0..4.</p>
+          <pre><code>adb shell su -c 'sh /data/adb/evox-quick-fix/debloat-restore.sh'</code></pre>
+          <p>Core module emergency disable:</p>
+          <pre><code>adb shell su -c 'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot'</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Verification</h2>
+          <div class="card">
+            <strong>v1.1.0-beta.1 signed APK SHA-256</strong>
+            <p class="hash">0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53</p>
+            <strong>v1.0.1 signed APK SHA-256</strong>
+            <p class="hash">f53819d94114e634537a510806f52cc158f88f2d5f2badc764b248a2dd841172</p>
+            <strong>Debloat package-set SHA-256</strong>
+            <p class="hash">bb24e159ce264a4fc9b823051b549206cceb73bef10e366c51046d2aea46488f</p>
+          </div>
+          <p>No INTERNET permission, analytics, WebView, terminal, automatic links, uninstall, or clear-data. CI artifacts are unsigned; official release APKs are signed locally.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>FAQ</h2>
+          <details><summary>Does installing the beta disable 104 packages?</summary><p>No. The initial selection is empty and every package displays Keep until you explicitly select it.</p></details>
+          <details><summary>Why did the app send me to Home?</summary><p>Back Guard must restart Quick Search. The tool stores the operation before doing so; reopen it for the result and restart prompt.</p></details>
+          <details><summary>Why is a package marked External?</summary><p>It was disabled before EvoX Quick Fix owned it. The restore action will not enable it.</p></details>
+          <details><summary>Why is Circle available without Quick Search or Vector?</summary><p>Circle checks Launcher3, Google contextual search, the system service and KernelSU independently. It checks Magic Mount-rs only when a systemless feature declaration is needed.</p></details>
+        </div>
+      </section>
+    </div>
+
+    <div id="ar" lang="ar" dir="rtl" hidden>
+      <section class="hero">
+        <div class="wrap">
+          <div class="eyebrow">KernelSU · Android 16 · Galaxy S23</div>
+          <h1>إصلاح أقل. تحقق أكثر.</h1>
+          <p class="lede">إصلاحات قابلة للاسترجاع لـRecent Apps وQuick Search وCircle to Search، مع قائمة دبلوت من 104 حزم يبدأ كل عنصر فيها على Keep.</p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/Akramx15/evox-quick-fix/releases">التحميل من Releases</a>
+            <a class="button" href="https://github.com/Akramx15/evox-quick-fix">المصدر</a>
+          </div>
+          <div class="notice"><strong>Root قد يعطل الهاتف.</strong> احتفظ بنسخة احتياطية حقيقية ووصول ADB/Recovery. تثبيت APK وحده لا يطبق إصلاحًا ولا يعطل حزمة.</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap grid">
+          <article class="card"><span class="tag">Recents</span><h3>خلفية شفافة</h3><p>شفافية الوضعين الداكن والفاتح مع وحدة KernelSU صغيرة للاستمرار.</p></article>
+          <article class="card"><span class="tag">Quick Search</span><h3>Back Guard</h3><p>Hook مقفل على hash النسخة المجربة ونطاق HomeActivity عبر Vector فقط.</p></article>
+          <article class="card"><span class="tag">Google</span><h3>Circle to Search</h3><p>يضيف تعريف الميزة المفقودة فقط عند الحاجة، ولا يغيّر HOME أو ASSISTANT.</p></article>
+          <article class="card"><span class="tag">اختياري</span><h3>خيارات الدبلوت</h3><p>لا Disable All ولا حذف ولا مسح بيانات؛ اختيار صريح وفحص صحة واسترجاع دقيق.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>التوافق</h2>
+          <table>
+            <thead><tr><th>البيئة</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td>SM-S918B · Android 16 · المستخدم 0 · KernelSU</td><td>مجرب بالكامل</td></tr>
+              <tr><td>SM-S911* / SM-S916* · Android 16 · المستخدم 0 · KernelSU</td><td>تجريبي</td></tr>
+              <tr><td>S23 FE / SM-S711*</td><td>غير مدعوم</td></tr>
+              <tr><td>Magisk وملفات العمل والمستخدمون الإضافيون</td><td>غير مدعوم</td></tr>
+            </tbody>
+          </table>
+          <p>الشفافية وBack Guard مقفلان على بيئة SM-S918B المجربة. Circle مستقل ويتطلب Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُطلب Magic Mount-rs فقط إذا كان تعريف الميزة مفقودًا من الروم.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>طريقة الاستخدام الآمنة</h2>
+          <ol>
+            <li>تحقق من SHA-256 وثبت APK الموقع.</li>
+            <li>اقرأ شاشة البداية وHelp، ولا تمنح Root إلا بعد تطابق الفحص.</li>
+            <li>طبق خيارًا واحدًا كل مرة. ينقلك Back Guard إلى Home عمدًا أثناء إعادة تشغيل Quick Search؛ هذا ليس crash.</li>
+            <li>للدبلوت: خمس حزم عادية كحد أقصى، أو حزمة خطرة واحدة مع كتابة Package ID.</li>
+            <li>اختبر المكالمات والرسائل والبيانات والواي فاي والبلوتوث والكاميرا والبصمة والمنبه والإشعارات وRecents وCircle.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>الاسترجاع</h2>
+          <p>استرجاع الإصلاحات الأساسية منفصل عن استرجاع الدبلوت. يعيد الدبلوت فقط الحزم التي يملكها Ledger إلى حالتها الأصلية 0..4.</p>
+          <pre><code>adb shell su -c 'sh /data/adb/evox-quick-fix/debloat-restore.sh'</code></pre>
+          <p>تعطيل وحدات الإصلاح وقت الطوارئ:</p>
+          <pre><code>adb shell su -c 'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot'</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>التحقق</h2>
+          <div class="card">
+            <strong>SHA-256 لـAPK v1.1.0-beta.1 الموقع</strong>
+            <p class="hash">0a154477ef2bbbe51b9f2950f7cf3b8432ab01cac8b1972102fdf915e64fae53</p>
+            <strong>SHA-256 لـAPK v1.0.1 الموقع</strong>
+            <p class="hash">f53819d94114e634537a510806f52cc158f88f2d5f2badc764b248a2dd841172</p>
+            <strong>SHA-256 لمجموعة حزم الدبلوت</strong>
+            <p class="hash">bb24e159ce264a4fc9b823051b549206cceb73bef10e366c51046d2aea46488f</p>
+          </div>
+          <p>لا صلاحية INTERNET ولا Analytics ولا WebView ولا Terminal ولا روابط تلقائية ولا uninstall ولا clear-data. ملفات CI غير موقعة؛ إصدارات Releases الرسمية توقّع محليًا.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>أسئلة شائعة</h2>
+          <details><summary>هل تثبيت beta يعطل 104 حزم؟</summary><p>لا. التحديد يبدأ فارغًا وكل حزمة تظهر Keep حتى تختارها بنفسك.</p></details>
+          <details><summary>لماذا نقلني التطبيق إلى Home؟</summary><p>يحتاج Back Guard إلى إعادة تشغيل Quick Search. تحفظ الأداة العملية أولًا؛ افتحها مجددًا لرؤية النتيجة وطلب Restart.</p></details>
+          <details><summary>لماذا تظهر حزمة External؟</summary><p>كانت معطلة قبل أن تملكها الأداة، ولذلك لن يقوم الاسترجاع بتفعيلها.</p></details>
+          <details><summary>لماذا Circle مستقل عن Quick Search وVector؟</summary><p>يفحص Circle ‏Launcher3 ومزود Google وخدمة النظام وKernelSU بصورة مستقلة، ولا يفحص Magic Mount-rs إلا عند الحاجة لإضافة تعريف الميزة systemless.</p></details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>EvoX Quick Fix is independently developed and licensed under Apache-2.0.</p>
+      <p><a href="https://github.com/Akramx15/evox-quick-fix/blob/main/THIRD_PARTY_NOTICES.md">Third-party notices</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const english = document.getElementById("en");
+    const arabic = document.getElementById("ar");
+    const showEnglish = document.getElementById("show-en");
+    const showArabic = document.getElementById("show-ar");
+    function setLanguage(language) {
+      const isArabic = language === "ar";
+      english.hidden = isArabic;
+      arabic.hidden = !isArabic;
+      showEnglish.setAttribute("aria-pressed", String(!isArabic));
+      showArabic.setAttribute("aria-pressed", String(isArabic));
+      document.documentElement.lang = language;
+      document.documentElement.dir = isArabic ? "rtl" : "ltr";
+      try { localStorage.setItem("evox-language", language); } catch (_) {}
+    }
+    showEnglish.addEventListener("click", () => setLanguage("en"));
+    showArabic.addEventListener("click", () => setLanguage("ar"));
+    let preferred = "en";
+    try { preferred = localStorage.getItem("evox-language") || (navigator.language.startsWith("ar") ? "ar" : "en"); } catch (_) {}
+    setLanguage(preferred === "ar" ? "ar" : "en");
+  </script>
+</body>
+</html>

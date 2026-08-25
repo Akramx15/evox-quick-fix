@@ -1,0 +1,1802 @@
+{
+  "schema": 1,
+  "profileId": "evox-debloat-user0-v1",
+  "packageCount": 104,
+  "packageSetSha256": "bb24e159ce264a4fc9b823051b549206cceb73bef10e366c51046d2aea46488f",
+  "canonicalization": "Sort package IDs by Unicode code point and join with LF without a trailing LF.",
+  "target": {
+    "modelFamilies": ["SM-S911*", "SM-S916*", "SM-S918*"],
+    "excludedModels": ["SM-S711*"],
+    "sdk": 36,
+    "user": 0,
+    "root": "KernelSU"
+  },
+  "excludedProtectedPackages": [
+    "android",
+    "com.android.launcher3",
+    "com.android.packageinstaller",
+    "com.android.permissioncontroller",
+    "com.android.phone",
+    "com.android.providers.media.module",
+    "com.android.providers.telephony",
+    "com.android.settings",
+    "com.android.shell",
+    "com.android.systemui",
+    "com.android.vending",
+    "com.codex.evoxquickfix",
+    "com.google.android.gms",
+    "com.google.android.googlequicksearchbox",
+    "com.google.android.gsf",
+    "com.tk.quicksearch"
+  ],
+  "packages": [
+    {
+      "package": "com.android.adservices.api",
+      "name": {
+        "ar": "خدمات إعلانات أندرويد",
+        "en": "Android Ad Services"
+      },
+      "function": {
+        "ar": "يوفر واجهات Privacy Sandbox للإعلانات والقياس.",
+        "en": "Provides Privacy Sandbox advertising and measurement APIs."
+      },
+      "impact": {
+        "ar": "قد تفقد التطبيقات ميزات Topics وقياس الإحالات والجمهور المحمي.",
+        "en": "Apps using Topics, attribution, or protected-audience APIs may lose those features."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.angle",
+      "name": {
+        "ar": "مشغل الرسوميات ANGLE",
+        "en": "ANGLE Graphics Driver"
+      },
+      "function": {
+        "ar": "يوفر تنفيذًا بديلًا لـOpenGL ES فوق Vulkan.",
+        "en": "Offers an alternate OpenGL ES implementation over Vulkan."
+      },
+      "impact": {
+        "ar": "قد تتراجع الألعاب أو التطبيقات المفروضة على ANGLE أو تعرض الرسوم بشكل خاطئ أو لا تبدأ.",
+        "en": "Games or apps forced to use ANGLE can fall back, render incorrectly, or fail to start."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.apps.tag",
+      "name": {
+        "ar": "قارئ وسوم NFC",
+        "en": "AOSP NFC Tags"
+      },
+      "function": {
+        "ar": "يعالج وسوم NFC المكتشفة والأوامر الشائعة فيها.",
+        "en": "Handles discovered NFC tags and common tag actions."
+      },
+      "impact": {
+        "ar": "لن يؤدي لمس وسوم NFC إلى فتح أو تنفيذ الأوامر المخزنة فيها.",
+        "en": "Tapping NFC tags will no longer open or execute their stored actions."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.appsearch.apk",
+      "name": {
+        "ar": "فهرسة AppSearch للنظام",
+        "en": "System AppSearch"
+      },
+      "function": {
+        "ar": "يفهرس بيانات التطبيقات المنظمة للبحث السريع على الجهاز.",
+        "en": "Indexes structured app data for fast on-device search."
+      },
+      "impact": {
+        "ar": "قد تتوقف أسطح البحث المعتمدة على AppSearch أو تعيد نتائج فارغة.",
+        "en": "System and in-app search surfaces that depend on AppSearch can return no results or fail."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.backupconfirm",
+      "name": {
+        "ar": "واجهة تأكيد النسخ الاحتياطي",
+        "en": "Backup Confirmation UI"
+      },
+      "function": {
+        "ar": "يعرض شاشات تأكيد عمليات النسخ الاحتياطي والاسترجاع القديمة.",
+        "en": "Displays confirmation screens for legacy device backup and restore operations."
+      },
+      "impact": {
+        "ar": "قد لا تتمكن طلبات ADB القديمة للنسخ أو الاسترجاع من الحصول على تأكيد المستخدم.",
+        "en": "Legacy ADB backup or restore requests may be unable to obtain user confirmation."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.bips",
+      "name": {
+        "ar": "خدمة الطباعة المدمجة",
+        "en": "Built-in Print Service"
+      },
+      "function": {
+        "ar": "يكتشف الطابعات المتوافقة ويوفر خدمة الطباعة الافتراضية.",
+        "en": "Discovers compatible printers and supplies the default print service."
+      },
+      "impact": {
+        "ar": "تختفي الطباعة المباشرة وقد تصبح بعض صفحات إعدادات الطباعة بطيئة أو غير مستقرة.",
+        "en": "Direct printing disappears and some print-related Settings screens may become slow or unstable."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.bluetoothmidiservice",
+      "name": {
+        "ar": "خدمة Bluetooth MIDI",
+        "en": "Bluetooth MIDI Service"
+      },
+      "function": {
+        "ar": "يربط آلات ووحدات تحكم MIDI عبر البلوتوث.",
+        "en": "Connects MIDI instruments and controllers over Bluetooth."
+      },
+      "impact": {
+        "ar": "لن تتصل لوحات MIDI ووحدات التحكم وتطبيقات الموسيقى عبر البلوتوث.",
+        "en": "Bluetooth MIDI keyboards, controllers, and music apps will not communicate."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.bookmarkprovider",
+      "name": {
+        "ar": "موفر الإشارات المرجعية القديم",
+        "en": "Legacy Bookmark Provider"
+      },
+      "function": {
+        "ar": "يخزن إشارات المتصفح للتطبيقات القديمة في أندرويد.",
+        "en": "Stores browser bookmarks for older Android applications."
+      },
+      "impact": {
+        "ar": "قد تفقد التطبيقات القديمة الوصول إلى موفر الإشارات المرجعية المشترك.",
+        "en": "Older apps that query the shared bookmark provider can lose bookmark access."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.calculator2",
+      "name": {
+        "ar": "حاسبة AOSP",
+        "en": "AOSP Calculator"
+      },
+      "function": {
+        "ar": "يوفر تطبيق الحاسبة الافتراضي.",
+        "en": "Provides the stock calculator application."
+      },
+      "impact": {
+        "ar": "يختفي تطبيق الحاسبة المدمج ولا يمكن إجراء الحسابات من خلاله.",
+        "en": "The built-in calculator icon and calculations through that app become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.camera2",
+      "name": {
+        "ar": "كاميرا AOSP",
+        "en": "AOSP Camera"
+      },
+      "function": {
+        "ar": "يوفر تطبيق الكاميرا الأساسي في AOSP.",
+        "en": "Provides the basic AOSP camera application."
+      },
+      "impact": {
+        "ar": "يختفي هذا التطبيق، بينما قد تستمر الكاميرا بالعمل من خلال تطبيق آخر.",
+        "en": "That camera app disappears; camera hardware can still work through another camera app."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.cellbroadcastreceiver.module",
+      "name": {
+        "ar": "وحدة تنبيهات البث الخلوي",
+        "en": "Cell Broadcast Receiver Module"
+      },
+      "function": {
+        "ar": "يستقبل ويعرض تنبيهات الطوارئ الحكومية وتنبيهات شركة الاتصالات.",
+        "en": "Receives and displays government and carrier emergency broadcasts."
+      },
+      "impact": {
+        "ar": "قد لا تظهر تنبيهات الزلازل والطقس والإخلاء والطوارئ الأخرى إطلاقًا.",
+        "en": "Earthquake, severe-weather, evacuation, and other emergency alerts may never be shown."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.devicediagnostics",
+      "name": {
+        "ar": "تشخيص الجهاز",
+        "en": "Device Diagnostics"
+      },
+      "function": {
+        "ar": "يوفر اختبارات مدمجة لعتاد الجهاز ومكوناته.",
+        "en": "Provides built-in hardware and component diagnostic tests."
+      },
+      "impact": {
+        "ar": "لن تتوفر قوائم التشخيص والاختبارات الموجهة للعتاد.",
+        "en": "Diagnostic menus and guided hardware tests will be unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.devicediagnostics.auto_generated_rro_product__",
+      "name": {
+        "ar": "تراكب تشخيص الجهاز",
+        "en": "Device Diagnostics Product Overlay"
+      },
+      "function": {
+        "ar": "يوفر موارد خاصة بالمنتج لتطبيق تشخيص الجهاز.",
+        "en": "Supplies product-specific resources to Device Diagnostics."
+      },
+      "impact": {
+        "ar": "قد يؤدي إبقاء التشخيص دون هذا التراكب إلى نصوص ناقصة أو تخطيط خاطئ أو انهيارات.",
+        "en": "Keeping diagnostics enabled without this overlay can produce missing text, wrong layout, or crashes."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.dreams.basic",
+      "name": {
+        "ar": "شاشات التوقف الأساسية",
+        "en": "Basic Screensavers"
+      },
+      "function": {
+        "ar": "يوفر شاشات توقف أساسية مثل الساعة والألوان.",
+        "en": "Provides basic clock and color Android screensavers."
+      },
+      "impact": {
+        "ar": "تختفي خيارات شاشة التوقف الأساسية من إعدادات العرض.",
+        "en": "Basic screensaver choices disappear from display settings."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.dreams.phototable",
+      "name": {
+        "ar": "شاشة توقف الصور",
+        "en": "Photo Table Screensaver"
+      },
+      "function": {
+        "ar": "يعرض الصور المحلية كشاشة توقف.",
+        "en": "Displays local photos as an Android screensaver."
+      },
+      "impact": {
+        "ar": "لن يمكن اختيار أو تشغيل شاشة توقف عرض الصور.",
+        "en": "The photo slideshow screensaver can no longer be selected or run."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.dynsystem",
+      "name": {
+        "ar": "تحديثات النظام الديناميكية",
+        "en": "Dynamic System Updates"
+      },
+      "function": {
+        "ar": "يثبت ويشغل صور GSI مؤقتة عبر DSU.",
+        "en": "Installs and boots temporary GSI images through DSU."
+      },
+      "impact": {
+        "ar": "لن يتمكن المطورون من اختبار GSI عبر Dynamic System Updates دون تفليش.",
+        "en": "Developers cannot use Dynamic System Updates to test a GSI without flashing."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.emergency",
+      "name": {
+        "ar": "معلومات الطوارئ",
+        "en": "Emergency Information"
+      },
+      "function": {
+        "ar": "يعرض معلومات الطوارئ والاختصارات المرتبطة بها.",
+        "en": "Shows emergency information and related emergency shortcuts."
+      },
+      "impact": {
+        "ar": "قد تختفي البيانات الطبية وجهات الاتصال أو شاشات معلومات الطوارئ عند الحاجة.",
+        "en": "Medical details, emergency contacts, or emergency information screens may be missing when needed."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.federatedcompute.services",
+      "name": {
+        "ar": "الحوسبة الاتحادية",
+        "en": "Federated Compute"
+      },
+      "function": {
+        "ar": "يشغل مهام تعلم اتحادي تحافظ على الخصوصية على الجهاز.",
+        "en": "Runs privacy-preserving federated learning jobs on the device."
+      },
+      "impact": {
+        "ar": "قد تتوقف الميزات التي تحسن النماذج محليًا عن التعلم أو التحديث.",
+        "en": "Features that improve models locally can stop learning or updating."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.gallery3d",
+      "name": {
+        "ar": "معرض AOSP",
+        "en": "AOSP Gallery"
+      },
+      "function": {
+        "ar": "يتصفح ويعرض الصور ومقاطع الفيديو المحلية.",
+        "en": "Browses and views local photos and videos."
+      },
+      "impact": {
+        "ar": "يختفي معرض AOSP وأي عمليات فتح لا يعالجها سواه.",
+        "en": "The AOSP gallery and any intents resolved only by it become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.health.connect.backuprestore",
+      "name": {
+        "ar": "نسخ Health Connect واسترجاعه",
+        "en": "Health Connect Backup and Restore"
+      },
+      "function": {
+        "ar": "ينقل بيانات وإعدادات Health Connect أثناء النسخ أو ترحيل الجهاز.",
+        "en": "Transfers Health Connect data and configuration during backup or device migration."
+      },
+      "impact": {
+        "ar": "قد لا تُسترجع بيانات الصحة أو إعداداتها بعد الفورمات أو نقل الجهاز.",
+        "en": "Health history or settings may not restore after a reset or migration."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.healthconnect.controller",
+      "name": {
+        "ar": "إدارة Health Connect",
+        "en": "Health Connect Controller"
+      },
+      "function": {
+        "ar": "يدير صلاحيات Health Connect والوصول إلى البيانات وتحكم المستخدم.",
+        "en": "Manages Health Connect permissions, data access, and user controls."
+      },
+      "impact": {
+        "ar": "قد تفقد تطبيقات الصحة واجهة الصلاحيات وإدارة البيانات القياسية.",
+        "en": "Health apps may lose the standard permission and data-management interface."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.hotspot2.osulogin",
+      "name": {
+        "ar": "تسجيل Passpoint OSU",
+        "en": "Passpoint OSU Login"
+      },
+      "function": {
+        "ar": "يعالج التسجيل الإلكتروني لشبكات Passpoint وHotspot 2.0.",
+        "en": "Handles online sign-up for Passpoint and Hotspot 2.0 networks."
+      },
+      "impact": {
+        "ar": "قد تفشل بوابات التسجيل في شبكات Wi‑Fi الاشتراكية في الفتح أو الاكتمال.",
+        "en": "Subscription Wi-Fi onboarding portals may fail to open or complete."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.hotwordenrollment.okgoogle",
+      "name": {
+        "ar": "تسجيل OK Google",
+        "en": "OK Google Enrollment"
+      },
+      "function": {
+        "ar": "يسجل ويدير نموذج الصوت الأساسي لعبارة OK Google.",
+        "en": "Enrolls and manages the primary Google hotword voice model."
+      },
+      "impact": {
+        "ar": "قد يتوقف تنشيط المساعد صوتيًا للغة المسجلة.",
+        "en": "Always-listening hotword activation can stop working for the enrolled language."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.hotwordenrollment.xgoogle",
+      "name": {
+        "ar": "تسجيل نداء Google البديل",
+        "en": "Alternate Google Hotword Enrollment"
+      },
+      "function": {
+        "ar": "يدعم نماذج النداء الصوتي البديلة وعمليات تسجيلها.",
+        "en": "Supports alternate Google hotword models and enrollment flows."
+      },
+      "impact": {
+        "ar": "قد لا تعود نماذج النداء الثانوية أو اللغات البديلة قادرة على تشغيل المساعد.",
+        "en": "Secondary hotword models or language variants may no longer activate Assistant."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.managedprovisioning",
+      "name": {
+        "ar": "إعداد الإدارة المؤسسية",
+        "en": "Managed Provisioning"
+      },
+      "function": {
+        "ar": "ينشئ ملفات العمل ويجهز إدارة مالك الجهاز أو الملف.",
+        "en": "Creates work profiles and provisions device-owner or profile-owner management."
+      },
+      "impact": {
+        "ar": "ستفشل ملفات العمل والتسجيل المؤسسي وإعداد الأجهزة المُدارة.",
+        "en": "Work profiles, enterprise enrollment, and managed-device setup will fail."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.nfc",
+      "name": {
+        "ar": "خدمة NFC الأساسية",
+        "en": "Core NFC Service"
+      },
+      "function": {
+        "ar": "يتحكم باكتشاف NFC وتمرير الوسوم ومحاكاة البطاقات وواجهات النظام.",
+        "en": "Controls NFC discovery, tag dispatch, card emulation, and related system APIs."
+      },
+      "impact": {
+        "ar": "تتعطل جميع وظائف NFC، بما فيها الوسوم ودعم الدفع اللاتلامسي.",
+        "en": "All NFC functions, including tags and contactless payment support, become unavailable."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.ondevicepersonalization.services",
+      "name": {
+        "ar": "التخصيص على الجهاز",
+        "en": "On-Device Personalization"
+      },
+      "function": {
+        "ar": "يشغل خدمات تخصيص واختيار محتوى محلية ومعزولة.",
+        "en": "Runs isolated local personalization and content-selection services."
+      },
+      "impact": {
+        "ar": "قد تفقد التطبيقات توصياتها أو تفشل مهام التخصيص المعتمدة على النظام.",
+        "en": "Apps using the platform personalization APIs may lose recommendations or fail those jobs."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.pacprocessor",
+      "name": {
+        "ar": "معالج بروكسي PAC",
+        "en": "PAC Proxy Processor"
+      },
+      "function": {
+        "ar": "يفسر سكربتات الإعداد التلقائي للبروكسي لاتصالات الشبكة.",
+        "en": "Evaluates proxy auto-configuration scripts for network connections."
+      },
+      "impact": {
+        "ar": "قد تفقد الشبكات التي تتطلب PAC الاتصال أو تستخدم بروكسي خاطئًا.",
+        "en": "Networks that require a PAC URL can lose connectivity or use the wrong proxy."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.printservice.recommendation",
+      "name": {
+        "ar": "اقتراحات خدمات الطباعة",
+        "en": "Print Service Recommendations"
+      },
+      "function": {
+        "ar": "يقترح إضافات طباعة متوافقة عند اكتشاف طابعة.",
+        "en": "Suggests compatible print-service plugins when a printer is discovered."
+      },
+      "impact": {
+        "ar": "تختفي اقتراحات خدمات الطباعة التلقائية مع احتمال استمرار الخدمات المثبتة.",
+        "en": "Automatic print-service suggestions disappear, while installed print services can remain usable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.printspooler",
+      "name": {
+        "ar": "مدير مهام الطباعة",
+        "en": "Print Spooler"
+      },
+      "function": {
+        "ar": "يصطف مهام الطباعة ويوفر واجهة إدارتها في أندرويد.",
+        "en": "Queues print jobs and hosts Android print-management UI."
+      },
+      "impact": {
+        "ar": "تتوقف الطباعة وقد تنهار صفحات الطباعة أو تفضيلات الاتصال في بعض الرومات.",
+        "en": "Printing stops and print or Connection Preferences pages can crash on some ROMs."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.providers.calendar",
+      "name": {
+        "ar": "موفر تخزين التقويم",
+        "en": "Calendar Storage Provider"
+      },
+      "function": {
+        "ar": "يخزن التقويمات والأحداث والتذكيرات والبيانات المشتركة بين التطبيقات.",
+        "en": "Stores calendars, events, reminders, and shared calendar data for apps."
+      },
+      "impact": {
+        "ar": "قد تفشل تطبيقات التقويم والمزامنة وتصبح الأحداث الحالية غير قابلة للوصول.",
+        "en": "Calendar apps and sync can fail, and existing event data can become inaccessible."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.proxyhandler",
+      "name": {
+        "ar": "معالج البروكسي للنظام",
+        "en": "System Proxy Handler"
+      },
+      "function": {
+        "ar": "يعالج مصادقة البروكسي وطلباته على مستوى النظام.",
+        "en": "Handles proxy authentication and system proxy requests."
+      },
+      "impact": {
+        "ar": "قد تتوقف بروكسيات الشبكات المُدارة أو التي تتطلب مصادقة عن العمل.",
+        "en": "Authenticated or managed-network proxies may stop working correctly."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.se",
+      "name": {
+        "ar": "خدمة العنصر الآمن",
+        "en": "Secure Element Service"
+      },
+      "function": {
+        "ar": "يوفر قارئات العنصر الآمن لتطبيقات الدفع والهوية والأمان.",
+        "en": "Exposes secure-element readers used by payment, identity, and security applications."
+      },
+      "impact": {
+        "ar": "قد تفشل المدفوعات اللاتلامسية والتطبيقات الآمنة وميزات العنصر المدمج.",
+        "en": "Contactless payments, secure applets, or embedded secure-element features can fail."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.settings.intelligence",
+      "name": {
+        "ar": "ذكاء إعدادات AOSP",
+        "en": "AOSP Settings Intelligence"
+      },
+      "function": {
+        "ar": "يوفر فهرسة البحث والاقتراحات والملخصات داخل الإعدادات.",
+        "en": "Provides Settings search indexing, suggestions, and contextual summaries."
+      },
+      "impact": {
+        "ar": "قد يصبح البحث والاقتراحات داخل الإعدادات فارغًا أو أقل فائدة.",
+        "en": "Settings search and recommendations may be empty or less useful."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.stk",
+      "name": {
+        "ar": "أدوات شريحة SIM",
+        "en": "SIM Toolkit"
+      },
+      "function": {
+        "ar": "يشغل قوائم وأوامر SIM Toolkit المقدمة من شركة الاتصالات.",
+        "en": "Runs carrier-provided SIM Toolkit menus and commands."
+      },
+      "impact": {
+        "ar": "قد تختفي قوائم الرصيد والتجوال والخدمات أو الخدمات البنكية المقدمة عبر الشريحة.",
+        "en": "Carrier banking, balance, roaming, or service menus exposed through the SIM can disappear."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.systemui.plugin.globalactions.wallet",
+      "name": {
+        "ar": "إضافة المحفظة في قائمة الطاقة",
+        "en": "Power Menu Wallet Plugin"
+      },
+      "function": {
+        "ar": "يضيف اختصار المحفظة إلى إجراءات SystemUI أو قائمة الطاقة.",
+        "en": "Adds the wallet shortcut to SystemUI global actions or the power menu."
+      },
+      "impact": {
+        "ar": "يختفي اختصار المحفظة مع بقاء إمكانية فتح تطبيقها مباشرة.",
+        "en": "The wallet shortcut disappears, but the wallet app can still be opened directly."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.vpndialogs",
+      "name": {
+        "ar": "حوارات صلاحية VPN",
+        "en": "VPN Permission Dialogs"
+      },
+      "function": {
+        "ar": "يعرض موافقة المستخدم وتحذيراته لاتصالات VPN.",
+        "en": "Displays user consent and warning dialogs for VPN connections."
+      },
+      "impact": {
+        "ar": "قد لا تتمكن تطبيقات VPN الجديدة من طلب الموافقة أو إنشاء اتصال.",
+        "en": "New VPN apps may be unable to obtain consent or establish a connection."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.android.wallpaper",
+      "name": {
+        "ar": "منتقي خلفيات AOSP",
+        "en": "AOSP Wallpaper Picker"
+      },
+      "function": {
+        "ar": "يوفر واجهة اختيار الخلفيات الثابتة القياسية.",
+        "en": "Provides the standard static wallpaper selection interface."
+      },
+      "impact": {
+        "ar": "قد لا تجد الإعدادات أو أوامر اختيار الخلفية واجهة قادرة على تنفيذها.",
+        "en": "Wallpaper selection from Settings or intents may have no compatible handler."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.wallpaper.livepicker",
+      "name": {
+        "ar": "منتقي الخلفيات الحية",
+        "en": "Live Wallpaper Picker"
+      },
+      "function": {
+        "ar": "يسرد الخلفيات الحية المثبتة ويعرض معاينتها.",
+        "en": "Lists and previews installed live wallpapers."
+      },
+      "impact": {
+        "ar": "لن يمكن اختيار الخلفيات الحية من خلال المنتقي القياسي.",
+        "en": "Live wallpapers cannot be selected through the standard picker."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.android.wallpaperbackup",
+      "name": {
+        "ar": "نسخ الخلفية احتياطيًا",
+        "en": "Wallpaper Backup"
+      },
+      "function": {
+        "ar": "ينسخ بيانات الخلفية وصورها ويسترجعها.",
+        "en": "Backs up and restores wallpaper metadata and images."
+      },
+      "impact": {
+        "ar": "قد لا تعود الخلفيات المختارة بعد استرجاع الجهاز أو ترحيله.",
+        "en": "Wallpaper choices may not return after device restore or migration."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.caf.fmradio",
+      "name": {
+        "ar": "راديو FM من Qualcomm",
+        "en": "Qualcomm FM Radio"
+      },
+      "function": {
+        "ar": "يوفر تشغيل راديو FM على أجهزة Qualcomm المدعومة.",
+        "en": "Provides FM radio playback on supported Qualcomm hardware."
+      },
+      "impact": {
+        "ar": "يتوقف استقبال راديو FM الهوائي من خلال هذا التطبيق.",
+        "en": "Over-the-air FM radio reception through this app becomes unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.duckduckgo.mobile.android",
+      "name": {
+        "ar": "متصفح DuckDuckGo",
+        "en": "DuckDuckGo Browser"
+      },
+      "function": {
+        "ar": "يوفر تصفحًا خاصًا وميزات حماية التطبيقات من DuckDuckGo.",
+        "en": "Provides private web browsing and DuckDuckGo app-protection features."
+      },
+      "impact": {
+        "ar": "يتوقف المتصفح وميزات الخصوصية التابعة له حتى إعادة تفعيله.",
+        "en": "The browser and its privacy features become unavailable until re-enabled."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.accessibility.soundamplifier",
+      "name": {
+        "ar": "مضخم الصوت",
+        "en": "Sound Amplifier"
+      },
+      "function": {
+        "ar": "يحسن الأصوات المحيطة للمستخدمين ذوي الاحتياجات السمعية.",
+        "en": "Enhances surrounding audio for users with hearing needs."
+      },
+      "impact": {
+        "ar": "يفقد المستخدمون المعتمدون على تضخيم أو تنقية الصوت أداة الوصول هذه.",
+        "en": "Users relying on amplified or filtered audio lose that accessibility aid."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.accessibility.switchaccess",
+      "name": {
+        "ar": "الوصول عبر المفاتيح",
+        "en": "Switch Access"
+      },
+      "function": {
+        "ar": "يتيح التحكم بأندرويد عبر مفاتيح خارجية بدل اللمس.",
+        "en": "Lets users control Android with switches instead of touch."
+      },
+      "impact": {
+        "ar": "قد يعجز المستخدمون المعتمدون على المفاتيح عن التحكم بالجهاز.",
+        "en": "Users who depend on switch navigation may be unable to operate the device."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.aicore",
+      "name": {
+        "ar": "نواة Google AI",
+        "en": "Google AI Core"
+      },
+      "function": {
+        "ar": "يستضيف نماذج الذكاء الاصطناعي التوليدي وخدمات تشغيلها محليًا.",
+        "en": "Hosts on-device generative AI models and inference services."
+      },
+      "impact": {
+        "ar": "قد تتوقف الميزات التي تستخدم Gemini Nano أو نماذج محلية أخرى.",
+        "en": "Features that call Gemini Nano or other local models can stop working."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.aiwallpapers",
+      "name": {
+        "ar": "خلفيات الذكاء الاصطناعي",
+        "en": "AI Wallpapers"
+      },
+      "function": {
+        "ar": "ينشئ خلفيات ذات طابع محدد باستخدام خدمات Google AI.",
+        "en": "Generates themed wallpapers with Google AI services."
+      },
+      "impact": {
+        "ar": "تختفي إمكانية إنشاء خلفيات بالذكاء الاصطناعي من واجهة الخلفيات.",
+        "en": "AI-generated wallpaper creation disappears from the wallpaper interface."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.credentialmanager",
+      "name": {
+        "ar": "مدير بيانات اعتماد Google",
+        "en": "Google Credential Manager"
+      },
+      "function": {
+        "ar": "يوفر واجهة اختيار مفاتيح المرور وكلمات السر وتسجيل الدخول الموحد.",
+        "en": "Provides passkey, password, and federated sign-in selection UI."
+      },
+      "impact": {
+        "ar": "قد تفشل مفاتيح المرور وتسجيلات الدخول المحفوظة أو تختفي واجهة اختيارها.",
+        "en": "Passkeys and saved-credential sign-in can fail or lose their selection screen."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.dreamliner",
+      "name": {
+        "ar": "خدمة قاعدة Pixel",
+        "en": "Pixel Dock Service"
+      },
+      "function": {
+        "ar": "يدعم Pixel Stand وميزات قواعد الشحن المتوافقة.",
+        "en": "Supports Pixel Stand and compatible dock features."
+      },
+      "impact": {
+        "ar": "تتوقف شاشات الشحن والتحكم والميزات المحيطية الخاصة بقاعدة الشحن.",
+        "en": "Dock-specific charging screens, controls, and ambient features stop working."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.emojiwallpaper",
+      "name": {
+        "ar": "خلفيات Emoji Workshop",
+        "en": "Emoji Workshop Wallpaper"
+      },
+      "function": {
+        "ar": "ينشئ خلفيات قابلة للتخصيص من أنماط الرموز التعبيرية.",
+        "en": "Creates customizable emoji-pattern wallpapers."
+      },
+      "impact": {
+        "ar": "تختفي صناعة خلفيات Emoji Workshop وأدوات تخصيصها.",
+        "en": "Emoji Workshop wallpaper creation and existing customization controls disappear."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.maps",
+      "name": {
+        "ar": "خرائط Google",
+        "en": "Google Maps"
+      },
+      "function": {
+        "ar": "يوفر الخرائط والملاحة والأماكن ومشاركة الموقع.",
+        "en": "Provides maps, navigation, places, and location sharing."
+      },
+      "impact": {
+        "ar": "تتوقف ملاحة Google وروابط الخرائط وعمليات مشاركة الموقع.",
+        "en": "Google navigation, map links, and location-sharing workflows become unavailable."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.pixel.subzero",
+      "name": {
+        "ar": "خدمة Pixel Subzero",
+        "en": "Pixel Subzero Service"
+      },
+      "function": {
+        "ar": "يوفر مكون دعم خلفي خاص بأجهزة Pixel لبعض ميزات الجهاز.",
+        "en": "Supplies a Pixel-specific background support component for device features."
+      },
+      "impact": {
+        "ar": "قد تتوقف سلوكيات Pixel المرتبطة بهذا المكون بصمت أو تستخدم بديلًا.",
+        "en": "Pixel-specific behavior tied to this component may silently stop or fall back."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.pixel.support",
+      "name": {
+        "ar": "دعم Pixel",
+        "en": "Pixel Support"
+      },
+      "function": {
+        "ar": "يوفر مساعدة Pixel وربط التشخيص وتجارب الدعم.",
+        "en": "Provides Pixel help, diagnostics hand-off, and support experiences."
+      },
+      "impact": {
+        "ar": "تتوقف مسارات دعم Pixel والمساعدة الموجهة.",
+        "en": "Pixel support flows and guided help become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.restore",
+      "name": {
+        "ar": "استرجاع بيانات Google",
+        "en": "Google Data Restore"
+      },
+      "function": {
+        "ar": "يسترجع التطبيقات وبيانات الجهاز أثناء الإعداد والترحيل.",
+        "en": "Restores apps and device data during setup and migration."
+      },
+      "impact": {
+        "ar": "قد يفشل الاسترجاع من جهاز أندرويد آخر أو نسخة سحابية أثناء الإعداد.",
+        "en": "Restoring from another Android device or cloud backup can fail during setup."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.safetyhub",
+      "name": {
+        "ar": "مركز أمان Google",
+        "en": "Google Safety Hub"
+      },
+      "function": {
+        "ar": "يعرض حالة أمان الحساب والجهاز والسلامة الشخصية في مكان واحد.",
+        "en": "Surfaces account, device, and personal-safety status in one place."
+      },
+      "impact": {
+        "ar": "تختفي حالة الأمان والتنبيهات والإجراءات الموصى بها من المركز.",
+        "en": "Safety status, alerts, and recommended actions from the hub disappear."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.setupwizard.searchselector",
+      "name": {
+        "ar": "اختيار محرك البحث أثناء الإعداد",
+        "en": "Setup Search Selector"
+      },
+      "function": {
+        "ar": "يعرض اختيار موفر البحث أثناء مسارات الإعداد التي تتطلب ذلك.",
+        "en": "Presents search-provider choice during regulated setup flows."
+      },
+      "impact": {
+        "ar": "قد يتجاوز الإعداد الجديد أو يفشل في خطوة اختيار محرك البحث المطلوبة.",
+        "en": "A reset or fresh setup may skip or fail the required search-choice step."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.turbo",
+      "name": {
+        "ar": "خدمات صحة الجهاز",
+        "en": "Device Health Services"
+      },
+      "function": {
+        "ar": "يحسب تقديرات البطارية التكيفية وتوقعات استخدام الجهاز.",
+        "en": "Calculates adaptive battery estimates and device-usage predictions."
+      },
+      "impact": {
+        "ar": "قد تصبح تقديرات البطارية والميزات التكيفية أقل دقة أو غير متاحة.",
+        "en": "Battery estimates and adaptive features may become less accurate or unavailable."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.apps.wallpaper.pixel",
+      "name": {
+        "ar": "خلفيات Pixel",
+        "en": "Pixel Wallpapers"
+      },
+      "function": {
+        "ar": "يوفر مجموعات خلفيات Pixel ودمجها مع واجهة الاختيار.",
+        "en": "Provides Pixel wallpaper collections and selection integration."
+      },
+      "impact": {
+        "ar": "تختفي مجموعات خلفيات Pixel ودمجها مع المنتقي.",
+        "en": "Pixel wallpaper collections and their picker integration disappear."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.weather",
+      "name": {
+        "ar": "طقس Google",
+        "en": "Google Weather"
+      },
+      "function": {
+        "ar": "يوفر توقعات الطقس وواجهتها من Google.",
+        "en": "Provides Google weather forecasts and related UI."
+      },
+      "impact": {
+        "ar": "قد تتوقف صفحات واختصارات أو أدوات طقس Google عن التحديث أو الفتح.",
+        "en": "Google weather pages, shortcuts, or widgets may stop updating or opening."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.wellbeing",
+      "name": {
+        "ar": "الرفاهية الرقمية",
+        "en": "Digital Wellbeing"
+      },
+      "function": {
+        "ar": "يتابع وقت الشاشة ويوفر التركيز ووقت النوم وحدود التطبيقات.",
+        "en": "Tracks screen time and provides focus, bedtime, and app-limit controls."
+      },
+      "impact": {
+        "ar": "تختفي لوحات الاستخدام والمؤقتات ووضع التركيز وأدوات وقت النوم.",
+        "en": "Usage dashboards, timers, Focus Mode, and Bedtime controls disappear."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.apps.work.clouddpc",
+      "name": {
+        "ar": "سياسة أجهزة Google",
+        "en": "Google Device Policy"
+      },
+      "function": {
+        "ar": "يفرض سياسات المؤسسات ويدير ملفات عمل Google.",
+        "en": "Enforces enterprise policies and manages Google work profiles."
+      },
+      "impact": {
+        "ar": "قد تتوقف حسابات العمل المُدارة وسياسات المؤسسة عن العمل.",
+        "en": "Managed work accounts and enterprise policy enforcement can stop functioning."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.as",
+      "name": {
+        "ar": "ذكاء نظام أندرويد",
+        "en": "Android System Intelligence"
+      },
+      "function": {
+        "ar": "يوفر الاقتراحات الذكية وتحديد النص والتعليقات والميزات السياقية.",
+        "en": "Provides smart suggestions, text selection, captions, and contextual features."
+      },
+      "impact": {
+        "ar": "قد تختفي ميزات النظام الذكية والاقتراحات السياقية أو تنهار.",
+        "en": "Smart system features and contextual suggestions can disappear or crash."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.as.oss",
+      "name": {
+        "ar": "ذكاء Private Compute Core",
+        "en": "Private Compute Core Intelligence"
+      },
+      "function": {
+        "ar": "يشغل مكونات ذكاء مفتوحة المصدر داخل بيئة الحوسبة الخاصة.",
+        "en": "Runs open-source intelligence components inside the private compute environment."
+      },
+      "impact": {
+        "ar": "قد تتوقف اقتراحات الحوسبة الخاصة وميزات الذكاء المحلية المرتبطة بها.",
+        "en": "Private-compute suggestions and related on-device intelligence may stop."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.calendar",
+      "name": {
+        "ar": "تقويم Google",
+        "en": "Google Calendar"
+      },
+      "function": {
+        "ar": "يوفر واجهة أحداث وتذكيرات وجدولة تقويم Google.",
+        "en": "Provides Google Calendar event, reminder, and scheduling UI."
+      },
+      "impact": {
+        "ar": "يختفي تطبيق تقويم Google مع احتمال بقاء بيانات الموفر لتطبيقات أخرى.",
+        "en": "The Google Calendar app becomes unavailable; provider data may remain for other apps."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.configupdater",
+      "name": {
+        "ar": "محدّث إعدادات Google",
+        "en": "Google Config Updater"
+      },
+      "function": {
+        "ar": "يوصل تحديثات موقعة لإعدادات الأمان والشبكة والنظام.",
+        "en": "Delivers signed security, network, and system configuration updates."
+      },
+      "impact": {
+        "ar": "قد تصبح بيانات الإعداد والثقة المهمة قديمة بين تحديثات الروم.",
+        "en": "Important configuration and trust data may become stale between ROM updates."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.contactkeys",
+      "name": {
+        "ar": "التحقق من مفاتيح جهات الاتصال",
+        "en": "Contact Key Verification"
+      },
+      "function": {
+        "ar": "يدعم التحقق من مفاتيح التشفير التام بين الأطراف لجهات الاتصال.",
+        "en": "Supports verification of end-to-end encryption keys for contacts."
+      },
+      "impact": {
+        "ar": "قد تختفي عمليات التحقق من المفاتيح أو تظهر كغير متاحة.",
+        "en": "Key-verification workflows may disappear or report unavailable."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.feedback",
+      "name": {
+        "ar": "ملاحظات Google",
+        "en": "Google Feedback"
+      },
+      "function": {
+        "ar": "يجمع تشخيصات يوافق عليها المستخدم ويرسل الملاحظات إلى Google.",
+        "en": "Collects user-approved diagnostics and sends feedback to Google."
+      },
+      "impact": {
+        "ar": "تختفي شاشات إرسال الملاحظات وتمرير تقارير الأخطاء المدمجة.",
+        "en": "Built-in feedback and bug-report hand-off screens become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.ims",
+      "name": {
+        "ar": "خدمة Google IMS",
+        "en": "Google IMS Service"
+      },
+      "function": {
+        "ar": "يدعم ميزات IMS مثل VoLTE وVoWiFi ودمج RCS.",
+        "en": "Supports carrier IMS features such as VoLTE, VoWiFi, and RCS integration."
+      },
+      "impact": {
+        "ar": "قد تتعطل المكالمات والرسائل وتسجيل الشبكة أو الاتصال عبر Wi‑Fi.",
+        "en": "Calls, messaging, carrier registration, or Wi-Fi calling can break."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.markup",
+      "name": {
+        "ar": "محرر لقطات Google",
+        "en": "Google Markup"
+      },
+      "function": {
+        "ar": "يوفر قص لقطات الشاشة والرسم وإضافة التعليقات.",
+        "en": "Provides screenshot cropping, drawing, and annotation tools."
+      },
+      "impact": {
+        "ar": "لن يظهر محرر Markup بعد التقاط لقطات الشاشة أو مشاركتها.",
+        "en": "The Markup editor no longer appears after taking or sharing screenshots."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.onetimeinitializer",
+      "name": {
+        "ar": "مهيئ Google لمرة واحدة",
+        "en": "Google One-Time Initializer"
+      },
+      "function": {
+        "ar": "يكمل التجهيز لمرة واحدة بعد إعداد الجهاز أو الحساب.",
+        "en": "Completes one-time provisioning after setup or account initialization."
+      },
+      "impact": {
+        "ar": "قد يبقى إعداد الجهاز أو الحساب أو التهيئة بعد الفورمات غير مكتمل.",
+        "en": "Fresh setup, account provisioning, or post-reset initialization may remain incomplete."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.partnersetup",
+      "name": {
+        "ar": "إعداد شركاء Google",
+        "en": "Google Partner Setup"
+      },
+      "function": {
+        "ar": "يطبق إعدادات الشركاء وشركات الاتصالات أثناء إعداد Google.",
+        "en": "Applies partner and carrier configuration during Google setup."
+      },
+      "impact": {
+        "ar": "قد لا تُطبق الإعدادات الافتراضية للشركاء أو شركة الاتصال بعد الفورمات.",
+        "en": "Partner defaults and carrier-specific configuration may not be applied after reset."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.pcs",
+      "name": {
+        "ar": "خدمات الحوسبة الخاصة",
+        "en": "Private Compute Services"
+      },
+      "function": {
+        "ar": "يوفر وصولًا شبكيًا منضبطًا لميزات Private Compute Core.",
+        "en": "Provides controlled network access for Private Compute Core features."
+      },
+      "impact": {
+        "ar": "قد تتوقف ميزات الحوسبة الخاصة التي تحتاج تحديثات نماذج أو بيانات.",
+        "en": "Private-compute features that need model or data updates can stop working."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.pixel.setupwizard",
+      "name": {
+        "ar": "معالج إعداد Pixel",
+        "en": "Pixel Setup Wizard"
+      },
+      "function": {
+        "ar": "يشغل خطوات Pixel الخاصة عند الإقلاع الأول والفورمات وترحيل الجهاز.",
+        "en": "Runs Pixel-specific steps during first boot, reset, and device migration."
+      },
+      "impact": {
+        "ar": "قد يدخل الجهاز بعد الفورمات أو الترحيل في إعداد ناقص أو معطل.",
+        "en": "A factory reset or migration can enter an incomplete or broken setup flow."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.projection.gearhead",
+      "name": {
+        "ar": "أندرويد أوتو",
+        "en": "Android Auto"
+      },
+      "function": {
+        "ar": "يعرض الملاحة والوسائط والمكالمات والمساعد على السيارات المتوافقة.",
+        "en": "Projects navigation, media, calls, and Assistant to compatible vehicles."
+      },
+      "impact": {
+        "ar": "تتوقف اتصالات Android Auto السلكية واللاسلكية.",
+        "en": "Wired and wireless Android Auto connections become unavailable."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.safetycenter.resources",
+      "name": {
+        "ar": "موارد مركز أمان Google",
+        "en": "Google Safety Center Resources"
+      },
+      "function": {
+        "ar": "يوفر نصوص وموارد Google الخاصة لمركز أمان أندرويد.",
+        "en": "Supplies Google-specific text and resources to Android Safety Center."
+      },
+      "impact": {
+        "ar": "قد يعرض مركز الأمان محتوى ناقصًا أو تسميات خاطئة أو ينهار.",
+        "en": "Safety Center may show missing content, incorrect labels, or crash."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.safetycore",
+      "name": {
+        "ar": "نواة أمان Google",
+        "en": "Google SafetyCore"
+      },
+      "function": {
+        "ar": "ينفذ فحوص وتصنيف أمان مدعومًا على الجهاز.",
+        "en": "Performs supported on-device safety classification and protective checks."
+      },
+      "impact": {
+        "ar": "قد تتوقف فحوص الأمان والميزات الوقائية في التطبيقات المدعومة.",
+        "en": "Safety scanning and protective features in supported apps can stop."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.settings.intelligence",
+      "name": {
+        "ar": "ذكاء إعدادات Google",
+        "en": "Google Settings Intelligence"
+      },
+      "function": {
+        "ar": "يضيف فهرسة واقتراحات وميزات سياقية من Google داخل الإعدادات.",
+        "en": "Adds Google search indexing, suggestions, and contextual Settings features."
+      },
+      "impact": {
+        "ar": "قد تختفي أو تفشل اقتراحات وبحث Google المحسن داخل الإعدادات.",
+        "en": "Google-enhanced Settings search and suggestions may vanish or fail."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.setupwizard",
+      "name": {
+        "ar": "معالج إعداد Google",
+        "en": "Google Setup Wizard"
+      },
+      "function": {
+        "ar": "يشغل خطوات حساب Google والاسترجاع والموافقات وإعداد الجهاز.",
+        "en": "Runs core Google account, restore, consent, and device setup steps."
+      },
+      "impact": {
+        "ar": "قد يصبح إعداد الجهاز بعد الفورمات أو تجهيز المستخدم والحساب غير قابل للاستخدام.",
+        "en": "Factory reset, user setup, or account provisioning can become unusable."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.storagemanager",
+      "name": {
+        "ar": "مدير تخزين Google",
+        "en": "Google Storage Manager"
+      },
+      "function": {
+        "ar": "يوفر اقتراحات تنظيف التخزين وإدارته تلقائيًا.",
+        "en": "Provides storage cleanup suggestions and automated space management."
+      },
+      "impact": {
+        "ar": "تختفي اقتراحات التنظيف وإدارة التخزين التلقائية من Google.",
+        "en": "Google cleanup recommendations and automatic storage management disappear."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.syncadapters.calendar",
+      "name": {
+        "ar": "مزامن تقويم Google",
+        "en": "Google Calendar Sync Adapter"
+      },
+      "function": {
+        "ar": "يزامن بيانات التقويم بين حسابات Google وتخزين أندرويد.",
+        "en": "Synchronizes calendar data between Google accounts and Android storage."
+      },
+      "impact": {
+        "ar": "تتوقف مزامنة أحداث تقويم Google وقد تصبح قديمة بين الأجهزة.",
+        "en": "Google calendar events stop synchronizing and can become stale across devices."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.tag",
+      "name": {
+        "ar": "قارئ وسوم Google",
+        "en": "Google NFC Tags"
+      },
+      "function": {
+        "ar": "يعالج اكتشاف وسوم NFC وإجراءاتها الخاصة بـGoogle.",
+        "en": "Handles Google-specific NFC tag discovery and actions."
+      },
+      "impact": {
+        "ar": "لن تعمل إجراءات وسوم Google وبعض عمليات التسليم عبر NFC.",
+        "en": "Google tag actions and some NFC hand-offs no longer launch."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.tts",
+      "name": {
+        "ar": "خدمات النطق من Google",
+        "en": "Speech Services by Google"
+      },
+      "function": {
+        "ar": "يوفر أصوات تحويل النص إلى كلام للوصول والملاحة والتطبيقات.",
+        "en": "Provides text-to-speech voices for accessibility, navigation, and apps."
+      },
+      "impact": {
+        "ar": "قد تفقد الملاحة الناطقة وقراءة الشاشة والتطبيقات المعتمدة عليه الصوت.",
+        "en": "Spoken navigation, screen reading, and apps using Google TTS can lose speech output."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.turboadapter",
+      "name": {
+        "ar": "موصل خدمات صحة الجهاز",
+        "en": "Turbo Adapter"
+      },
+      "function": {
+        "ar": "يربط توقعات خدمات صحة الجهاز بمكونات البطارية في النظام.",
+        "en": "Connects Device Health Services predictions to system battery components."
+      },
+      "impact": {
+        "ar": "قد تصبح تقديرات البطارية التكيفية وعمليات دمج الصحة غير متسقة.",
+        "en": "Adaptive battery estimates and health integrations may become inconsistent."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.verifier",
+      "name": {
+        "ar": "متحقق حزم Google",
+        "en": "Google Package Verifier"
+      },
+      "function": {
+        "ar": "يفحص الحزم المثبتة بحثًا عن سلوك ضار معروف وإشارات أمان.",
+        "en": "Checks installed packages for known harmful behavior and policy signals."
+      },
+      "impact": {
+        "ar": "تُزال طبقة من حماية تثبيت التطبيقات واكتشاف البرمجيات الضارة.",
+        "en": "A layer of app-installation and malware protection is removed."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.android.videos",
+      "name": {
+        "ar": "تلفزيون Google",
+        "en": "Google TV"
+      },
+      "function": {
+        "ar": "يوفر اكتشاف وتشغيل الفيديوهات المشتراة والمؤجرة وخدمات البث.",
+        "en": "Provides purchased, rented, and streaming video discovery and playback."
+      },
+      "impact": {
+        "ar": "يختفي تطبيق Google TV ومكتبته.",
+        "en": "The Google TV app and its library become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.android.wallpaper.effects",
+      "name": {
+        "ar": "تأثيرات الخلفيات",
+        "en": "Wallpaper Effects"
+      },
+      "function": {
+        "ar": "ينشئ تأثيرات سينمائية وعمقًا للخلفيات المدعومة.",
+        "en": "Creates cinematic and depth effects for supported wallpapers."
+      },
+      "impact": {
+        "ar": "لن يمكن إنشاء أو تطبيق تأثيرات الخلفية السينمائية والعمق.",
+        "en": "Cinematic and depth wallpaper effects can no longer be generated or applied."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.ar.core",
+      "name": {
+        "ar": "خدمات Google للواقع المعزز",
+        "en": "Google Play Services for AR"
+      },
+      "function": {
+        "ar": "يوفر تتبع الحركة وفهم البيئة والمراسي لتطبيقات الواقع المعزز.",
+        "en": "Provides motion tracking, environmental understanding, and anchors for AR apps."
+      },
+      "impact": {
+        "ar": "ستفشل تطبيقات وتأثيرات الكاميرا التي تتطلب ARCore.",
+        "en": "AR applications and camera effects that require ARCore will fail."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.google.assistant.hubui",
+      "name": {
+        "ar": "واجهة Google Assistant Hub",
+        "en": "Google Assistant Hub UI"
+      },
+      "function": {
+        "ar": "يوفر واجهة Google Assistant لنقاط التشغيل المدعومة.",
+        "en": "Provides a Google Assistant user interface for supported entry points."
+      },
+      "impact": {
+        "ar": "قد لا تفتح أسطح المساعد المعتمدة على Hub UI أو تعرض بشكل صحيح.",
+        "en": "Assistant surfaces relying on Hub UI may not open or render correctly."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.audio.hearing.visualization.accessibility.scribe",
+      "name": {
+        "ar": "النسخ المباشر",
+        "en": "Live Transcribe"
+      },
+      "function": {
+        "ar": "يحول الكلام والأصوات المحيطة إلى نص لضعاف السمع والصم.",
+        "en": "Transcribes nearby speech and sounds for deaf or hard-of-hearing users."
+      },
+      "impact": {
+        "ar": "يفقد المستخدمون المعتمدون على النسخ الفوري للكلام المحيط خدمة الوصول هذه.",
+        "en": "Users who rely on live captions for nearby speech lose that accessibility service."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "com.google.pixel.livewallpaper",
+      "name": {
+        "ar": "خلفيات Pixel الحية",
+        "en": "Pixel Live Wallpapers"
+      },
+      "function": {
+        "ar": "يوفر حزم خلفيات Pixel المتحركة ومكونات عرضها.",
+        "en": "Provides animated Pixel wallpaper packages and rendering components."
+      },
+      "impact": {
+        "ar": "تختفي خلفيات Pixel الحية وقد تتحول الخلفية المختارة إلى ثابتة.",
+        "en": "Pixel live wallpapers disappear and selected ones may fall back to a static wallpaper."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "com.simplemobiletools.calendar.pro",
+      "name": {
+        "ar": "تقويم Simple Calendar Pro",
+        "en": "Simple Calendar Pro"
+      },
+      "function": {
+        "ar": "يوفر تطبيق تقويم وإدارة أحداث يعمل دون اتصال.",
+        "en": "Provides an offline calendar and event-management application."
+      },
+      "impact": {
+        "ar": "يتوقف هذا التقويم وتذكيراته حتى إعادة تفعيله.",
+        "en": "That calendar app and its reminders become unavailable until re-enabled."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "com.stevesoltys.seedvault",
+      "name": {
+        "ar": "نسخ Seedvault الاحتياطي",
+        "en": "Seedvault Backup"
+      },
+      "function": {
+        "ar": "ينسخ التطبيقات والبيانات إلى تخزين محلي أو بعيد يختاره المستخدم.",
+        "en": "Backs up apps and data to user-selected local or remote storage."
+      },
+      "impact": {
+        "ar": "تتوقف النسخ المجدولة وعمليات الاسترجاع عبر Seedvault.",
+        "en": "Scheduled backups and restore through Seedvault stop working."
+      },
+      "risk": "HIGH",
+      "dangerous": true
+    },
+    {
+      "package": "com.voltage.flash",
+      "name": {
+        "ar": "أداة Voltage Flash",
+        "en": "Voltage Flash Utility"
+      },
+      "function": {
+        "ar": "يوفر أداة أو اختصار المصباح المخصص في الروم.",
+        "en": "Provides the ROM's dedicated flashlight utility or shortcut."
+      },
+      "impact": {
+        "ar": "تختفي واجهة المصباح هذه مع احتمال استمرار زر SystemUI.",
+        "en": "That flashlight interface disappears; the SystemUI flashlight tile may still work."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "io.chaldeaprjkt.gamespace",
+      "name": {
+        "ar": "مساحة الألعاب",
+        "en": "Game Space"
+      },
+      "function": {
+        "ar": "يطبق إعدادات أداء وإشعارات وتراكبات مخصصة لكل لعبة.",
+        "en": "Applies per-game performance, notification, and overlay controls."
+      },
+      "impact": {
+        "ar": "تختفي ملفات إعداد الألعاب ولوحة Game Space.",
+        "en": "Game profiles and the Game Space dashboard become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.eu.droid_ng.jellyfish",
+      "name": {
+        "ar": "متصفح Jellyfish",
+        "en": "Jellyfish Browser"
+      },
+      "function": {
+        "ar": "يوفر متصفح Jellyfish المضمّن في بعض رومات AOSP.",
+        "en": "Provides the Jellyfish web browser bundled by some AOSP ROMs."
+      },
+      "impact": {
+        "ar": "يتوقف متصفح Jellyfish والروابط المسندة إليه وحده عن الفتح.",
+        "en": "The Jellyfish browser and links assigned exclusively to it stop opening."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.audiofx",
+      "name": {
+        "ar": "مؤثرات AudioFX",
+        "en": "AudioFX"
+      },
+      "function": {
+        "ar": "يوفر معادل الصوت والجهير والمحاكاة ومؤثرات الصوت.",
+        "en": "Provides equalizer, bass, virtualizer, and audio-effect controls."
+      },
+      "impact": {
+        "ar": "تختفي ملفات AudioFX وضبط الصوت الذي يوفره التطبيق.",
+        "en": "AudioFX profiles and system-wide tuning from that app disappear."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.camelot",
+      "name": {
+        "ar": "عارض PDF من Lineage",
+        "en": "Lineage PDF Viewer"
+      },
+      "function": {
+        "ar": "يفتح مستندات PDF ويعرضها.",
+        "en": "Opens and renders PDF documents."
+      },
+      "impact": {
+        "ar": "ستحتاج ملفات PDF إلى عارض آخر أو لن تجد تطبيقًا لفتحها.",
+        "en": "PDF files need another installed viewer or will have no handler."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.etar",
+      "name": {
+        "ar": "تقويم Etar",
+        "en": "Etar Calendar"
+      },
+      "function": {
+        "ar": "يوفر واجهة تقويم LineageOS للأحداث والتذكيرات.",
+        "en": "Provides the LineageOS calendar interface for events and reminders."
+      },
+      "impact": {
+        "ar": "يختفي تطبيق Etar مع احتمال بقاء بيانات التقويم لتطبيقات أخرى.",
+        "en": "The Etar app disappears; calendar storage may remain for other clients."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.glimpse",
+      "name": {
+        "ar": "معرض Glimpse",
+        "en": "Glimpse Gallery"
+      },
+      "function": {
+        "ar": "يوفر معرض LineageOS للصور ومقاطع الفيديو.",
+        "en": "Provides the LineageOS photo and video gallery."
+      },
+      "impact": {
+        "ar": "ستحتاج الوسائط المحلية إلى معرض أو عارض ملفات آخر.",
+        "en": "Local media needs another gallery or file viewer."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.jelly",
+      "name": {
+        "ar": "متصفح Jelly",
+        "en": "Jelly Browser"
+      },
+      "function": {
+        "ar": "يوفر متصفح LineageOS الخفيف.",
+        "en": "Provides the lightweight LineageOS web browser."
+      },
+      "impact": {
+        "ar": "يختفي متصفح Jelly وتحتاج الروابط المسندة إليه إلى تطبيق آخر.",
+        "en": "The Jelly browser disappears and its assigned web links need another handler."
+      },
+      "risk": "MEDIUM",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.recorder",
+      "name": {
+        "ar": "مسجل Lineage",
+        "en": "Lineage Recorder"
+      },
+      "function": {
+        "ar": "يسجل الصوت والملاحظات الصوتية ولقطات الشاشة المدعومة.",
+        "en": "Records audio, voice notes, and supported screen captures."
+      },
+      "impact": {
+        "ar": "يتوقف التسجيل الصوتي المدمج واختصارات المسجل.",
+        "en": "Built-in audio recording and any recorder shortcuts become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.lineageos.setupwizard",
+      "name": {
+        "ar": "معالج إعداد LineageOS",
+        "en": "LineageOS Setup Wizard"
+      },
+      "function": {
+        "ar": "يشغل خطوات LineageOS الخاصة بالإقلاع الأول وما بعد الفورمات.",
+        "en": "Runs LineageOS-specific first-boot and post-reset setup steps."
+      },
+      "impact": {
+        "ar": "قد يصبح الإعداد بعد الفورمات أو للمستخدم الجديد ناقصًا أو عالقًا.",
+        "en": "A reset or new-user setup can become incomplete or get stuck."
+      },
+      "risk": "CRITICAL",
+      "dangerous": true
+    },
+    {
+      "package": "org.lineageos.twelve",
+      "name": {
+        "ar": "مشغل Twelve",
+        "en": "Twelve Music Player"
+      },
+      "function": {
+        "ar": "يوفر مشغل الموسيقى المحلي في LineageOS.",
+        "en": "Provides the LineageOS local music player."
+      },
+      "impact": {
+        "ar": "ستحتاج الموسيقى المحلية إلى مشغل آخر وتختفي قوائم Twelve.",
+        "en": "Local music needs another player and Twelve playlists become unavailable."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.omnirom.logcat",
+      "name": {
+        "ar": "سجل Omni",
+        "en": "Omni Logcat"
+      },
+      "function": {
+        "ar": "يوفر واجهة على الجهاز لجمع سجلات النظام وعرضها.",
+        "en": "Provides an on-device interface for collecting and viewing system logs."
+      },
+      "impact": {
+        "ar": "تختفي واجهة عرض السجل واختصارات جمعه.",
+        "en": "The dedicated log viewer and collection shortcuts disappear."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    },
+    {
+      "package": "org.omnirom.omnijaws",
+      "name": {
+        "ar": "موفر طقس OmniJaws",
+        "en": "OmniJaws Weather Provider"
+      },
+      "function": {
+        "ar": "يجلب بيانات الطقس ويوفرها لأدوات الروم وشاشة القفل.",
+        "en": "Fetches and supplies weather data to ROM widgets and lock-screen surfaces."
+      },
+      "impact": {
+        "ar": "قد تتوقف أدوات الطقس وطقس شاشة القفل في الروم عن التحديث.",
+        "en": "ROM weather widgets and lock-screen weather can stop updating."
+      },
+      "risk": "LOW",
+      "dangerous": false
+    }
+  ]
+}

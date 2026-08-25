@@ -1,10 +1,13 @@
 /.gradle/
 /local.properties
 /**/build/
-/*.jks
-/*.keystore
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+*.pk8
 /release-signing/
 /signing*/
 /signed*/
-/*.p12
 /*.properties.local

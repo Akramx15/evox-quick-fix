@@ -11,12 +11,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 final class FixManager {
-    private static final ReentrantLock TRANSACTION_LOCK = new ReentrantLock();
+    static final FeatureScope TRANSPARENCY_SCOPE =
+            new FeatureScope(true, false, false);
+    static final FeatureScope BACK_SCOPE =
+            new FeatureScope(false, true, false);
+    static final FeatureScope CIRCLE_SCOPE =
+            new FeatureScope(false, false, true);
+    static final FeatureScope ALL_SCOPE =
+            new FeatureScope(true, true, true);
     private final Context context;
     private final DeviceDiagnostics diagnostics;
     private final SnapshotStore snapshots;
@@ -32,22 +38,24 @@ final class FixManager {
     }
 
     OperationResult applyTransparency() throws Exception {
-        return runTransactional("الشفافية", this::applyTransparencyInternal);
+        return runTransactional("الشفافية", TRANSPARENCY_SCOPE,
+                this::applyTransparencyInternal);
     }
 
     OperationResult applyBackGuard() throws Exception {
-        return runTransactional("Back Guard", this::applyBackGuardInternal);
+        return runTransactional("Back Guard", BACK_SCOPE, this::applyBackGuardInternal);
     }
 
     OperationResult applyCircleToSearch() throws Exception {
-        return runTransactional("Circle to Search", this::applyCircleToSearchInternal);
+        return runTransactional("Circle to Search", CIRCLE_SCOPE,
+                this::applyCircleToSearchInternal);
     }
 
     OperationResult applyAll() throws Exception {
-        return runTransactional("تطبيق الكل", () -> {
+        return runTransactional("تطبيق الكل", ALL_SCOPE, () -> {
             DiagnosticReport before = diagnostics.inspect();
-            if (!before.baseSupported() || !before.quickSearchCompatible
-                    || !before.quickSearchIsHome) {
+            if (!before.transparencySupported || !before.backGuardSupported
+                    || !before.circleSupported) {
                 throw new IllegalStateException("الفحص الشامل لم ينجح؛ لم يتم تطبيق أي تغيير");
             }
             OperationResult transparency = applyTransparencyInternal();
@@ -62,25 +70,66 @@ final class FixManager {
     }
 
     OperationResult restoreRomBehavior() throws Exception {
-        acquireTransactionLock();
-        try {
+        try (OperationCoordinator.Lease ignored =
+                     OperationCoordinator.acquire("restore core ROM behavior")) {
             DiagnosticReport report = diagnostics.inspect();
             requireDeviceAndRoot(report);
-            requireOwnedCircleModuleOrAbsent();
-            requireOwnedOverviewModuleOrAbsent();
             JSONObject target = snapshots.load();
             if (target == null) {
                 throw new IllegalStateException("لا يوجد Snapshot صالح؛ لم يتم أي تغيير");
             }
-            JSONObject before = snapshots.captureCurrent();
-            try {
-                disableOverlay(AppConstants.DARK_OVERLAY);
-                disableOverlay(AppConstants.LIGHT_OVERLAY);
-                setVectorQuickSearchScope(false);
-                setVectorModuleEnabled(false);
+            boolean circlePresent = circleModuleOwned();
+            boolean overviewPresent = overviewModuleOwned();
+            JSONObject rootTransparency = target.optJSONObject("transparency");
+            JSONObject rootBack = target.optJSONObject("back");
+            JSONObject rootCircle = target.optJSONObject("circle");
+            boolean transparencyManaged = overviewPresent || snapshots.hasFeatureBaseline(
+                    target, SnapshotStore.Feature.TRANSPARENCY)
+                    || rootTransparency != null
+                    && rootTransparency.optBoolean("stateCaptured", false);
+            boolean backManaged = report.vectorModuleEnabled || report.vectorScopeReady
+                    || snapshots.hasFeatureBaseline(target, SnapshotStore.Feature.BACK)
+                    || rootBack != null && rootBack.optBoolean("vectorAvailable", false);
+            boolean circleManaged = circlePresent || snapshots.hasFeatureBaseline(
+                    target, SnapshotStore.Feature.CIRCLE)
+                    || rootCircle != null && rootCircle.optBoolean("stateCaptured", false);
 
-                boolean circlePresent = circleModuleOwned();
-                boolean overviewPresent = overviewModuleOwned();
+            JSONObject transparency = transparencyManaged ? snapshots.featureTarget(
+                    target, SnapshotStore.Feature.TRANSPARENCY) : null;
+            JSONObject back = backManaged ? snapshots.featureTarget(
+                    target, SnapshotStore.Feature.BACK) : null;
+            JSONObject circle = circleManaged ? snapshots.featureTarget(
+                    target, SnapshotStore.Feature.CIRCLE) : null;
+
+            if (transparencyManaged && !report.launcherPresent) {
+                throw new IllegalStateException(
+                        "Launcher3 is unavailable; transparency restore was not started");
+            }
+            if (backManaged && !report.vectorReady) {
+                throw new IllegalStateException(
+                        "Vector is unavailable; Back Guard restore was not started");
+            }
+            if ((circlePresent || overviewPresent)) {
+                requireKernelSu(report, "restore owned systemless modules");
+            }
+
+            FeatureScope restoreScope = new FeatureScope(
+                    transparencyManaged, backManaged, circleManaged);
+            JSONObject before = snapshots.captureCurrent(
+                    restoreScope.transparency, restoreScope.back, restoreScope.circle);
+            try {
+                if (transparencyManaged) {
+                    setOverlay(AppConstants.DARK_OVERLAY,
+                            transparency.optBoolean("darkOverlayEnabled", false));
+                    setOverlay(AppConstants.LIGHT_OVERLAY,
+                            transparency.optBoolean("lightOverlayEnabled", false));
+                }
+                if (backManaged) {
+                    setVectorQuickSearchScope(
+                            back.optBoolean("vectorScopeHadQuickSearch", false));
+                    setVectorModuleEnabled(back.optBoolean("vectorModuleEnabled", false));
+                }
+
                 if (circlePresent) {
                     RootShell.run(AppConstants.KSU_CLI + " module uninstall "
                                     + AppConstants.CIRCLE_MODULE_ID)
@@ -91,11 +140,15 @@ final class FixManager {
                                     + AppConstants.OVERVIEW_MODULE_ID)
                             .requireSuccess("تعليم وحدة استمرار الشفافية للإزالة");
                 }
-                SnapshotStore.restoreSetting(target, "searchAllEntrypoints", "secure",
-                        "search_all_entrypoints_enabled");
-                SnapshotStore.restoreSetting(target, "navbarLongPress", "system",
-                        "navbar_long_press_gesture");
-                restartQuickSearchHome();
+                if (circleManaged) {
+                    SnapshotStore.restoreSetting(circle, "searchAllEntrypoints", "secure",
+                            "search_all_entrypoints_enabled");
+                    SnapshotStore.restoreSetting(circle, "navbarLongPress", "system",
+                            "navbar_long_press_gesture");
+                }
+                if (backManaged) {
+                    restartQuickSearchHomeIfPresent();
+                }
                 verifyDisabledPackages(before);
 
                 return circlePresent || overviewPresent
@@ -104,27 +157,25 @@ final class FixManager {
                         : OperationResult.applied("تم استرجاع سلوك الروم.");
             } catch (Throwable failure) {
                 throw transactionFailure(
-                        "استرجاع وضع الروم", failure, rollbackToSnapshot(before));
+                        "استرجاع وضع الروم", failure,
+                        rollbackToSnapshot(before, restoreScope));
             }
-        } finally {
-            TRANSACTION_LOCK.unlock();
         }
     }
 
     void rebootDevice() {
-        acquireTransactionLock();
-        try {
+        try (OperationCoordinator.Lease ignored =
+                     OperationCoordinator.acquire("reboot device")) {
             RootShell.run("sync; reboot", 10L);
-        } finally {
-            TRANSACTION_LOCK.unlock();
         }
     }
 
     private OperationResult applyTransparencyInternal() throws Exception {
         DiagnosticReport report = diagnostics.inspect();
         requireDeviceAndRoot(report);
-        if (!report.launcherPresent || !report.darkResource || !report.lightResource) {
-            throw new IllegalStateException("موارد Launcher3 المطلوبة غير موجودة");
+        if (!report.transparencySupported) {
+            throw new IllegalStateException(
+                    "Transparency is locked to the verified SM-S918B/Launcher3 environment");
         }
 
         requireOwnedOverviewModuleOrAbsent();
@@ -195,12 +246,9 @@ final class FixManager {
     private OperationResult applyBackGuardInternal() {
         DiagnosticReport report = diagnostics.inspect();
         requireDeviceAndRoot(report);
-        if (!report.quickSearchCompatible || !report.quickSearchIsHome) {
+        if (!report.backGuardSupported) {
             throw new IllegalStateException(
-                    "نسخة Quick Search أو دور HOME غير مطابقين؛ تم الإيقاف بأمان");
-        }
-        if (!report.vectorReady) {
-            throw new IllegalStateException("Vector API 102 غير جاهز");
+                    "Back Guard requires the verified Quick Search build, HOME role and Vector");
         }
 
         setVectorModuleEnabled(true);
@@ -218,48 +266,61 @@ final class FixManager {
     private OperationResult applyCircleToSearchInternal() throws Exception {
         DiagnosticReport report = diagnostics.inspect();
         requireDeviceAndRoot(report);
-        if (!report.magicMountReady) {
-            throw new IllegalStateException("Magic Mount-rs metamodule غير جاهز");
-        }
-        if (!report.googleProvider || !report.contextualService) {
+        if (!report.launcherPresent || !report.googleProvider || !report.contextualService) {
             throw new IllegalStateException(
-                    "Google provider أو خدمة contextual_search غير متاحين");
+                    "Circle requires Launcher3, the Google provider and contextual_search service");
         }
-        requireOwnedCircleModuleOrAbsent();
 
-        File featureXml = stageAsset("circle_module/contextual_search_feature.xml",
-                "contextual-search-feature.xml");
-        String expectedXmlHash = DeviceDiagnostics.sha256File(featureXml.getAbsolutePath());
         boolean alreadyOwned = circleModuleOwned();
+        boolean moduleNeeded = !report.contextualFeature;
         if (alreadyOwned) {
+            requireOwnedCircleModuleOrAbsent();
+            File featureXml = stageAsset("circle_module/contextual_search_feature.xml",
+                    "contextual-search-feature.xml");
+            String expectedXmlHash = DeviceDiagnostics.sha256File(featureXml.getAbsolutePath());
             String payload = installedCirclePayloadPath();
             if (payload == null || !fileHashMatches(payload, expectedXmlHash)) {
                 throw new IllegalStateException(
-                        "وحدة Circle المملوكة موجودة لكن محتواها غير مطابق؛ استرجعها أولًا");
+                        "Owned Circle module payload does not match this release");
             }
-            if (rootTest("test -e " + AppConstants.CIRCLE_MODULE_DIR + "/remove",
-                    "فحص علامة إزالة Circle")) {
+            boolean removePending = rootTest("test -e "
+                    + AppConstants.CIRCLE_MODULE_DIR + "/remove",
+                    "inspect Circle removal flag");
+            boolean disabled = rootTest("test -e "
+                    + AppConstants.CIRCLE_MODULE_DIR + "/disable",
+                    "inspect Circle disable flag");
+            boolean moduleChanged = removePending || disabled || moduleNeeded;
+            if (moduleChanged) {
+                requireKernelSuAndMagicMount(report, "reactivate the owned Circle module");
+            }
+            if (removePending) {
                 RootShell.run(AppConstants.KSU_CLI + " module restore "
                                 + AppConstants.CIRCLE_MODULE_ID)
-                        .requireSuccess("إلغاء علامة إزالة وحدة Circle");
+                        .requireSuccess("restore Circle module");
             }
-            if (rootTest("test -e " + AppConstants.CIRCLE_MODULE_DIR + "/disable",
-                    "فحص علامة تعطيل Circle")) {
+            if (disabled) {
                 RootShell.run(AppConstants.KSU_CLI + " module enable "
                                 + AppConstants.CIRCLE_MODULE_ID)
-                        .requireSuccess("إعادة تفعيل وحدة Circle");
+                        .requireSuccess("enable Circle module");
             }
-        } else {
+            if (moduleChanged && !kernelSuModuleActive(AppConstants.CIRCLE_MODULE_ID)) {
+                throw new IllegalStateException("KernelSU did not confirm the Circle module");
+            }
+        } else if (moduleNeeded) {
+            requireKernelSuAndMagicMount(report, "install the Circle feature module");
+            requireOwnedCircleModuleOrAbsent();
+            File featureXml = stageAsset("circle_module/contextual_search_feature.xml",
+                    "contextual-search-feature.xml");
+            String expectedXmlHash = DeviceDiagnostics.sha256File(featureXml.getAbsolutePath());
             File moduleZip = stageCircleModuleZip();
             installCircleModule(moduleZip);
             String payload = installedCirclePayloadPath();
             if (payload == null || !fileHashMatches(payload, expectedXmlHash)) {
-                throw new IllegalStateException("Hash ملف ميزة Circle غير مطابق بعد التثبيت");
+                throw new IllegalStateException("Circle feature XML hash mismatch");
             }
-        }
-
-        if (!kernelSuModuleActive(AppConstants.CIRCLE_MODULE_ID)) {
-            throw new IllegalStateException("KernelSU لم يؤكد أن وحدة Circle مفعلة");
+            if (!kernelSuModuleActive(AppConstants.CIRCLE_MODULE_ID)) {
+                throw new IllegalStateException("KernelSU did not confirm the Circle module");
+            }
         }
         RootShell.run("settings --user 0 put secure search_all_entrypoints_enabled 1")
                 .requireSuccess("تفعيل search_all_entrypoints");
@@ -267,39 +328,49 @@ final class FixManager {
                 .requireSuccess("تفعيل الضغط المطول لشريط الإيماءات");
 
         DiagnosticReport verified = diagnostics.inspect();
-        if (!verified.circleModuleInstalled) {
+        if (moduleNeeded && !verified.circleModuleInstalled) {
             throw new IllegalStateException("لم يتم تسجيل الوحدة بنجاح");
         }
         if (verified.contextualFeature) {
-            return OperationResult.applied("Circle to Search جاهز والميزة معلنة بالفعل.");
+            return OperationResult.applied(
+                    "Circle to Search is ready; no extra feature module was installed.");
         }
         return OperationResult.reboot(
                 "تم تثبيت ميزة Circle to Search systemless؛ يلزم Restart واحد.");
     }
 
-    private OperationResult runTransactional(String label, TransactionBody operation)
-            throws Exception {
-        acquireTransactionLock();
-        try {
+    private OperationResult runTransactional(String label, FeatureScope scope,
+                                             TransactionBody operation) throws Exception {
+        try (OperationCoordinator.Lease ignored = OperationCoordinator.acquire(label)) {
             DiagnosticReport report = diagnostics.inspect();
             requireDeviceAndRoot(report);
             snapshots.ensureSnapshot();
-            JSONObject before = snapshots.captureCurrent();
+            prepareFeatureBaselines(scope, report);
+            JSONObject before = snapshots.captureCurrent(
+                    scope.transparency, scope.back, scope.circle);
             try {
                 OperationResult result = operation.run();
                 verifyDisabledPackages(before);
                 return result;
             } catch (Throwable failure) {
-                throw transactionFailure(label, failure, rollbackToSnapshot(before));
+                throw transactionFailure(label, failure, rollbackToSnapshot(before, scope));
             }
-        } finally {
-            TRANSACTION_LOCK.unlock();
         }
     }
 
-    private static void acquireTransactionLock() {
-        if (!TRANSACTION_LOCK.tryLock()) {
-            throw new IllegalStateException("هناك عملية إصلاح أخرى قيد التنفيذ؛ انتظر اكتمالها");
+    private void prepareFeatureBaselines(FeatureScope scope, DiagnosticReport report)
+            throws Exception {
+        if (scope.transparency) {
+            snapshots.ensureFeatureBaseline(SnapshotStore.Feature.TRANSPARENCY,
+                    overviewModuleOwned());
+        }
+        if (scope.back) {
+            snapshots.ensureFeatureBaseline(SnapshotStore.Feature.BACK,
+                    report.vectorModuleEnabled || report.vectorScopeReady);
+        }
+        if (scope.circle) {
+            snapshots.ensureFeatureBaseline(SnapshotStore.Feature.CIRCLE,
+                    circleModuleOwned());
         }
     }
 
@@ -315,24 +386,47 @@ final class FixManager {
                 + String.join("؛ ", rollbackFailures) + "): " + cause, failure);
     }
 
-    private List<String> rollbackToSnapshot(JSONObject snapshot) {
+    private List<String> rollbackToSnapshot(JSONObject snapshot, FeatureScope scope) {
         List<String> failures = new ArrayList<>();
-        rollbackStep(failures, "overlay الداكن", () -> setOverlay(AppConstants.DARK_OVERLAY,
-                snapshot.optBoolean("darkOverlayEnabled", false)));
-        rollbackStep(failures, "overlay الفاتح", () -> setOverlay(AppConstants.LIGHT_OVERLAY,
-                snapshot.optBoolean("lightOverlayEnabled", false)));
-        rollbackStep(failures, "وحدة استمرار الشفافية",
-                () -> restoreOverviewState(snapshot));
-        rollbackStep(failures, "نطاق Vector", () -> setVectorQuickSearchScope(
-                snapshot.optBoolean("vectorScopeHadQuickSearch", false)));
-        rollbackStep(failures, "وحدة Vector", () -> setVectorModuleEnabled(
-                snapshot.optBoolean("vectorModuleEnabled", false)));
-        rollbackStep(failures, "وحدة Circle", () -> restoreCircleState(snapshot));
-        rollbackStep(failures, "إعداد البحث", () -> SnapshotStore.restoreSetting(snapshot,
-                "searchAllEntrypoints", "secure", "search_all_entrypoints_enabled"));
-        rollbackStep(failures, "إعداد شريط الإيماءات", () -> SnapshotStore.restoreSetting(snapshot,
-                "navbarLongPress", "system", "navbar_long_press_gesture"));
-        rollbackStep(failures, "Quick Search HOME", this::restartQuickSearchHome);
+        JSONObject transparency = snapshot.optJSONObject("transparency");
+        JSONObject back = snapshot.optJSONObject("back");
+        JSONObject circle = snapshot.optJSONObject("circle");
+        if (scope.transparency && transparency == null) {
+            failures.add("Transparency snapshot section is missing");
+        }
+        if (scope.back && back == null) {
+            failures.add("Back snapshot section is missing");
+        }
+        if (scope.circle && circle == null) {
+            failures.add("Circle snapshot section is missing");
+        }
+        if (!failures.isEmpty()) {
+            return failures;
+        }
+        if (scope.transparency) {
+            rollbackStep(failures, "overlay الداكن", () -> setOverlay(
+                    AppConstants.DARK_OVERLAY,
+                    transparency.optBoolean("darkOverlayEnabled", false)));
+            rollbackStep(failures, "overlay الفاتح", () -> setOverlay(
+                    AppConstants.LIGHT_OVERLAY,
+                    transparency.optBoolean("lightOverlayEnabled", false)));
+            rollbackStep(failures, "وحدة استمرار الشفافية",
+                    () -> restoreOverviewState(transparency));
+        }
+        if (scope.back && back.optBoolean("vectorAvailable", false)) {
+            rollbackStep(failures, "نطاق Vector", () -> setVectorQuickSearchScope(
+                    back.optBoolean("vectorScopeHadQuickSearch", false)));
+            rollbackStep(failures, "وحدة Vector", () -> setVectorModuleEnabled(
+                    back.optBoolean("vectorModuleEnabled", false)));
+            rollbackStep(failures, "Quick Search HOME", this::restartQuickSearchHomeIfPresent);
+        }
+        if (scope.circle) {
+            rollbackStep(failures, "وحدة Circle", () -> restoreCircleState(circle));
+            rollbackStep(failures, "إعداد البحث", () -> SnapshotStore.restoreSetting(circle,
+                    "searchAllEntrypoints", "secure", "search_all_entrypoints_enabled"));
+            rollbackStep(failures, "إعداد شريط الإيماءات", () -> SnapshotStore.restoreSetting(
+                    circle, "navbarLongPress", "system", "navbar_long_press_gesture"));
+        }
         rollbackStep(failures, "قائمة الحزم المعطلة", () -> verifyDisabledPackages(snapshot));
         return failures;
     }
@@ -775,14 +869,39 @@ final class FixManager {
                 .requireSuccess("تشغيل شاشة HOME");
     }
 
+    private void restartQuickSearchHomeIfPresent() {
+        if (RootShell.run("pm path " + AppConstants.QUICK_SEARCH_PACKAGE
+                + " >/dev/null 2>&1").ok()) {
+            restartQuickSearchHome();
+        }
+    }
+
     private static void requireDeviceAndRoot(DiagnosticReport report) {
         if (!report.root) {
             throw new IllegalStateException("صلاحية Root غير متاحة");
         }
         if (!report.deviceGate) {
-            throw new IllegalStateException("الأداة مقفلة على SM-S918B / Android 16 / User 0");
+            throw new IllegalStateException(
+                    "Requires SM-S911/SM-S916/SM-S918 family, Android 16 and user 0");
         }
     }
+
+    private static void requireKernelSu(DiagnosticReport report, String operation) {
+        if (!report.kernelSuReady || report.magiskPresent) {
+            throw new IllegalStateException("KernelSU is required to " + operation
+                    + "; Magisk-only environments are not supported");
+        }
+    }
+
+    private static void requireKernelSuAndMagicMount(DiagnosticReport report,
+                                                     String operation) {
+        requireKernelSu(report, operation);
+        if (!report.magicMountReady) {
+            throw new IllegalStateException("Magic Mount-rs is required to " + operation);
+        }
+    }
+
+    static record FeatureScope(boolean transparency, boolean back, boolean circle) {}
 
     @FunctionalInterface
     private interface TransactionBody {

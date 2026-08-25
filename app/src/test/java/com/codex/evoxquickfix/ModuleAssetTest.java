@@ -30,8 +30,8 @@ public final class ModuleAssetTest {
 
     @Test
     public void xmlDeclaresOnlyTheExpectedFeature() throws Exception {
-        String xml = Files.readString(
-                ASSETS.resolve("contextual_search_feature.xml"), StandardCharsets.UTF_8);
+        String xml = new String(Files.readAllBytes(
+                ASSETS.resolve("contextual_search_feature.xml")), StandardCharsets.UTF_8);
         assertTrue(xml.contains("name=\"" + AppConstants.CONTEXTUAL_FEATURE + "\""));
         assertEquals(1, xml.split("<feature ", -1).length - 1);
     }

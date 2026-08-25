@@ -2,6 +2,7 @@ package com.codex.evoxquickfix;
 
 final class AppConstants {
     static final String APP_PACKAGE = "com.codex.evoxquickfix";
+    static final String SYSTEM_UI_PACKAGE = "com.android.systemui";
     static final String QUICK_SEARCH_PACKAGE = "com.tk.quicksearch";
     static final String QUICK_SEARCH_HOME = "com.tk.quicksearch.app.HomeActivity";
     static final long QUICK_SEARCH_VERSION = 78L;

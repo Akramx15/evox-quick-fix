@@ -1,15 +1,15 @@
 package com.codex.evoxquickfix;
 
 enum FeatureStatus {
-    READY("جاهز"),
-    APPLIED("مفعّل"),
-    REBOOT_REQUIRED("يحتاج إعادة تشغيل"),
-    BLOCKED("محمي/غير متوافق"),
-    FAILED("فشل");
+    READY(R.string.status_ready),
+    APPLIED(R.string.status_applied),
+    REBOOT_REQUIRED(R.string.status_reboot_required),
+    BLOCKED(R.string.status_blocked),
+    FAILED(R.string.status_failed);
 
-    final String arabicLabel;
+    final int labelRes;
 
-    FeatureStatus(String arabicLabel) {
-        this.arabicLabel = arabicLabel;
+    FeatureStatus(int labelRes) {
+        this.labelRes = labelRes;
     }
 }

@@ -6,9 +6,9 @@ import org.junit.Test;
 
 public class FeatureStatusTest {
     @Test
-    public void hasStableArabicLabels() {
-        assertEquals("جاهز", FeatureStatus.READY.arabicLabel);
-        assertEquals("يحتاج إعادة تشغيل", FeatureStatus.REBOOT_REQUIRED.arabicLabel);
-        assertEquals("محمي/غير متوافق", FeatureStatus.BLOCKED.arabicLabel);
+    public void hasStableStringResources() {
+        assertEquals(R.string.status_ready, FeatureStatus.READY.labelRes);
+        assertEquals(R.string.status_reboot_required, FeatureStatus.REBOOT_REQUIRED.labelRes);
+        assertEquals(R.string.status_blocked, FeatureStatus.BLOCKED.labelRes);
     }
 }

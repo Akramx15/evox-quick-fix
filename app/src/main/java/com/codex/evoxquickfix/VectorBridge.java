@@ -1,5 +1,7 @@
 package com.codex.evoxquickfix;
 
+import android.content.Context;
+
 import java.util.List;
 
 import io.github.libxposed.service.XposedService;
@@ -7,16 +9,17 @@ import io.github.libxposed.service.XposedService;
 final class VectorBridge {
     private VectorBridge() {}
 
-    static String serviceSummary() {
+    static String serviceSummary(Context context) {
         XposedService service = EvoQuickFixApp.vectorService();
         if (service == null) {
-            return "Vector service: سيُستخدم CLI الرسمي للتهيئة الأولى";
+            return context.getString(R.string.vector_cli_fallback);
         }
         try {
-            return "Vector service: " + service.getFrameworkName() + " "
-                    + service.getFrameworkVersion() + " / API " + service.getApiVersion();
+            return context.getString(R.string.vector_service_format,
+                    service.getFrameworkName(), service.getFrameworkVersion(),
+                    service.getApiVersion());
         } catch (Throwable t) {
-            return "Vector service: غير متاح مؤقتًا";
+            return context.getString(R.string.vector_service_unavailable);
         }
     }
 

@@ -1,8 +1,8 @@
 package com.codex.evoxquickfix;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -23,21 +23,31 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@SuppressLint("SetTextI18n")
 public final class MainActivity extends Activity {
     private static final int BG = Color.rgb(16, 20, 23);
     private static final int CARD = Color.rgb(30, 37, 41);
     private static final int TEXT = Color.rgb(238, 244, 245);
     private static final int MUTED = Color.rgb(177, 193, 196);
     private static final int ACCENT = Color.rgb(128, 203, 196);
+    private static final int DANGER = Color.rgb(255, 183, 177);
 
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final List<Button> actionButtons = new ArrayList<>();
     private FixManager fixes;
+    private OperationStateStore operationState;
     private TextView deviceStatus;
+    private TextView featureStatus;
     private TextView operationStatus;
     private ProgressBar progress;
+    private Button applyAllButton;
+    private Button transparencyButton;
+    private Button backButton;
+    private Button circleButton;
+    private Button debloatButton;
+    private DiagnosticReport lastReport;
     private volatile boolean busy;
+    private boolean resumedOnce;
+    private boolean restartPromptShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +55,32 @@ public final class MainActivity extends Activity {
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         fixes = new FixManager(this);
+        operationState = new OperationStateStore(this);
         setContentView(buildUi());
+        applyAvailability(new DiagnosticReport());
         getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                 OnBackInvokedDispatcher.PRIORITY_DEFAULT, () -> {
                     if (!busy) {
                         finish();
                     }
                 });
+        showOnboardingIfNeeded();
         refreshDiagnostics();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (resumedOnce && operationState.read().state() == OperationStateStore.State.PENDING) {
+            refreshDiagnostics();
+        }
+        resumedOnce = true;
     }
 
     private View buildUi() {
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setBackgroundColor(BG);
-        scroll.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -67,19 +88,14 @@ public final class MainActivity extends Activity {
         scroll.addView(root, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        TextView title = text("EvoX Quick Fix", 28, TEXT, true);
-        title.setGravity(Gravity.START);
+        TextView title = text(getString(R.string.app_name), 28, TEXT, true);
         root.addView(title);
 
-        TextView subtitle = text(
-                "أداة Root محلية لجهاز SM-S918B: شفافية Recent Apps، Back Guard، وCircle to Search.",
-                15, MUTED, false);
+        TextView subtitle = text(getString(R.string.home_subtitle), 15, MUTED, false);
         subtitle.setPadding(0, dp(6), 0, dp(14));
         root.addView(subtitle);
 
-        TextView safety = cardText(
-                "لا تغيّر الأداة تطبيق HOME أو ASSISTANT، ولا تحذف حزمًا أو بيانات. "
-                        + "الإصلاحات محدودة بالمستخدم 0 وقابلة للاسترجاع.");
+        TextView safety = cardText(getString(R.string.home_safety));
         safety.setTextColor(ACCENT);
         root.addView(safety, cardParams());
 
@@ -91,81 +107,126 @@ public final class MainActivity extends Activity {
         progressParams.setMargins(0, dp(12), 0, dp(8));
         root.addView(progress, progressParams);
 
-        operationStatus = text("جاهز للفحص", 15, TEXT, true);
+        operationStatus = text(getString(R.string.status_idle), 15, TEXT, true);
         operationStatus.setPadding(dp(4), dp(8), dp(4), dp(8));
         root.addView(operationStatus);
 
-        deviceStatus = cardText("جارٍ فحص الجهاز…");
+        root.addView(sectionTitle(getString(R.string.section_diagnostics)));
+        featureStatus = cardText(getString(R.string.status_inspecting));
+        featureStatus.setTextIsSelectable(true);
+        root.addView(featureStatus, cardParams());
+
+        deviceStatus = cardText(getString(R.string.status_inspecting));
         deviceStatus.setTextIsSelectable(true);
         deviceStatus.setMovementMethod(new ScrollingMovementMethod());
         root.addView(deviceStatus, cardParams());
 
-        root.addView(sectionTitle("الإجراءات"));
-        root.addView(actionButton("فحص الجهاز", view -> refreshDiagnostics()));
-        root.addView(actionButton("تطبيق الكل", view -> confirmApplyAll()));
-        root.addView(actionButton("شفافية Recent Apps", view ->
-                runOperation("تطبيق الشفافية", fixes::applyTransparency)));
-        root.addView(actionButton("منع Back في شاشة Home", view ->
-                runOperation("تفعيل Back Guard", fixes::applyBackGuard)));
-        root.addView(actionButton("تفعيل Circle to Search", view ->
-                runOperation("تثبيت Circle to Search", fixes::applyCircleToSearch)));
-        root.addView(actionButton("إعادة تشغيل الجهاز", view -> confirmReboot()));
+        root.addView(sectionTitle(getString(R.string.section_actions)));
+        root.addView(actionButton(getString(R.string.action_inspect),
+                view -> refreshDiagnostics()));
+        applyAllButton = actionButton(getString(R.string.action_apply_all),
+                view -> confirmApplyAll());
+        root.addView(applyAllButton);
+        transparencyButton = actionButton(getString(R.string.action_transparency),
+                view -> runOperation(OperationStateStore.OP_TRANSPARENCY,
+                        R.string.action_transparency, fixes::applyTransparency, false));
+        root.addView(transparencyButton);
+        backButton = actionButton(getString(R.string.action_back_guard),
+                view -> confirmDepartureThenRun(OperationStateStore.OP_BACK,
+                        R.string.action_back_guard, fixes::applyBackGuard));
+        root.addView(backButton);
+        circleButton = actionButton(getString(R.string.action_circle),
+                view -> runOperation(OperationStateStore.OP_CIRCLE,
+                        R.string.action_circle, fixes::applyCircleToSearch, false));
+        root.addView(circleButton);
+        debloatButton = actionButton(getString(R.string.action_debloat),
+                view -> startActivity(new Intent(this, DebloatActivity.class)));
+        root.addView(debloatButton);
+        root.addView(actionButton(getString(R.string.action_help),
+                view -> startActivity(new Intent(this, HelpActivity.class))));
+        root.addView(actionButton(getString(R.string.action_reboot),
+                view -> confirmReboot()));
 
-        Button restore = actionButton("استرجاع وضع الروم", view -> confirmRestore());
-        restore.setTextColor(Color.rgb(255, 183, 177));
+        Button restore = actionButton(getString(R.string.action_restore),
+                view -> confirmRestore());
+        restore.setTextColor(DANGER);
         root.addView(restore);
 
-        root.addView(sectionTitle("الاسترجاع الطارئ"));
-        TextView emergency = cardText(
-                "إذا لم يقلع النظام، عطّل وحدتي الإصلاح من Recovery/ADB ثم أعد التشغيل:\n\n"
-                        + "adb shell su -c 'touch /data/adb/modules/evox_contextual_search_fix/disable; "
-                        + "touch /data/adb/modules/evox_overview_transparency/disable; reboot'\n\n"
-                        + "Back Guard يزول بتعطيل EvoX Quick Fix من Vector وإعادة تشغيل Quick Search.");
+        root.addView(sectionTitle(getString(R.string.section_recovery)));
+        TextView emergency = cardText(getString(R.string.emergency_core));
         emergency.setTextIsSelectable(true);
         emergency.setTypeface(Typeface.MONOSPACE);
         root.addView(emergency, cardParams());
 
-        TextView footer = text("الإصدار 1.0.1 • بدون صلاحية إنترنت", 12, MUTED, false);
+        TextView footer = text(getString(R.string.footer_version), 12, MUTED, false);
         footer.setGravity(Gravity.CENTER);
         footer.setPadding(0, dp(20), 0, 0);
         root.addView(footer);
         return scroll;
     }
 
+    private void showOnboardingIfNeeded() {
+        if (getSharedPreferences("onboarding", MODE_PRIVATE)
+                .getBoolean("completed_v1", false)) {
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.first_run_title)
+                .setMessage(R.string.first_run_message)
+                .setNeutralButton(R.string.open_help, (dialog, which) ->
+                        startActivity(new Intent(this, HelpActivity.class)))
+                .setPositiveButton(R.string.continue_label, (dialog, which) ->
+                        getSharedPreferences("onboarding", MODE_PRIVATE).edit()
+                                .putBoolean("completed_v1", true).apply())
+                .setCancelable(false)
+                .show();
+    }
+
     private void confirmApplyAll() {
         new AlertDialog.Builder(this)
-                .setTitle("تطبيق الإصلاحات الثلاثة")
-                .setMessage("سيطلب التطبيق صلاحية Root، يفعّل نطاق Quick Search في Vector، "
-                        + "ويثبت وحدتي systemless صغيرتين. ستحتاج Restart واحدًا لتثبيت الاستمرار.")
-                .setNegativeButton("إلغاء", null)
-                .setPositiveButton("تطبيق الكل", (dialog, which) ->
-                        runOperation("تطبيق الإصلاحات الثلاثة", fixes::applyAll))
+                .setTitle(R.string.dialog_apply_all_title)
+                .setMessage(R.string.dialog_apply_all_message)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setPositiveButton(R.string.dialog_apply, (dialog, which) ->
+                        confirmDepartureThenRun(OperationStateStore.OP_ALL,
+                                R.string.action_apply_all, fixes::applyAll))
+                .show();
+    }
+
+    private void confirmDepartureThenRun(String operationId, int labelRes,
+                                         Callable<OperationResult> operation) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_departure_title)
+                .setMessage(R.string.dialog_departure_message)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setPositiveButton(R.string.dialog_apply, (dialog, which) ->
+                        runOperation(operationId, labelRes, operation, true))
                 .show();
     }
 
     private void confirmRestore() {
         new AlertDialog.Builder(this)
-                .setTitle("استرجاع وضع الروم")
-                .setMessage("سيتم تعطيل الشفافية وBack Guard وتعليم وحدتي الإصلاح للإزالة. "
-                        + "لن تُمسح بيانات Quick Search أو أي تطبيق.")
-                .setNegativeButton("إلغاء", null)
-                .setPositiveButton("استرجاع", (dialog, which) ->
-                        runOperation("استرجاع وضع الروم", fixes::restoreRomBehavior))
+                .setTitle(R.string.dialog_restore_title)
+                .setMessage(R.string.dialog_restore_message)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setPositiveButton(R.string.dialog_restore, (dialog, which) ->
+                        runOperation(OperationStateStore.OP_RESTORE,
+                                R.string.action_restore, fixes::restoreRomBehavior, false))
                 .show();
     }
 
     private void confirmReboot() {
         new AlertDialog.Builder(this)
-                .setTitle("إعادة تشغيل الجهاز")
-                .setMessage("احفظ عملك أولًا. هل تريد إعادة التشغيل الآن؟")
-                .setNegativeButton("لاحقًا", null)
-                .setPositiveButton("إعادة التشغيل", (dialog, which) -> {
-                    operationStatus.setText("جارٍ إعادة التشغيل…");
+                .setTitle(R.string.dialog_reboot_title)
+                .setMessage(R.string.dialog_reboot_message)
+                .setNegativeButton(R.string.dialog_later, null)
+                .setPositiveButton(R.string.dialog_reboot_now, (dialog, which) -> {
+                    operationStatus.setText(R.string.dialog_reboot_title);
                     worker.execute(() -> {
                         try {
                             fixes.rebootDevice();
                         } catch (Throwable failure) {
-                            showFailure("إعادة التشغيل", failure);
+                            showFailure(R.string.action_reboot, failure, "");
                         }
                     });
                 })
@@ -173,67 +234,151 @@ public final class MainActivity extends Activity {
     }
 
     private void refreshDiagnostics() {
-        setBusy(true, "جارٍ فحص الجهاز والحالة الحالية…");
+        setBusy(true, getString(R.string.status_inspecting));
         worker.execute(() -> {
             try {
                 DiagnosticReport report = fixes.inspect();
-                String status = report.toArabicText() + "\n\n" + VectorBridge.serviceSummary();
+                OperationStateStore.Entry stored = operationState.reconcile(report);
                 runOnUiThread(() -> {
-                    deviceStatus.setText(status);
-                    operationStatus.setText(report.baseSupported()
-                            ? "الفحص مكتمل — الجهاز جاهز" : "الفحص مكتمل — راجع العناصر غير الجاهزة");
+                    lastReport = report;
+                    deviceStatus.setText(getString(R.string.diagnostic_with_vector,
+                            report.toDisplayText(this), VectorBridge.serviceSummary(this)));
+                    featureStatus.setText(featureCards(report));
+                    operationStatus.setText(report.transparencySupported
+                            || report.backGuardSupported || report.circleSupported
+                            || report.debloatSupported
+                            ? R.string.status_device_ready : R.string.status_review);
                     setBusy(false, null);
+                    applyAvailability(report);
+                    showStoredOperation(stored);
                 });
             } catch (Throwable failure) {
-                showFailure("فشل الفحص", failure);
+                showFailure(R.string.action_inspect, failure, "");
             }
         });
     }
 
-    private void runOperation(String label, Callable<OperationResult> operation) {
-        setBusy(true, label + "…");
+    private String featureCards(DiagnosticReport report) {
+        return featureLine(R.string.feature_transparency, report.transparencySupported)
+                + "\n" + featureLine(R.string.feature_back_guard, report.backGuardSupported)
+                + "\n" + featureLine(R.string.feature_circle, report.circleSupported)
+                + "\n" + featureLine(R.string.feature_debloat, report.debloatSupported);
+    }
+
+    private String featureLine(int labelRes, boolean ready) {
+        return (ready ? "✓ " + getString(R.string.status_ready)
+                : "✗ " + getString(R.string.status_blocked))
+                + " — " + getString(labelRes);
+    }
+
+    private void applyAvailability(DiagnosticReport report) {
+        applyAllButton.setEnabled(report.baseSupported());
+        transparencyButton.setEnabled(report.transparencySupported);
+        backButton.setEnabled(report.backGuardSupported);
+        circleButton.setEnabled(report.circleSupported);
+        debloatButton.setEnabled(report.debloatSupported || report.debloatRestoreSupported);
+    }
+
+    private void runOperation(String operationId, int labelRes,
+                              Callable<OperationResult> operation,
+                              boolean expectedDeparture) {
+        operationState.markPending(operationId);
+        restartPromptShown = false;
+        String label = getString(labelRes);
+        setBusy(true, getString(R.string.operation_running, label));
+        if (expectedDeparture) {
+            operationStatus.setText(R.string.operation_departure_pending);
+        }
         worker.execute(() -> {
             try {
                 OperationResult result = operation.call();
+                operationState.markResult(operationId, result);
                 DiagnosticReport report = fixes.inspect();
                 runOnUiThread(() -> {
-                    deviceStatus.setText(report.toArabicText() + "\n\n" + VectorBridge.serviceSummary());
-                    operationStatus.setText(result.status.arabicLabel + " — " + result.message);
+                    lastReport = report;
+                    deviceStatus.setText(getString(R.string.diagnostic_with_vector,
+                            report.toDisplayText(this), VectorBridge.serviceSummary(this)));
+                    featureStatus.setText(featureCards(report));
+                    operationStatus.setText(getString(R.string.operation_completed,
+                            getString(result.status.labelRes), label));
                     setBusy(false, null);
+                    applyAvailability(report);
                     if (result.status == FeatureStatus.REBOOT_REQUIRED) {
-                        new AlertDialog.Builder(this)
-                                .setTitle("يلزم Restart")
-                                .setMessage(result.message + "\n\nهل تريد إعادة التشغيل الآن؟")
-                                .setNegativeButton("لاحقًا", null)
-                                .setPositiveButton("إعادة التشغيل", (dialog, which) -> {
-                                    operationStatus.setText("جارٍ إعادة التشغيل…");
-                                    worker.execute(() -> {
-                                        try {
-                                            fixes.rebootDevice();
-                                        } catch (Throwable failure) {
-                                            showFailure("إعادة التشغيل", failure);
-                                        }
-                                    });
-                                })
-                                .show();
+                        showRestartPrompt();
                     }
                 });
             } catch (Throwable failure) {
-                showFailure(label, failure);
+                operationState.markFailed(operationId);
+                showFailure(labelRes, failure, operationId);
             }
         });
     }
 
-    private void showFailure(String label, Throwable failure) {
+    private void showStoredOperation() {
+        showStoredOperation(operationState.read());
+    }
+
+    private void showStoredOperation(OperationStateStore.Entry entry) {
+        if (entry.state() == OperationStateStore.State.NONE) {
+            return;
+        }
+        if (entry.state() == OperationStateStore.State.PENDING) {
+            operationStatus.setText(R.string.operation_departure_pending);
+            return;
+        }
+        int statusRes = switch (entry.state()) {
+            case APPLIED -> R.string.status_applied;
+            case REBOOT_REQUIRED -> R.string.status_reboot_required;
+            case FAILED -> R.string.status_failed;
+            default -> R.string.status_idle;
+        };
+        operationStatus.setText(getString(R.string.operation_previous_result,
+                operationLabel(entry.operation()), getString(statusRes)));
+        if (entry.state() == OperationStateStore.State.REBOOT_REQUIRED) {
+            showRestartPrompt();
+        }
+    }
+
+    private String operationLabel(String operation) {
+        return getString(switch (operation) {
+            case OperationStateStore.OP_BACK -> R.string.action_back_guard;
+            case OperationStateStore.OP_ALL -> R.string.action_apply_all;
+            case OperationStateStore.OP_TRANSPARENCY -> R.string.action_transparency;
+            case OperationStateStore.OP_CIRCLE -> R.string.action_circle;
+            case OperationStateStore.OP_RESTORE -> R.string.action_restore;
+            default -> R.string.app_name;
+        });
+    }
+
+    private void showRestartPrompt() {
+        if (isFinishing() || isDestroyed() || restartPromptShown) {
+            return;
+        }
+        restartPromptShown = true;
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.status_reboot_required)
+                .setMessage(R.string.operation_reboot_message)
+                .setNegativeButton(R.string.dialog_later, null)
+                .setPositiveButton(R.string.dialog_reboot_now,
+                        (dialog, which) -> worker.execute(fixes::rebootDevice))
+                .show();
+    }
+
+    private void showFailure(int labelRes, Throwable failure, String operationId) {
         runOnUiThread(() -> {
             setBusy(false, null);
+            if (lastReport != null) {
+                applyAvailability(lastReport);
+            } else {
+                applyAvailability(new DiagnosticReport());
+            }
             String message = failure.getMessage() == null
                     ? failure.getClass().getSimpleName() : failure.getMessage();
-            operationStatus.setText("فشل — " + message);
+            operationStatus.setText(getString(R.string.operation_failed, message));
             new AlertDialog.Builder(this)
-                    .setTitle(label + " لم يكتمل")
+                    .setTitle(getString(R.string.operation_failed_title, getString(labelRes)))
                     .setMessage(message)
-                    .setPositiveButton("حسنًا", null)
+                    .setPositiveButton(android.R.string.ok, null)
                     .show();
         });
     }
@@ -294,7 +439,7 @@ public final class MainActivity extends Activity {
         text.setTextSize(sp);
         text.setTextColor(color);
         text.setGravity(Gravity.START);
-        text.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG_RTL);
+        text.setTextDirection(View.TEXT_DIRECTION_FIRST_STRONG);
         if (bold) {
             text.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         }
@@ -307,7 +452,6 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        // Let an already-started root transaction finish its rollback if the UI closes.
         worker.shutdown();
         super.onDestroy();
     }

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<module name="bluetooth" halVersion="2.0">
+  <mixPorts>
+    <mixPort name="a2dp output" role="source" />
+    <mixPort name="hearing aid output" role="source">
+      <profile name="" format="AUDIO_FORMAT_PCM_16_BIT" samplingRates="24000 16000" channelMasks="AUDIO_CHANNEL_OUT_STEREO" />
+    </mixPort>
+    <mixPort name="le audio output" role="source" />
+    <mixPort name="le audio broadcast output" role="source" />
+  </mixPorts>
+  <devicePorts>
+    <devicePort tagName="BT A2DP Out" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP" role="sink">
+      <profile name="" format="AUDIO_FORMAT_PCM_16_BIT" samplingRates="44100 48000 88200 96000" channelMasks="AUDIO_CHANNEL_OUT_STEREO" />
+    </devicePort>
+    <devicePort tagName="BT A2DP Headphones" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES" role="sink">
+      <profile name="" format="AUDIO_FORMAT_PCM_16_BIT" samplingRates="44100 48000 88200 96000" channelMasks="AUDIO_CHANNEL_OUT_STEREO" />
+    </devicePort>
+    <devicePort tagName="BT A2DP Speaker" type="AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER" role="sink">
+      <profile name="" format="AUDIO_FORMAT_PCM_16_BIT" samplingRates="44100 48000 88200 96000" channelMasks="AUDIO_CHANNEL_OUT_STEREO" />
+    </devicePort>
+    <devicePort tagName="BT Hearing Aid Out" type="AUDIO_DEVICE_OUT_HEARING_AID" role="sink" />
+    <devicePort tagName="BLE Headset Out" type="AUDIO_DEVICE_OUT_BLE_HEADSET" role="sink" />
+    <devicePort tagName="BLE Speaker Out" type="AUDIO_DEVICE_OUT_BLE_SPEAKER" role="sink" />
+    <devicePort tagName="BLE Broadcast Out" type="AUDIO_DEVICE_OUT_BLE_BROADCAST" role="sink" />
+  </devicePorts>
+  <routes>
+    <route type="mix" sink="BT A2DP Out" sources="a2dp output" />
+    <route type="mix" sink="BT A2DP Headphones" sources="a2dp output" />
+    <route type="mix" sink="BT A2DP Speaker" sources="a2dp output" />
+    <route type="mix" sink="BT Hearing Aid Out" sources="hearing aid output" />
+    <route type="mix" sink="BLE Headset Out" sources="le audio output" />
+    <route type="mix" sink="BLE Speaker Out" sources="le audio output" />
+    <route type="mix" sink="BLE Broadcast Out" sources="le audio broadcast output" />
+  </routes>
+</module>

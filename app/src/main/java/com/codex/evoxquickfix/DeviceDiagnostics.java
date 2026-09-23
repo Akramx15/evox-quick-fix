@@ -152,6 +152,7 @@ final class DeviceDiagnostics {
         report.debloatSupported = supportsDebloat(report);
         // Recovery deliberately survives ROM/profile compatibility changes. New mutations do not.
         report.debloatRestoreSupported = report.root && report.systemUser;
+        report.leAudio = new LeAudioManager(context).inspect(report);
 
         if (!report.deviceGate) {
             report.notes.add("unsupported_device");

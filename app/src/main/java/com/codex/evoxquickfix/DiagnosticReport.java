@@ -42,6 +42,7 @@ final class DiagnosticReport {
     boolean circleSupported;
     boolean debloatSupported;
     boolean debloatRestoreSupported;
+    LeAudioStatus leAudio = LeAudioStatus.unavailable();
     String contextualProviderPackage = "";
     String quickSearchHash = "";
     String quickSearchCertificate = "";

@@ -61,7 +61,7 @@
     <string name="error_vector_scope_confirmation">Vector did not confirm the module and Quick Search scope.</string>
     <string name="result_quicksearch_hooks_applied">Back Guard and Quick Search file-folder routing are enabled through Vector.</string>
     <string name="emergency_core">If Android does not boot, disable the two systemless modules from ADB/Recovery and restart:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nThe Quick Search Back/APK-result hooks are removed by disabling EvoX Quick Fix in Vector and restarting Quick Search.</string>
-    <string name="footer_version">Version 1.1.0-beta.1 • no INTERNET permission</string>
+    <string name="footer_version">Version 1.2.0-beta.1 • no INTERNET permission</string>
 
     <string name="feature_transparency">Recent Apps transparency</string>
     <string name="feature_back_guard">Back Guard</string>
@@ -144,4 +144,23 @@
     <string name="debloat_too_many">Select no more than five normal packages.</string>
     <string name="debloat_mixed_danger">A dangerous package must be the only selected item.</string>
     <string name="debloat_emergency">Emergency restore:\nadb shell su -c \'sh /data/adb/evox-quick-fix/debloat-restore.sh\'</string>
+
+    <string name="feature_le_audio">LE Audio music fix</string>
+    <string name="section_tools">Other tools</string>
+    <string name="action_le_audio">Enable LE Audio music fix</string>
+    <string name="action_le_audio_disable">Disable LE Audio fix</string>
+    <string name="le_audio_description">Tested with Sony WH-1000XM6: stereo LC3 at 48 kHz / 160 kbps. Music mode disables the headset microphone. This is a separate option from the four fixes. Requires SM-S918B, Android 16, user 0, KernelSU and all three exact tested ROM file hashes.</string>
+    <string name="le_audio_confirm">Enable the tested LE Audio music profile? It disables the Bluetooth LE headset microphone. The phone must be restarted manually before the change takes effect. An existing exact v1.1 module is kept; a different module is blocked.</string>
+    <string name="le_audio_disable_confirm">Disable only the verified LE Audio module? Restart manually afterward to return to the ROM audio policy. The original LE Audio silence may return. Your existing module files are kept.</string>
+    <string name="le_audio_unavailable">Unavailable: requires the tested SM-S918B / Android 16 / user 0 / KernelSU environment.</string>
+    <string name="le_audio_unknown">Blocked: module files, paths or root checks could not be verified. Existing files were not changed.</string>
+    <string name="le_audio_absent">Ready: the three ROM files match. LE Audio music fix is not installed.</string>
+    <string name="le_audio_active">Active: verified v1.1 music payload, three mounted policies and successful service status for this boot.</string>
+    <string name="le_audio_pending">Verified music profile is enabled. Restart required to complete or verify the change.</string>
+    <string name="le_audio_disabled">Disabled: the verified module is kept and the ROM audio policy is restored.</string>
+    <string name="le_audio_disable_pending">Disabled for the next boot. Restart required to remove the current audio policy mounts.</string>
+    <string name="le_audio_removing">Module removal is already pending in KernelSU. Restart before enabling the fix again.</string>
+    <string name="le_audio_rom_changed">Blocked: the ROM audio files have changed. A verified module can still be disabled for recovery.</string>
+    <string name="le_audio_boot_failed">The verified module reported a failure this boot. You can disable it or retry after a restart.</string>
+    <string name="le_audio_blocked_operation">LE Audio compatibility or ownership verification failed. Inspect the independent LE Audio status before retrying.</string>
 </resources>

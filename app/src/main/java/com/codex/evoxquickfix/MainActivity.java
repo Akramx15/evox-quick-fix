@@ -34,6 +34,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final List<Button> actionButtons = new ArrayList<>();
     private FixManager fixes;
+    private LeAudioManager leAudio;
     private OperationStateStore operationState;
     private TextView deviceStatus;
     private TextView featureStatus;
@@ -44,6 +45,9 @@ public final class MainActivity extends Activity {
     private Button backButton;
     private Button circleButton;
     private Button debloatButton;
+    private Button leAudioButton;
+    private Button leAudioDisableButton;
+    private TextView leAudioStatus;
     private DiagnosticReport lastReport;
     private volatile boolean busy;
     private boolean resumedOnce;
@@ -55,6 +59,7 @@ public final class MainActivity extends Activity {
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         fixes = new FixManager(this);
+        leAudio = new LeAudioManager(this);
         operationState = new OperationStateStore(this);
         setContentView(buildUi());
         applyAvailability(new DiagnosticReport());
@@ -139,6 +144,19 @@ public final class MainActivity extends Activity {
                 view -> runOperation(OperationStateStore.OP_CIRCLE,
                         R.string.action_circle, fixes::applyCircleToSearch, false));
         root.addView(circleButton);
+
+        root.addView(sectionTitle(getString(R.string.feature_le_audio)));
+        root.addView(cardText(getString(R.string.le_audio_description)), cardParams());
+        leAudioStatus = cardText(getString(R.string.status_inspecting));
+        root.addView(leAudioStatus, cardParams());
+        leAudioButton = actionButton(getString(R.string.action_le_audio),
+                view -> confirmLeAudio(false));
+        root.addView(leAudioButton);
+        leAudioDisableButton = actionButton(getString(R.string.action_le_audio_disable),
+                view -> confirmLeAudio(true));
+        leAudioDisableButton.setTextColor(DANGER);
+        root.addView(leAudioDisableButton);
+        root.addView(sectionTitle(getString(R.string.section_tools)));
         debloatButton = actionButton(getString(R.string.action_debloat),
                 view -> startActivity(new Intent(this, DebloatActivity.class)));
         root.addView(debloatButton);
@@ -215,6 +233,20 @@ public final class MainActivity extends Activity {
                 .show();
     }
 
+    private void confirmLeAudio(boolean disable) {
+        new AlertDialog.Builder(this)
+                .setTitle(disable ? R.string.action_le_audio_disable : R.string.action_le_audio)
+                .setMessage(disable ? R.string.le_audio_disable_confirm : R.string.le_audio_confirm)
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .setPositiveButton(disable ? R.string.dialog_restore : R.string.dialog_apply,
+                        (dialog, which) -> runOperation(
+                                disable ? OperationStateStore.OP_LE_AUDIO_DISABLE
+                                        : OperationStateStore.OP_LE_AUDIO,
+                                disable ? R.string.action_le_audio_disable : R.string.action_le_audio,
+                                disable ? leAudio::disable : leAudio::apply, false))
+                .show();
+    }
+
     private void confirmReboot() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_reboot_title)
@@ -247,6 +279,7 @@ public final class MainActivity extends Activity {
                     operationStatus.setText(report.transparencySupported
                             || report.backGuardSupported || report.circleSupported
                             || report.debloatSupported
+                            || report.leAudio.canApply() || report.leAudio.canDisable()
                             ? R.string.status_device_ready : R.string.status_review);
                     setBusy(false, null);
                     applyAvailability(report);
@@ -279,6 +312,9 @@ public final class MainActivity extends Activity {
         backButton.setEnabled(report.backGuardSupported);
         circleButton.setEnabled(report.circleSupported);
         debloatButton.setEnabled(report.debloatSupported || report.debloatRestoreSupported);
+        leAudioButton.setEnabled(report.leAudio.canApply());
+        leAudioDisableButton.setEnabled(report.leAudio.canDisable());
+        leAudioStatus.setText(report.leAudio.state().label);
     }
 
     private void runOperation(String operationId, int labelRes,
@@ -348,6 +384,8 @@ public final class MainActivity extends Activity {
             case OperationStateStore.OP_TRANSPARENCY -> R.string.action_transparency;
             case OperationStateStore.OP_CIRCLE -> R.string.action_circle;
             case OperationStateStore.OP_RESTORE -> R.string.action_restore;
+            case OperationStateStore.OP_LE_AUDIO -> R.string.action_le_audio;
+            case OperationStateStore.OP_LE_AUDIO_DISABLE -> R.string.action_le_audio_disable;
             default -> R.string.app_name;
         });
     }

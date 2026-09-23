@@ -6,12 +6,13 @@
 
 ## العربية
 
-EvoX Quick Fix أداة مفتوحة المصدر لمعالجة أربع مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
+EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
 
 - شفافية خلفية Recent Apps في الوضعين الداكن والفاتح.
 - منع زر Back من إخراج شاشة Home في نسخة Quick Search المجربة.
 - إصلاح آمن لفتح مجلدات التخزين الخارجي في نسخة Quick Search المطابقة، ومنها مجلد نتائج APK: يوجّهها إلى DocumentsUI بعد إزالة URI grant غير الصالح، ولا يثبت APK بصمت ولا يغيّر تطبيق الفتح الافتراضي.
 - تعريف ميزة Google Circle to Search المفقودة بصورة systemless.
+- إصلاح استماع LE Audio على SM-S918B والروم المختبر: ستيريو LC3 ‏48 kHz / 160 kbps، مع تعطيل مايك سماعة LE Audio في وضع الاستماع.
 - ملف دبلوت ثابت من 104 حزم، باختيار يدوي وLedger ملكية واسترجاع دقيق.
 
 ### للمبتدئ: ما الذي تحتاجه؟
@@ -42,6 +43,16 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة أربع مشك
 4. ثبّت APK وافتحه واقرأ شاشة البداية وHelp.
 5. نفّذ كل مجموعة إصلاح بصورة مستقلة؛ إصلاحا Quick Search يشتركان في زر Vector واحد. هذا الزر و«الإصلاحات الأربعة» يعيدان تشغيل Quick Search وينقلانك إلى Home عمدًا؛ هذا ليس crash.
 6. أعد فتح الأداة لرؤية نتيجة العملية المحفوظة وطلب Restart.
+
+### الانتقال إلى v1.2.0-beta.1
+
+هذا الإصدار يستخدم مفتاح توقيع جديدًا؛ لا يمكن تثبيته كتحديث فوق APK بالإصدار السابق. قبل حذف النسخة القديمة، احفظ بيانات التطبيق وسجل ملكية الدبلوت وإعدادات Vector باستعمال نسخة احتياطية تدعم الروت. حذف التطبيق يمسح بياناته المحلية؛ وجود وحدات الإصلاح وحده لا يعيد سجل الملكية. بعد التثبيت الجديد، استرجع البيانات وأعد التحقق من صلاحية KernelSU وتفعيل Vector ونطاق Quick Search.
+
+### إصلاح LE Audio المستقل
+
+إصلاح LE Audio له زر تطبيق وزر تعطيل مستقلان، ولا يدخل ضمن زر «الإصلاحات الأربعة». يطابق موديل SM-S918B وAndroid 16 والمستخدم 0 وKernelSU وبصمات ملفات سياسة الصوت وBluetooth المختبرة. لا يغيّر إعدادات الصوت بمجرد تثبيت التطبيق، ولا يفرض الإعداد على روم مختلف.
+
+يتعرف على وحدة `s23_le_audio_fix` بالإصدار 1.1 الموجودة سابقًا فقط عند تطابق ملفاتها الثابتة بالكامل؛ يرفض استبدال وحدة مجهولة أو معدّلة. التطبيق أو التعطيل يحتاج إعادة تشغيل يدوية. وضع الاستماع يعطّل مدخل مايك سماعات LE Audio، والتعطيل يعيد سياسة الروم التي قد تعيد مشكلة انعدام الصوت.
 
 ### Debloat Profiles
 
@@ -80,6 +91,14 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة أربع مشك
 - CI يشغّل الاختبارات وlint ويبني APK غير موقع فقط.
 - مفتاح توقيع الإصدار لا يدخل GitHub ولا GitHub Secrets.
 
+v1.2.0-beta.1 APK SHA-256:
+
+**cfd7f5aec47c6ed01feabaf660a4db2750c3b27275a2aa6150a80e5c95813d35**
+
+v1.2.0-beta.1 signing certificate SHA-256:
+
+**0b31f6c2af746febc328b04a6d78b437d436e34e0c5ed3cc6361de95918dfe0b**
+
 v1.1.0-beta.1 APK SHA-256:
 
 **41371910bafd15d5954afc21be223991b650e6fb3b06c010161e57e1e966acd1**
@@ -90,12 +109,13 @@ v1.0.1 APK SHA-256:
 
 ## English
 
-EvoX Quick Fix is an open-source root utility for four narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
+EvoX Quick Fix is an open-source root utility for five narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
 
 - Transparent Recent Apps scrim in dark and light modes.
 - A narrowly scoped Back Guard for the verified Quick Search Home build.
 - A safe external-storage folder fix for the exact Quick Search build, including APK results: containing-folder intents are routed to DocumentsUI after the invalid URI grant is removed, with no silent APK installation and no default-handler change.
 - A systemless declaration for the missing Google Circle to Search feature.
+- A guarded LE Audio music workaround for the tested SM-S918B ROM: LC3 stereo 48 kHz / 160 kbps, with LE headset microphone input disabled in music mode.
 - A fixed 104-package debloat profile with explicit selection, ownership ledger and exact rollback.
 
 ### Beginner requirements
@@ -126,6 +146,16 @@ Transparency and the Quick Search hooks remain locked to the exact verified SM-S
 4. Install, open the app, and read onboarding and Help.
 5. Apply each fix group independently; both Quick Search hooks share one Vector action. That action and “Apply the four fixes” intentionally restart Quick Search and switch to Home; that is not a crash.
 6. Reopen the app for the persisted result and restart prompt.
+
+### Migrating to v1.2.0-beta.1
+
+This release uses a new signing key and cannot update an APK signed with the old key. Before uninstalling the old app, use a root-capable backup to preserve app data, the debloat ownership ledger and Vector configuration. Uninstalling erases local app data; installed fix modules do not reconstruct the ownership ledger. After reinstalling, restore the data and verify KernelSU authorization and Vector enablement/Quick Search scope.
+
+### Independent LE Audio music fix
+
+LE Audio has separate apply and disable controls; it is excluded from “Apply the four fixes.” It requires the tested SM-S918B, Android 16, owner user, KernelSU and exact audio-policy/Bluetooth configuration hashes. Installing the APK alone does not change audio settings or apply this workaround to a different ROM.
+
+An existing standalone `s23_le_audio_fix` v1.1 module is recognized only when its full static payload matches. Unknown or modified modules are not overwritten. Applying or disabling requires a manual reboot. Music mode disables LE headset microphone input; disabling restores the ROM policy and can restore the original silent-playback problem.
 
 ### Debloat safety model
 
@@ -161,6 +191,14 @@ Transparency and the Quick Search hooks remain locked to the exact verified SM-S
 - No INTERNET permission, analytics, WebView, terminal, or automatic link opening.
 - CI runs tests and lint and produces an unsigned APK only.
 - The release signing key stays local and is not stored in GitHub or GitHub Secrets.
+
+v1.2.0-beta.1 APK SHA-256:
+
+**cfd7f5aec47c6ed01feabaf660a4db2750c3b27275a2aa6150a80e5c95813d35**
+
+v1.2.0-beta.1 signing certificate SHA-256:
+
+**0b31f6c2af746febc328b04a6d78b437d436e34e0c5ed3cc6361de95918dfe0b**
 
 v1.1.0-beta.1 APK SHA-256:
 

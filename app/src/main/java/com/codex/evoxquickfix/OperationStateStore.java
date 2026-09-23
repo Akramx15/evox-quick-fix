@@ -10,6 +10,8 @@ final class OperationStateStore {
     static final String OP_TRANSPARENCY = "transparency";
     static final String OP_CIRCLE = "circle";
     static final String OP_RESTORE = "restore";
+    static final String OP_LE_AUDIO = "le_audio_music";
+    static final String OP_LE_AUDIO_DISABLE = "le_audio_disable";
 
     enum State {
         NONE,
@@ -56,6 +58,13 @@ final class OperationStateStore {
 
     Entry reconcile(DiagnosticReport report) {
         Entry current = read();
+        if ((OP_LE_AUDIO.equals(current.operation) || OP_LE_AUDIO_DISABLE.equals(current.operation))
+                && (current.state == State.REBOOT_REQUIRED || current.state == State.PENDING)
+                && System.currentTimeMillis() - current.updatedAt >= 3_000L) {
+            State result = reconcileState(current.operation, report);
+            if (result != current.state) write(current.operation, result);
+            return read();
+        }
         if (current.state != State.PENDING
                 || System.currentTimeMillis() - current.updatedAt < 3_000L) {
             return current;
@@ -77,6 +86,16 @@ final class OperationStateStore {
                 : (circleSettings && report.circleModuleInstalled
                 ? State.REBOOT_REQUIRED : State.FAILED);
         return switch (operation) {
+            case OP_LE_AUDIO -> switch (report.leAudio.state()) {
+                case ACTIVE -> State.APPLIED;
+                case PENDING -> State.REBOOT_REQUIRED;
+                default -> State.FAILED;
+            };
+            case OP_LE_AUDIO_DISABLE -> switch (report.leAudio.state()) {
+                case DISABLED, ABSENT -> State.APPLIED;
+                case DISABLE_PENDING, REMOVING -> State.REBOOT_REQUIRED;
+                default -> State.FAILED;
+            };
             case OP_BACK -> backApplied ? State.APPLIED : State.FAILED;
             case OP_ALL -> transparencyApplied && backApplied
                     && circleState != State.FAILED ? circleState : State.FAILED;

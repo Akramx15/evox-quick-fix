@@ -1,6 +1,6 @@
 id=s23_le_audio_fix
 name=S23 Ultra LE Audio Fix
-version=1.1
-versionCode=2
+version=1.2
+versionCode=3
 author=Local device repair
-description=Music mode: software LE Audio stereo48kHz/160kbps, isolated from unused microphone metadata. Guarded for the tested ROM. Headset mic disabled in music mode; duplex profile included.
+description=Software LE Audio stereo playback and headset microphone, with a 48 kHz output / 32 kHz input conversational preset. Music-only profile available. Guarded for the tested ROM.

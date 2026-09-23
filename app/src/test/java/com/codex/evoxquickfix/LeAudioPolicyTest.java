@@ -22,6 +22,7 @@ import org.junit.rules.TemporaryFolder;
 
 public final class LeAudioPolicyTest {
     private static final Path ASSETS = Path.of("src/main/assets/le_audio_module");
+    private static final Path LEGACY = Path.of("src/test/resources/le_audio_v1_1");
     @Rule public TemporaryFolder temporary = new TemporaryFolder();
 
     @Test public void allShippedBytesAndManifestTargetsArePinned() throws Exception {
@@ -44,7 +45,7 @@ public final class LeAudioPolicyTest {
             assertEquals(LeAudioPolicy.ROM[index][2], columns[2]);
             assertEquals(columns[2], LeAudioPolicy.FILES.get(columns[3]));
         }
-        assertEquals("music\n", readText(ASSETS.resolve("mode.txt")));
+        assertEquals("duplex\n", readText(ASSETS.resolve("mode.txt")));
     }
 
     @Test public void exactStandaloneIsAdoptableWithOnlyKnownRuntimeFiles() throws Exception {
@@ -89,7 +90,7 @@ public final class LeAudioPolicyTest {
     }
 
     @Test public void onlyExactHelperGeneratedMusicManifestIsAlsoRecognized() throws Exception {
-        Path module = copyModule();
+        Path module = copyModule(true);
         Path manifest = module.resolve("manifest.txt");
         String canonical = readText(manifest);
         String music = canonical.replace(
@@ -110,6 +111,66 @@ public final class LeAudioPolicyTest {
         assertFalse(verify(module) == 0);
         writeText(manifest, canonical);
         assertEquals(0, verify(module));
+    }
+
+    @Test public void bothVersionsRequireCompleteBundlesAndMatchingOwners() throws Exception {
+        Path legacy = copyModule(true);
+        Path current = copyModule();
+        assertEquals(0, verify(legacy));
+        writeText(legacy.resolve(LeAudioPolicy.OWNER), LeAudioPolicy.LEGACY_OWNER_VALUE + "\n");
+        assertEquals(0, verify(legacy));
+        writeText(legacy.resolve(LeAudioPolicy.OWNER), LeAudioPolicy.OWNER_VALUE + "\n");
+        assertFalse(verify(legacy) == 0);
+        Files.delete(legacy.resolve(LeAudioPolicy.OWNER));
+        writeText(current.resolve(LeAudioPolicy.OWNER), LeAudioPolicy.LEGACY_OWNER_VALUE + "\n");
+        assertFalse(verify(current) == 0);
+        Files.delete(current.resolve(LeAudioPolicy.OWNER));
+        for (String file : LeAudioPolicy.FILES.keySet()) {
+            if (LeAudioPolicy.FILES.get(file).equals(LeAudioPolicy.LEGACY_FILES.get(file))) continue;
+            byte[] old = Files.readAllBytes(legacy.resolve(file));
+            Files.write(legacy.resolve(file), Files.readAllBytes(current.resolve(file)));
+            assertFalse("mixed legacy: " + file, verify(legacy) == 0);
+            Files.write(legacy.resolve(file), old);
+            byte[] newer = Files.readAllBytes(current.resolve(file));
+            Files.write(current.resolve(file), old);
+            assertFalse("mixed current: " + file, verify(current) == 0);
+            Files.write(current.resolve(file), newer);
+        }
+    }
+
+    @Test public void currentDuplexHelperManifestRemainsAnExactBundle() throws Exception {
+        Path current = copyModule();
+        Path manifest = current.resolve("manifest.txt");
+        String canonical = readText(manifest);
+        writeText(manifest, canonical.replace("|files/bluetooth_policy.xml|", "|profiles/duplex.xml|"));
+        assertEquals(0, verify(current));
+        writeText(current.resolve("mode.txt"), "music\n");
+        assertFalse(verify(current) == 0);
+    }
+
+    @Test public void kernelSuMetadataCopyNeedsCompleteCurrentUpdateAndMarker() throws Exception {
+        Path current = copyModule(true);
+        Path update = copyModule();
+        Files.copy(update.resolve("module.prop"), current.resolve("module.prop"),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        assertFalse(verify(current) == 0);
+        String state = LeAudioPolicy.verificationFunctions() + "fail() { exit 41; }\ncurrent="
+                + ShellEscaper.quote(current.toString()) + "\nupdate="
+                + ShellEscaper.quote(update.toString()) + "\n" + LeAudioPolicy.moduleState();
+        assertFalse(run(state) == 0);
+        Files.createFile(current.resolve("update"));
+        assertEquals(0, run(state + "[ \"$current_version\" = legacy ] && [ \"$update_version\" = current ]\n"));
+        writeText(update.resolve("service.sh"), "changed\n");
+        assertFalse(run(state) == 0);
+        Files.copy(ASSETS.resolve("service.sh"), update.resolve("service.sh"),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        writeText(current.resolve("mode.txt"), "duplex\n");
+        assertFalse(run(state) == 0);
+        writeText(current.resolve("mode.txt"), "music\n");
+        assertEquals(0, run(state));
+        String absent = state.replace("update=" + ShellEscaper.quote(update.toString()),
+                "update=" + ShellEscaper.quote(update.resolve("missing").toString()));
+        assertFalse(run(absent) == 0);
     }
 
     @Test public void freshArchiveStartsDisabledAndContainsAllSeventeenPinnedFiles() throws Exception {
@@ -161,6 +222,31 @@ public final class LeAudioPolicyTest {
                 assertTrue(Files.isRegularFile(enabled));
             }
         }
+    }
+
+    @Test public void verifiedMigrationEnablesStagedBundleWithoutRewritingCurrentPayload() throws Exception {
+        Path current = copyModule(true);
+        Path update = copyModule();
+        Files.delete(update.resolve("customize.sh"));
+        Files.createFile(update.resolve("disable"));
+        Files.createFile(current.resolve("update"));
+        Files.copy(update.resolve("module.prop"), current.resolve("module.prop"),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        Map<String, byte[]> before = new HashMap<>();
+        for (String file : LeAudioPolicy.LEGACY_FILES.keySet())
+            before.put(file, Files.readAllBytes(current.resolve(file)));
+        Path enabled = temporary.getRoot().toPath().resolve("migration-enabled");
+        String script = LeAudioPolicy.verificationFunctions()
+                + "fail() { exit 41; }\nksud() { : > " + ShellEscaper.quote(enabled.toString())
+                + "; }\ncurrent=" + ShellEscaper.quote(current.toString())
+                + "\nupdate=" + ShellEscaper.quote(update.toString()) + "\ninstall_result=0\n"
+                + LeAudioManager.finishFreshInstallScript();
+        assertEquals(0, run(script));
+        assertTrue(Files.isRegularFile(enabled));
+        assertFalse(Files.exists(update.resolve("disable")));
+        for (Map.Entry<String, byte[]> entry : before.entrySet())
+            org.junit.Assert.assertArrayEquals(entry.getKey(), entry.getValue(),
+                    Files.readAllBytes(current.resolve(entry.getKey())));
     }
 
     @Test public void unknownFilesAndSymlinksAreRejectedWithoutWriting() throws Exception {
@@ -253,11 +339,16 @@ public final class LeAudioPolicyTest {
     }
 
     private Path copyModule() throws Exception {
+        return copyModule(false);
+    }
+
+    private Path copyModule(boolean legacy) throws Exception {
         Path module = temporary.newFolder().toPath();
         for (String file : LeAudioPolicy.FILES.keySet()) {
             Path target = module.resolve(file);
             Files.createDirectories(target.getParent());
-            Files.copy(ASSETS.resolve(file), target);
+            Path source = legacy && Files.exists(LEGACY.resolve(file)) ? LEGACY.resolve(file) : ASSETS.resolve(file);
+            Files.copy(source, target);
         }
         return module;
     }

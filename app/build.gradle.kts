@@ -11,8 +11,8 @@ android {
         applicationId = "com.codex.evoxquickfix"
         minSdk = 36
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.2.0-beta.1"
+        versionCode = 5
+        versionName = "1.2.0-beta.2"
 
         testInstrumentationRunner = "android.app.Instrumentation"
     }

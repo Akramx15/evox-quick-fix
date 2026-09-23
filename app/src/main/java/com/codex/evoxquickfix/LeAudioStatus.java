@@ -8,6 +8,8 @@ record LeAudioStatus(State state, boolean canApply, boolean canDisable) {
         UNAVAILABLE(R.string.le_audio_unavailable),
         UNKNOWN(R.string.le_audio_unknown),
         ABSENT(R.string.le_audio_absent),
+        UPGRADE_AVAILABLE(R.string.le_audio_upgrade_available),
+        LEGACY_PENDING(R.string.le_audio_legacy_pending),
         ACTIVE(R.string.le_audio_active),
         PENDING(R.string.le_audio_pending),
         DISABLED(R.string.le_audio_disabled),
@@ -42,6 +44,15 @@ record LeAudioStatus(State state, boolean canApply, boolean canDisable) {
             }
         }
         boolean present = "1".equals(values.get("present"));
+        String currentVersion = values.get("current_version");
+        String updateVersion = values.get("update_version");
+        if (currentVersion == null || updateVersion == null
+                || !currentVersion.matches("none|legacy|current")
+                || !updateVersion.matches("none|legacy|current")
+                || ("1".equals(values.get("staged")) == updateVersion.equals("none"))
+                || (present == (currentVersion.equals("none") && updateVersion.equals("none")))) {
+            return new LeAudioStatus(State.UNKNOWN, false, false);
+        }
         boolean disabled = "1".equals(values.get("disabled"));
         boolean compatible = "1".equals(values.get("rom_ok"));
         boolean canDisable = present && !disabled;
@@ -50,12 +61,22 @@ record LeAudioStatus(State state, boolean canApply, boolean canDisable) {
         }
         if (present && disabled) {
             return new LeAudioStatus("0".equals(values.get("patched"))
-                    ? State.DISABLED : State.DISABLE_PENDING, compatible, false);
+                    ? State.DISABLED : State.DISABLE_PENDING,
+                    compatible && !updateVersion.equals("legacy"), false);
         }
         if (!compatible) {
             return new LeAudioStatus(State.ROM_CHANGED, false, canDisable);
         }
         if (!present) return new LeAudioStatus(State.ABSENT, true, false);
+        if (updateVersion.equals("legacy")) {
+            return new LeAudioStatus(State.LEGACY_PENDING, false, true);
+        }
+        if (updateVersion.equals("current")) {
+            return new LeAudioStatus(State.PENDING, true, true);
+        }
+        if (currentVersion.equals("legacy")) {
+            return new LeAudioStatus(State.UPGRADE_AVAILABLE, true, true);
+        }
         if ("1".equals(values.get("boot_failed"))) {
             return new LeAudioStatus(State.BOOT_FAILED, true, true);
         }

@@ -3,18 +3,22 @@ package com.codex.evoxquickfix;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Pinned, music-only v1.1 payload. Never upgrades or replaces an existing module. */
+/** Exact v1.2 duplex payload and complete v1.1 music payload; no per-file version mixing. */
 final class LeAudioPolicy {
     static final String ID = "s23_le_audio_fix";
     static final String CURRENT = "/data/adb/modules/" + ID;
     static final String UPDATE = "/data/adb/modules_update/" + ID;
     static final String OWNER = ".evox-quick-fix-owner";
-    static final String OWNER_VALUE = "com.codex.evoxquickfix:s23_le_audio_fix:1.1";
+    static final String OWNER_VALUE = "com.codex.evoxquickfix:s23_le_audio_fix:1.2";
+    static final String LEGACY_OWNER_VALUE = "com.codex.evoxquickfix:s23_le_audio_fix:1.1";
     // KernelSU's installer removes this hook after executing it. It stays mandatory in the ZIP.
     static final String INSTALLER_REMOVED_FILE = "customize.sh";
     // The bundled set-mode.sh music helper selects the identical immutable music profile.
     static final String HELPER_MUSIC_MANIFEST_SHA256 =
             "4eb57067cca60a036afd2df38776528b599f6929d0bf6ccd4cf0f1beb6920815";
+    static final String HELPER_DUPLEX_MANIFEST_SHA256 =
+            "62abf976129ffab0545f3757808c6e24e12b840ab8aa7c5f4c95e56c5957e789";
+    static final Map<String, String> LEGACY_FILES = legacyFiles();
     static final Map<String, String> FILES = pinnedFiles();
     static final String[][] ROM = {
             {"/vendor/etc/audio/sku_kalama_qssi/audio_policy_configuration.xml",
@@ -22,10 +26,13 @@ final class LeAudioPolicy {
                     "aa40b5c0fc5b87fadf715c20f061474eb8cb74852194dfa3fdb497d76da64a19"},
             {"/vendor/etc/bluetooth_audio_policy_configuration.xml",
                     "877d8745fe542a2e1070d773d64c7c6b3d03168679d3d8355dd8ee283c5ec884",
-                    "966c0521a05e2a4020b65d25e565dae982d6d2678f0cf03dfdfbef9b8f2c509b"},
+                    "59615b080e62635347c24511168fad0f6e1f959e520d9cf402e7e6f98be4b914"},
             {"/apex/com.android.bt/etc/bluetooth/le_audio/audio_set_scenarios.json",
                     "116e5e9c08d7bd02ec1e6d43d5d5bf25f80ddff4d6c5e4de158130745af4304b",
-                    "a4252be819cc254d2520983dc035886f6c1e40eeadaad0ab786eddecfea1bf1f"}
+                    "766643afc2cd256e5b5bd5976f5c2808ab094fdbda03b62336ed023733e19860"}
+    };
+    private static final String[] ROM_PAYLOADS = {
+            "files/primary_policy.xml", "files/bluetooth_policy.xml", "files/audio_set_scenarios.json"
     };
 
     private LeAudioPolicy() {}
@@ -36,6 +43,17 @@ final class LeAudioPolicy {
     }
 
     private static Map<String, String> pinnedFiles() {
+        Map<String, String> files = new LinkedHashMap<>(LEGACY_FILES);
+        files.put("files/audio_set_scenarios.json", "766643afc2cd256e5b5bd5976f5c2808ab094fdbda03b62336ed023733e19860");
+        files.put("files/bluetooth_policy.xml", "59615b080e62635347c24511168fad0f6e1f959e520d9cf402e7e6f98be4b914");
+        files.put("manifest.txt", "aaf3a8e4bd6caad009582de9e25c7a8e13184596120497ea9e1ad103e9796a6c");
+        files.put("mode.txt", "c5c6f8d6bc15500b6cef6581942afa5b033f9519e9f1701b45eb2d862c26945a");
+        files.put("module.prop", "b6dc0934c55c761d79a1905068e7e0fd5326a8e6d38c0da9750f48aa5b0961e0");
+        files.put("set-mode.sh", "1c581ffad0c4127b692246b2686f3a600ad0a58b5321f37dc87e472e5f9893c8");
+        return java.util.Collections.unmodifiableMap(files);
+    }
+
+    private static Map<String, String> legacyFiles() {
         Map<String, String> files = new LinkedHashMap<>();
         files.put("customize.sh", "2ae11736120e5f973477502bfe368a4967821cd305548c103332406447fb2bbb");
         files.put("files/audio_set_scenarios.json", "a4252be819cc254d2520983dc035886f6c1e40eeadaad0ab786eddecfea1bf1f");
@@ -65,6 +83,10 @@ final class LeAudioPolicy {
                     digest=$(sha256sum "$1") || return 1
                     [ "${digest%% *}" = "$2" ]
                 }
+                owner_is() {
+                    [ ! -e "$1/.evox-quick-fix-owner" ] ||
+                        [ "$(cat "$1/.evox-quick-fix-owner")" = "$2" ]
+                }
                 safe_tree() {
                     [ -d "$1" ] && [ ! -L "$1" ] || return 1
                     unsafe=$(find "$1" -name '*
@@ -83,27 +105,23 @@ final class LeAudioPolicy {
                 """);
         script.append(String.join("|", FILES.keySet()))
                 .append("|boot.log|status.txt|disable|remove|update|" + OWNER + ") ;;\n")
-                .append("*) return 1 ;;\nesac\nfi\ndone <<EOF\n$entries\nEOF\n")
-                .append("if [ -e \"$1/" + OWNER + "\" ]; then\n")
-                .append("[ \"$(cat \"$1/" + OWNER + "\")\" = ")
-                .append(ShellEscaper.quote(OWNER_VALUE)).append(" ] || return 1\nfi\n}\n")
-                .append("verify_module() {\nsafe_tree \"$1\" || return 1\n");
-        FILES.forEach((path, hash) -> {
-            if (INSTALLER_REMOVED_FILE.equals(path)) {
-                script.append("if [ -e \"$1/").append(path).append("\" ]; then\n");
-            }
-            script.append("hash_is \"$1/").append(path)
-                    .append("\" ").append(hash);
-            if ("manifest.txt".equals(path)) {
-                script.append(" || hash_is \"$1/manifest.txt\" ")
-                        .append(HELPER_MUSIC_MANIFEST_SHA256);
-            }
-            script.append(" || return 1\n");
-            if (INSTALLER_REMOVED_FILE.equals(path)) script.append("fi\n");
-        });
-        script.append("}\n");
-        // KernelSU creates a metadata-only current directory until the first reboot.
+                .append("*) return 1 ;;\nesac\nfi\ndone <<EOF\n$entries\nEOF\n}\n");
+        appendVerifier(script, "verify_current", FILES, OWNER_VALUE, HELPER_DUPLEX_MANIFEST_SHA256);
+        appendVerifier(script, "verify_legacy", LEGACY_FILES, LEGACY_OWNER_VALUE,
+                HELPER_MUSIC_MANIFEST_SHA256);
+        // KernelSU copies new module.prop into the running directory while staging an update.
+        // This exception is reachable only with a fully verified v1.2 update and update marker.
+        Map<String, String> pendingLegacy = new LinkedHashMap<>(LEGACY_FILES);
+        pendingLegacy.put("module.prop", FILES.get("module.prop"));
+        appendVerifier(script, "verify_legacy_pending", pendingLegacy, LEGACY_OWNER_VALUE,
+                HELPER_MUSIC_MANIFEST_SHA256);
         script.append("""
+                verify_module() { verify_current "$1" || verify_legacy "$1"; }
+                module_version() {
+                    if verify_current "$1"; then printf current;
+                    elif verify_legacy "$1"; then printf legacy;
+                    else return 1; fi
+                }
                 verify_stub() {
                     safe_tree "$1" || return 1
                     [ -f "$1/update" ] || return 1
@@ -112,9 +130,34 @@ final class LeAudioPolicy {
                         case "${entry##*/}" in module.prop|update|disable|remove|.evox-quick-fix-owner) ;;
                             *) return 1 ;; esac
                     done
-                """).append("hash_is \"$1/module.prop\" ")
-                .append(FILES.get("module.prop")).append("\n}\n");
+                    case "$2" in
+                """);
+        appendStubVersion(script, "current", FILES.get("module.prop"), OWNER_VALUE);
+        appendStubVersion(script, "legacy", LEGACY_FILES.get("module.prop"), LEGACY_OWNER_VALUE);
+        script.append("*) return 1 ;;\nesac\n}\n");
         return script.toString();
+    }
+
+    private static void appendStubVersion(StringBuilder script, String version, String hash,
+                                          String owner) {
+        script.append(version).append(") hash_is \"$1/module.prop\" ").append(hash)
+                .append(" && owner_is \"$1\" ").append(ShellEscaper.quote(owner)).append(" ;;\n");
+    }
+
+    private static void appendVerifier(StringBuilder script, String name, Map<String, String> files,
+                                       String owner, String alternateManifest) {
+        script.append(name).append("() {\nsafe_tree \"$1\" || return 1\nowner_is \"$1\" ")
+                .append(ShellEscaper.quote(owner)).append(" || return 1\n");
+        files.forEach((path, hash) -> {
+            if (INSTALLER_REMOVED_FILE.equals(path))
+                script.append("if [ -e \"$1/").append(path).append("\" ]; then\n");
+            script.append("hash_is \"$1/").append(path).append("\" ").append(hash);
+            if ("manifest.txt".equals(path))
+                script.append(" || hash_is \"$1/manifest.txt\" ").append(alternateManifest);
+            script.append(" || return 1\n");
+            if (INSTALLER_REMOVED_FILE.equals(path)) script.append("fi\n");
+        });
+        script.append("}\n");
     }
 
     static String preflight() {
@@ -144,19 +187,26 @@ final class LeAudioPolicy {
                 stub=0
                 disabled=0
                 removed=0
+                current_version=none
+                update_version=none
                 for directory in "$current" "$update"; do
                     [ ! -L "$directory" ] || fail module_symlink
                     [ ! -e "$directory" ] || [ -d "$directory" ] || fail module_type
                 done
                 if [ -d "$update" ]; then
-                    verify_module "$update" || fail unknown_update
+                    update_version=$(module_version "$update") || fail unknown_update
                     staged=1
                     present=1
                 fi
                 if [ -d "$current" ]; then
-                    if ! verify_module "$current"; then
-                        [ "$staged" = 1 ] && verify_stub "$current" || fail unknown_module
+                    if current_version=$(module_version "$current"); then :;
+                    elif [ "$update_version" = current ] && [ -f "$current/update" ] && verify_legacy_pending "$current"; then
+                        current_version=legacy
+                    elif [ "$staged" = 1 ] && verify_stub "$current" "$update_version"; then
+                        current_version=$update_version
                         stub=1
+                    else
+                        fail unknown_module
                     fi
                     present=1
                 fi
@@ -170,12 +220,22 @@ final class LeAudioPolicy {
 
     static String romChecks() {
         StringBuilder script = new StringBuilder("rom_ok=1\npatched=0\n");
-        for (String[] row : ROM) {
+        for (int index = 0; index < ROM.length; index++) {
+            String[] row = ROM[index];
+            String legacyHash = LEGACY_FILES.get(ROM_PAYLOADS[index]);
             script.append("digest=$(/system/bin/nsenter -t 1 -m -- /data/adb/ksu/bin/busybox sha256sum ")
                     .append(ShellEscaper.quote(row[0])).append(" 2>/dev/null) || digest=unavailable\n")
-                    .append("case ${digest%% *} in\n").append(row[1]).append(") ;;\n")
-                    .append(row[2]).append(") patched=$((patched + 1)); [ \"$present\" = 1 ] || rom_ok=0 ;;\n")
-                    .append("*) rom_ok=0 ;;\nesac\n");
+                    .append("case ${digest%% *} in\n").append(row[1]).append(") ;;\n");
+            if (legacyHash.equals(row[2])) {
+                script.append(row[2]).append(") patched=$((patched + 1)); ")
+                        .append("[ \"$stub\" = 0 ] && [ \"$current_version\" != none ] || rom_ok=0 ;;\n");
+            } else {
+                script.append(row[2]).append(") patched=$((patched + 1)); ")
+                        .append("[ \"$stub\" = 0 ] && [ \"$current_version\" = current ] || rom_ok=0 ;;\n")
+                        .append(legacyHash).append(") patched=$((patched + 1)); ")
+                        .append("[ \"$stub\" = 0 ] && [ \"$current_version\" = legacy ] || rom_ok=0 ;;\n");
+            }
+            script.append("*) rom_ok=0 ;;\nesac\n");
         }
         return script.toString();
     }
@@ -191,7 +251,7 @@ final class LeAudioPolicy {
                         if grep -q '^state=failed' "$current/status.txt"; then boot_failed=1; fi
                     fi
                 fi
-                printf 'present=%s\\nstaged=%s\\ndisabled=%s\\nremoved=%s\\nrom_ok=%s\\npatched=%s\\nready=%s\\nboot_failed=%s\\n' "$present" "$staged" "$disabled" "$removed" "$rom_ok" "$patched" "$ready" "$boot_failed"
+                printf 'present=%s\\nstaged=%s\\ndisabled=%s\\nremoved=%s\\nrom_ok=%s\\npatched=%s\\nready=%s\\nboot_failed=%s\\ncurrent_version=%s\\nupdate_version=%s\\n' "$present" "$staged" "$disabled" "$removed" "$rom_ok" "$patched" "$ready" "$boot_failed" "$current_version" "$update_version"
                 """;
     }
 }

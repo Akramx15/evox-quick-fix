@@ -12,7 +12,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 - منع زر Back من إخراج شاشة Home في نسخة Quick Search المجربة.
 - إصلاح آمن لفتح مجلدات التخزين الخارجي في نسخة Quick Search المطابقة، ومنها مجلد نتائج APK: يوجّهها إلى DocumentsUI بعد إزالة URI grant غير الصالح، ولا يثبت APK بصمت ولا يغيّر تطبيق الفتح الافتراضي.
 - تعريف ميزة Google Circle to Search المفقودة بصورة systemless.
-- إصلاح استماع LE Audio على SM-S918B والروم المختبر: ستيريو LC3 ‏48 kHz / 160 kbps، مع تعطيل مايك سماعة LE Audio في وضع الاستماع.
+- إصلاح LE Audio على SM-S918B والروم المختبر: استماع ستيريو LC3 ‏48 kHz / 160 kbps، مع مايك السماعة ‏32 kHz في المكالمات؛ اختُبر مع WH-1000XM6 وDiscord.
 - ملف دبلوت ثابت من 104 حزم، باختيار يدوي وLedger ملكية واسترجاع دقيق.
 
 ### للمبتدئ: ما الذي تحتاجه؟
@@ -44,6 +44,10 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 5. نفّذ كل مجموعة إصلاح بصورة مستقلة؛ إصلاحا Quick Search يشتركان في زر Vector واحد. هذا الزر و«الإصلاحات الأربعة» يعيدان تشغيل Quick Search وينقلانك إلى Home عمدًا؛ هذا ليس crash.
 6. أعد فتح الأداة لرؤية نتيجة العملية المحفوظة وطلب Restart.
 
+### الانتقال إلى v1.2.0-beta.2
+
+يمكن تثبيت beta.2 مباشرة فوق beta.1 لأن مفتاح التوقيع نفسه. يضيف الإصدار وحدة LE Audio ‏1.2 لتشغيل الصوت ومايك السماعة معًا. ترقية وحدة 1.1 المعروفة تُجهّز عبر KernelSU وتحتاج إعادة تشغيل؛ تثبيت APK وحده لا يطبّق الإصلاح.
+
 ### الانتقال إلى v1.2.0-beta.1
 
 هذا الإصدار يستخدم مفتاح توقيع جديدًا؛ لا يمكن تثبيته كتحديث فوق APK بالإصدار السابق. قبل حذف النسخة القديمة، احفظ بيانات التطبيق وسجل ملكية الدبلوت وإعدادات Vector باستعمال نسخة احتياطية تدعم الروت. حذف التطبيق يمسح بياناته المحلية؛ وجود وحدات الإصلاح وحده لا يعيد سجل الملكية. بعد التثبيت الجديد، استرجع البيانات وأعد التحقق من صلاحية KernelSU وتفعيل Vector ونطاق Quick Search.
@@ -52,7 +56,11 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 
 إصلاح LE Audio له زر تطبيق وزر تعطيل مستقلان، ولا يدخل ضمن زر «الإصلاحات الأربعة». يطابق موديل SM-S918B وAndroid 16 والمستخدم 0 وKernelSU وبصمات ملفات سياسة الصوت وBluetooth المختبرة. لا يغيّر إعدادات الصوت بمجرد تثبيت التطبيق، ولا يفرض الإعداد على روم مختلف.
 
-يتعرف على وحدة `s23_le_audio_fix` بالإصدار 1.1 الموجودة سابقًا فقط عند تطابق ملفاتها الثابتة بالكامل؛ يرفض استبدال وحدة مجهولة أو معدّلة. التطبيق أو التعطيل يحتاج إعادة تشغيل يدوية. وضع الاستماع يعطّل مدخل مايك سماعات LE Audio، والتعطيل يعيد سياسة الروم التي قد تعيد مشكلة انعدام الصوت.
+يتعرف على الإصدار 1.1 المطابق ويعرض ترقيته إلى 1.2، كما يتعرف على وحدة 1.2 المطابقة الموجودة سابقًا. يرفض الوحدات المجهولة أو المعدّلة. الإصدار 1.2 يعيد مسار مدخل مايك LE Audio ويضيف إعداد 48/32 إلى وضع المكالمات؛ الإصدار 1.1 كان يعطّل هذا المدخل، مما جعل Discord يستخدم مايك الجوال. التطبيق أو التعطيل يحتاج إعادة تشغيل يدوية. التعطيل يعيد سياسة الروم وقد يعيد مشكلة انعدام الصوت.
+
+الإصلاح يستخدم LC3 ومسارًا واحدًا: 150 بايت للصوت و60 بايت للمايك كل 7.5 مللي ثانية. لا يفعّل GMAP ولا يعدّل firmware السماعة أو تفضيلات الترميز المحفوظة. نجاحه على الجهاز والروم المختبرين لا يثبت إصلاح كل حالات تهيئة decoder في رومات أو تطبيقات أخرى.
+
+[تفاصيل اختبار LE Audio ونتيجة إعادة التشغيل](docs/LE_AUDIO.md).
 
 ### Debloat Profiles
 
@@ -91,6 +99,10 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 - CI يشغّل الاختبارات وlint ويبني APK غير موقع فقط.
 - مفتاح توقيع الإصدار لا يدخل GitHub ولا GitHub Secrets.
 
+v1.2.0-beta.2 APK SHA-256:
+
+**a7e92d93fec4fac68250bd98fd906decfa1bac758c7ae1dc395d292c70131b4b**
+
 v1.2.0-beta.1 APK SHA-256:
 
 **cfd7f5aec47c6ed01feabaf660a4db2750c3b27275a2aa6150a80e5c95813d35**
@@ -115,7 +127,7 @@ EvoX Quick Fix is an open-source root utility for five narrow Android 16 custom-
 - A narrowly scoped Back Guard for the verified Quick Search Home build.
 - A safe external-storage folder fix for the exact Quick Search build, including APK results: containing-folder intents are routed to DocumentsUI after the invalid URI grant is removed, with no silent APK installation and no default-handler change.
 - A systemless declaration for the missing Google Circle to Search feature.
-- A guarded LE Audio music workaround for the tested SM-S918B ROM: LC3 stereo 48 kHz / 160 kbps, with LE headset microphone input disabled in music mode.
+- A guarded LE Audio workaround for the tested SM-S918B ROM: LC3 stereo 48 kHz / 160 kbps playback with a 32 kHz headset microphone during calls, tested with WH-1000XM6 and Discord.
 - A fixed 104-package debloat profile with explicit selection, ownership ledger and exact rollback.
 
 ### Beginner requirements
@@ -147,15 +159,23 @@ Transparency and the Quick Search hooks remain locked to the exact verified SM-S
 5. Apply each fix group independently; both Quick Search hooks share one Vector action. That action and “Apply the four fixes” intentionally restart Quick Search and switch to Home; that is not a crash.
 6. Reopen the app for the persisted result and restart prompt.
 
+### Migrating to v1.2.0-beta.2
+
+Beta.2 updates beta.1 directly using the same signing key. It bundles LE Audio module 1.2 for simultaneous headset playback and microphone use. An exact known v1.1 module is upgraded through KernelSU staging and requires a reboot; installing the APK alone does not apply the audio fix.
+
 ### Migrating to v1.2.0-beta.1
 
 This release uses a new signing key and cannot update an APK signed with the old key. Before uninstalling the old app, use a root-capable backup to preserve app data, the debloat ownership ledger and Vector configuration. Uninstalling erases local app data; installed fix modules do not reconstruct the ownership ledger. After reinstalling, restore the data and verify KernelSU authorization and Vector enablement/Quick Search scope.
 
-### Independent LE Audio music fix
+### Independent LE Audio fix
 
 LE Audio has separate apply and disable controls; it is excluded from “Apply the four fixes.” It requires the tested SM-S918B, Android 16, owner user, KernelSU and exact audio-policy/Bluetooth configuration hashes. Installing the APK alone does not change audio settings or apply this workaround to a different ROM.
 
-An existing standalone `s23_le_audio_fix` v1.1 module is recognized only when its full static payload matches. Unknown or modified modules are not overwritten. Applying or disabling requires a manual reboot. Music mode disables LE headset microphone input; disabling restores the ROM policy and can restore the original silent-playback problem.
+Exact known v1.1 modules are offered an upgrade, and exact standalone v1.2 modules can be adopted. Unknown or modified bundles remain blocked. Version 1.2 restores the LE microphone input and adds the existing 48/32 configuration to Conversational. Version 1.1 disabled that input, causing Discord to use the phone microphone. Applying or disabling requires a manual reboot. Disabling restores the ROM policy and can restore the original silent-playback problem.
+
+The workaround uses LC3 over one CIS: 150-byte playback and 60-byte microphone SDUs every 7.5 ms. It does not enable GMAP, flash headphone firmware or change stored codec preferences. Validation on the tested device/ROM does not establish that all decoder-initialization cases in other applications or ROMs are fixed.
+
+[LE Audio validation and reboot results](docs/LE_AUDIO.md).
 
 ### Debloat safety model
 
@@ -191,6 +211,10 @@ An existing standalone `s23_le_audio_fix` v1.1 module is recognized only when it
 - No INTERNET permission, analytics, WebView, terminal, or automatic link opening.
 - CI runs tests and lint and produces an unsigned APK only.
 - The release signing key stays local and is not stored in GitHub or GitHub Secrets.
+
+v1.2.0-beta.2 APK SHA-256:
+
+**a7e92d93fec4fac68250bd98fd906decfa1bac758c7ae1dc395d292c70131b4b**
 
 v1.2.0-beta.1 APK SHA-256:
 

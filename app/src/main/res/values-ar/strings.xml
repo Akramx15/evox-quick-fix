@@ -61,7 +61,7 @@
     <string name="error_vector_scope_confirmation">لم يؤكد Vector تفعيل الوحدة ونطاق Quick Search.</string>
     <string name="result_quicksearch_hooks_applied">تم تفعيل منع Back وإصلاح فتح مجلدات الملفات في Quick Search عبر Vector.</string>
     <string name="emergency_core">إذا لم يقلع Android، عطّل وحدتي systemless من ADB/Recovery ثم أعد التشغيل:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nتزول Hooks ‏Back ونتائج APK بتعطيل EvoX Quick Fix من Vector وإعادة تشغيل Quick Search.</string>
-    <string name="footer_version">الإصدار 1.2.0-beta.1 • بلا صلاحية INTERNET</string>
+    <string name="footer_version">الإصدار 1.2.0-beta.2 • بلا صلاحية INTERNET</string>
 
     <string name="feature_transparency">شفافية Recent Apps</string>
     <string name="feature_back_guard">Back Guard</string>
@@ -145,22 +145,24 @@
     <string name="debloat_mixed_danger">يجب أن تكون الحزمة الخطرة هي العنصر الوحيد المحدد.</string>
     <string name="debloat_emergency">الاسترجاع الطارئ:\nadb shell su -c \'sh /data/adb/evox-quick-fix/debloat-restore.sh\'</string>
 
-    <string name="feature_le_audio">إصلاح موسيقى LE Audio</string>
+    <string name="feature_le_audio">صوت ومايك LE Audio</string>
     <string name="section_tools">أدوات أخرى</string>
-    <string name="action_le_audio">تفعيل إصلاح موسيقى LE Audio</string>
+    <string name="action_le_audio">تفعيل أو تحديث LE Audio</string>
     <string name="action_le_audio_disable">تعطيل إصلاح LE Audio</string>
-    <string name="le_audio_description">مجرب مع Sony WH-1000XM6: صوت LC3 ستيريو بتردد 48 kHz ومعدل 160 kbps. وضع الموسيقى يعطّل ميكروفون السماعة. خيار مستقل عن الإصلاحات الأربعة، ويتطلب SM-S918B وAndroid 16 والمستخدم 0 وKernelSU وتطابق بصمات ملفات الروم الثلاثة المجربة.</string>
-    <string name="le_audio_confirm">تفعيل وضع موسيقى LE Audio المجرب؟ سيعطّل ميكروفون سماعة Bluetooth LE. يلزم إعادة تشغيل الجوال يدويًا لتطبيق التغيير. تبقى وحدة v1.1 المطابقة كما هي، وتُحظر أي نسخة مختلفة.</string>
+    <string name="le_audio_description">مجرب مع Sony WH-1000XM6: صوت LC3 ستيريو بتردد 48 kHz ومعدل 160 kbps، مع مايك السماعة عبر LE بتردد 32 kHz. خيار مستقل عن الإصلاحات الأربعة، ويتطلب البيئة المجربة SM-S918B وAndroid 16 والمستخدم 0 وKernelSU.</string>
+    <string name="le_audio_confirm">تفعيل إعداد صوت ومايك LE Audio المجرب؟ تُحدّث وحدة الموسيقى v1.1 المطابقة عبر KernelSU. أعد تشغيل الجوال يدويًا لتطبيق التغيير. تُحظر ملفات الوحدات غير المعروفة.</string>
     <string name="le_audio_disable_confirm">تعطيل وحدة LE Audio المتحقق منها فقط؟ أعد التشغيل يدويًا للعودة إلى سياسة صوت الروم. قد تعود مشكلة انعدام صوت LE Audio الأصلية. تبقى ملفات وحدتك محفوظة.</string>
     <string name="le_audio_unavailable">غير متاح: يتطلب البيئة المجربة SM-S918B وAndroid 16 والمستخدم 0 وKernelSU.</string>
     <string name="le_audio_unknown">محظور: تعذر التحقق من ملفات الوحدة أو مساراتها أو صلاحية الروت. لم تتغير الملفات الموجودة.</string>
-    <string name="le_audio_absent">جاهز: ملفات الروم الثلاثة مطابقة. إصلاح موسيقى LE Audio غير مثبت.</string>
-    <string name="le_audio_active">مفعّل: ملفات وضع الموسيقى v1.1 مطابقة، والسياسات الثلاث مركبة، وخدمة الوحدة نجحت في هذا الإقلاع.</string>
-    <string name="le_audio_pending">وضع الموسيقى المتحقق منه مفعّل. يلزم إعادة التشغيل لإكمال التغيير أو التحقق منه.</string>
+    <string name="le_audio_absent">جاهز: ملفات الروم الثلاثة مطابقة. إصلاح LE Audio غير مثبت.</string>
+    <string name="le_audio_active">مفعّل: إعداد الصوت والمايك v1.2 متحقق منه، والسياسات الثلاث مركبة، وخدمة الوحدة نجحت في هذا الإقلاع.</string>
+    <string name="le_audio_pending">إعداد الصوت والمايك v1.2 المتحقق منه مفعّل. أعد التشغيل لإكمال التغيير أو التحقق منه.</string>
     <string name="le_audio_disabled">معطّل: الوحدة المتحقق منها محفوظة، وعادت سياسة صوت الروم.</string>
     <string name="le_audio_disable_pending">معطّل للإقلاع القادم. يلزم إعادة التشغيل لإزالة سياسات الصوت المركبة حاليًا.</string>
     <string name="le_audio_removing">إزالة الوحدة معلقة بالفعل في KernelSU. أعد التشغيل قبل تفعيل الإصلاح مجددًا.</string>
     <string name="le_audio_rom_changed">محظور: تغيرت ملفات صوت الروم. يمكن تعطيل الوحدة المتحقق منها للاسترجاع.</string>
     <string name="le_audio_boot_failed">أبلغت الوحدة المتحقق منها عن فشل في هذا الإقلاع. يمكنك تعطيلها أو إعادة المحاولة بعد إعادة التشغيل.</string>
     <string name="le_audio_blocked_operation">فشل التحقق من توافق LE Audio أو ملكية الوحدة. راجع حالة LE Audio المستقلة قبل إعادة المحاولة.</string>
+    <string name="le_audio_upgrade_available">وحدة الموسيقى v1.1 متحقق منها. حدّث إلى v1.2 لتفعيل مايك سماعة LE؛ يلزم إعادة التشغيل.</string>
+    <string name="le_audio_legacy_pending">يوجد تحديث v1.1 متحقق منه ومعلّق في KernelSU. أعد التشغيل قبل التحديث إلى إعداد الصوت والمايك.</string>
 </resources>

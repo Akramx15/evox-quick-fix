@@ -26,7 +26,7 @@ final class LeAudioManager {
     }
 
     OperationResult apply() throws Exception {
-        try (OperationCoordinator.Lease ignored = OperationCoordinator.acquire("LE Audio music")) {
+        try (OperationCoordinator.Lease ignored = OperationCoordinator.acquire("LE Audio duplex")) {
             DiagnosticReport report = new DeviceDiagnostics(context).inspect();
             if (report.leAudio.state() == LeAudioStatus.State.ACTIVE) {
                 return OperationResult.applied(context.getString(R.string.le_audio_active));
@@ -72,13 +72,23 @@ final class LeAudioManager {
         return LeAudioPolicy.preflight() + LeAudioPolicy.romChecks() + """
                 [ "$rom_ok" = 1 ] || fail rom_changed
                 [ "$removed" = 0 ] || fail removal_pending
-                if [ "$present" = 1 ]; then
-                    # Exact standalone v1.1 is adopted without rewriting any payload or metadata.
+                enable_verified() {
                     ksud module enable s23_le_audio_fix || fail enable
                     for directory in "$current" "$update"; do
                         [ ! -d "$directory" ] || rm -f "$directory/disable" || fail enable_flag
                     done
-                    exit 0
+                }
+                install_kind=fresh
+                if [ "$present" = 1 ]; then
+                    # Adopt an exact v1.2 bundle; never overwrite a pending legacy update.
+                    if [ "$staged" = 1 ]; then
+                        [ "$update_version" = current ] || fail legacy_update_pending
+                        enable_verified
+                        exit 0
+                    fi
+                    if [ "$current_version" = current ]; then enable_verified; exit 0; fi
+                    [ "$current_version" = legacy ] && [ "$stub" = 0 ] || fail upgrade_source
+                    install_kind=upgrade
                 fi
                 state=/data/adb/evox-quick-fix
                 mkdir -p "$state" && chown 0:0 "$state" && chmod 700 "$state" || fail staging_parent
@@ -88,10 +98,15 @@ final class LeAudioManager {
                 + "hash_is \"$staging/module.zip\" " + digest + " || fail archive_hash\n"
                 + """
                 chown 0:0 "$staging/module.zip" && chmod 600 "$staging/module.zip" || fail archive_permissions
-                # Recheck absence immediately before handing the archive to KernelSU.
-                for directory in "$current" "$update"; do
-                    [ ! -e "$directory" ] && [ ! -L "$directory" ] || fail appeared_during_install
-                done
+                """ + LeAudioPolicy.moduleState() + LeAudioPolicy.romChecks() + """
+                # Recheck the complete source and absence of a pending update before installing.
+                [ "$staged" = 0 ] && [ "$removed" = 0 ] && [ "$rom_ok" = 1 ] || fail state_changed_during_install
+                if [ "$install_kind" = fresh ]; then
+                    [ "$present" = 0 ] || fail appeared_during_install
+                else
+                    [ "$current_version" = legacy ] && [ "$stub" = 0 ] || fail upgrade_source_changed
+                fi
+                # KernelSU stages new payload files. Never copy onto currently bound policy inodes.
                 install_result=0
                 ksud module install "$staging/module.zip" || install_result=$?
                 """ + finishFreshInstallScript();
@@ -108,6 +123,7 @@ final class LeAudioManager {
                     fail install_failed_disabled
                 fi
                 [ "$removed" = 0 ] || fail install_removing
+                [ "$update_version" = current ] || [ "$current_version" = current ] || fail install_wrong_version
                 # The archive starts disabled; enable only after the entire payload was verified.
                 ksud module enable s23_le_audio_fix || fail install_enable
                 for directory in "$current" "$update"; do

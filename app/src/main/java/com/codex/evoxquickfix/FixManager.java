@@ -1,6 +1,7 @@
 package com.codex.evoxquickfix;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +46,78 @@ final class FixManager {
     OperationResult applyBackGuard() throws Exception {
         return runTransactional("Quick Search hooks", BACK_SCOPE,
                 this::applyBackGuardInternal);
+    }
+
+    OperationResult enableOneBack() throws Exception {
+        try (OperationCoordinator.Lease ignored =
+                     OperationCoordinator.acquire("enable OneBack")) {
+            DiagnosticReport report = diagnostics.inspect();
+            if (!report.oneBackSupported) {
+                throw new IllegalStateException(
+                        "OneBack requires Android 16, root, user 0, Vector and HeliBoard");
+            }
+            if (vectorModuleEnabledStrict(AppConstants.STANDALONE_ONE_BACK_PACKAGE)) {
+                throw new IllegalStateException(
+                        "عطّل وحدة OneBack المستقلة dev.oneback.ime في Vector أولاً لمنع Hook مزدوج");
+            }
+
+            boolean moduleEnabledBefore = vectorModuleEnabledStrict();
+            boolean imeScopeBefore = vectorScopeContainsPackageStrict(
+                    AppConstants.HELIBOARD_PACKAGE);
+            try {
+                if (!moduleEnabledBefore) {
+                    setVectorModuleEnabled(true);
+                }
+                if (!imeScopeBefore) {
+                    setVectorPackageScope(AppConstants.HELIBOARD_PACKAGE, true,
+                            "تفعيل نطاق HeliBoard في Vector");
+                }
+                restartHeliBoardIfPresent();
+
+                DiagnosticReport verified = diagnostics.inspect();
+                if (!verified.oneBackSupported || !verified.vectorModuleEnabled
+                        || !verified.vectorImeScopeReady) {
+                    throw new IllegalStateException(
+                            "Vector لم يثبت تفعيل OneBack على HeliBoard");
+                }
+                return OperationResult.applied(
+                        "تم تفعيل OneBack على HeliBoard وإعادة تشغيل الكيبورد.");
+            } catch (Throwable failure) {
+                throw transactionFailure("OneBack", failure,
+                        rollbackOneBackState(moduleEnabledBefore, imeScopeBefore));
+            }
+        }
+    }
+
+    OperationResult disableOneBack() throws Exception {
+        try (OperationCoordinator.Lease ignored =
+                     OperationCoordinator.acquire("disable OneBack")) {
+            DiagnosticReport report = diagnostics.inspect();
+            requireVectorScopeManagement(report);
+            boolean imeScopeBefore = vectorScopeContainsPackageStrict(
+                    AppConstants.HELIBOARD_PACKAGE);
+            try {
+                if (imeScopeBefore) {
+                    setVectorPackageScope(AppConstants.HELIBOARD_PACKAGE, false,
+                            "إزالة نطاق HeliBoard من Vector");
+                }
+                restartHeliBoardIfPresent();
+                if (vectorScopeContainsPackageStrict(AppConstants.HELIBOARD_PACKAGE)) {
+                    throw new IllegalStateException(
+                            "Vector لم يثبت إزالة نطاق HeliBoard");
+                }
+                return OperationResult.applied(
+                        "تم تعطيل OneBack على HeliBoard فقط؛ بقيت وحدة EvoX Fix فعالة.");
+            } catch (Throwable failure) {
+                List<String> rollbackFailures = new ArrayList<>();
+                rollbackStep(rollbackFailures, "نطاق HeliBoard", () ->
+                        setVectorPackageScope(AppConstants.HELIBOARD_PACKAGE,
+                                imeScopeBefore, "استرجاع نطاق HeliBoard في Vector"));
+                rollbackStep(rollbackFailures, "إعادة تشغيل HeliBoard",
+                        this::restartHeliBoardIfPresent);
+                throw transactionFailure("تعطيل OneBack", failure, rollbackFailures);
+            }
+        }
     }
 
     OperationResult applyCircleToSearch() throws Exception {
@@ -128,7 +201,8 @@ final class FixManager {
                 if (backManaged) {
                     setVectorQuickSearchScope(
                             back.optBoolean("vectorScopeHadQuickSearch", false));
-                    setVectorModuleEnabled(back.optBoolean("vectorModuleEnabled", false));
+                    restoreVectorModuleAfterScopeChange(
+                            back.optBoolean("vectorModuleEnabled", false));
                 }
 
                 if (circlePresent) {
@@ -419,7 +493,7 @@ final class FixManager {
         if (scope.back && back.optBoolean("vectorAvailable", false)) {
             rollbackStep(failures, "نطاق Vector", () -> setVectorQuickSearchScope(
                     back.optBoolean("vectorScopeHadQuickSearch", false)));
-            rollbackStep(failures, "وحدة Vector", () -> setVectorModuleEnabled(
+            rollbackStep(failures, "وحدة Vector", () -> restoreVectorModuleExactly(
                     back.optBoolean("vectorModuleEnabled", false)));
             rollbackStep(failures, "Quick Search HOME", this::restartQuickSearchHomeIfPresent);
         }
@@ -431,6 +505,18 @@ final class FixManager {
                     circle, "navbarLongPress", "system", "navbar_long_press_gesture"));
         }
         rollbackStep(failures, "قائمة الحزم المعطلة", () -> verifyDisabledPackages(snapshot));
+        return failures;
+    }
+
+    private List<String> rollbackOneBackState(boolean moduleEnabledBefore,
+                                              boolean imeScopeBefore) {
+        List<String> failures = new ArrayList<>();
+        rollbackStep(failures, "نطاق HeliBoard", () -> setVectorPackageScope(
+                AppConstants.HELIBOARD_PACKAGE, imeScopeBefore,
+                "استرجاع نطاق HeliBoard في Vector"));
+        rollbackStep(failures, "وحدة Vector", () ->
+                restoreVectorModuleExactly(moduleEnabledBefore));
+        rollbackStep(failures, "إعادة تشغيل HeliBoard", this::restartHeliBoardIfPresent);
         return failures;
     }
 
@@ -806,46 +892,77 @@ final class FixManager {
         }
     }
 
+    private void restoreVectorModuleAfterScopeChange(boolean baselineEnabled) {
+        boolean required = vectorModuleRequiredAfterScopeRestore(
+                baselineEnabled, vectorScopeHasAnyStrict());
+        restoreVectorModuleExactly(required);
+    }
+
+    private void restoreVectorModuleExactly(boolean enabled) {
+        if (vectorModuleEnabledStrict() != enabled) {
+            setVectorModuleEnabled(enabled);
+        }
+    }
+
+    static boolean vectorModuleRequiredAfterScopeRestore(boolean baselineEnabled,
+                                                         boolean anyScopePresent) {
+        return baselineEnabled || anyScopePresent;
+    }
+
     private boolean vectorModuleEnabledStrict() {
+        return vectorModuleEnabledStrict(AppConstants.APP_PACKAGE);
+    }
+
+    private boolean vectorModuleEnabledStrict(String packageName) {
         JSONObject result = runVectorJson("modules ls", "قراءة وحدات Vector");
         JSONArray data = result.optJSONArray("data");
         if (data == null) {
             throw new IllegalStateException("Vector أعاد قائمة وحدات غير صالحة");
         }
-        for (int index = 0; index < data.length(); index++) {
-            JSONObject module = data.optJSONObject(index);
-            if (module != null
-                    && AppConstants.APP_PACKAGE.equals(module.optString("PACKAGE"))) {
-                return "enabled".equalsIgnoreCase(module.optString("STATUS"));
-            }
-        }
-        return false;
+        return VectorStateParser.moduleEnabled(data, packageName);
     }
 
     private void setVectorQuickSearchScope(boolean present) {
-        String verb = present ? "add" : "rm";
-        runVectorJson("scope " + verb + " " + AppConstants.APP_PACKAGE + " "
-                        + AppConstants.QUICK_SEARCH_PACKAGE + "/0",
+        setVectorPackageScope(AppConstants.QUICK_SEARCH_PACKAGE, present,
                 "تغيير نطاق Quick Search في Vector");
-        if (vectorScopeContainsQuickSearchStrict() != present) {
-            throw new IllegalStateException("Vector لم يثبت حالة نطاق Quick Search المطلوبة");
-        }
     }
 
     private boolean vectorScopeContainsQuickSearchStrict() {
+        return vectorScopeContainsPackageStrict(AppConstants.QUICK_SEARCH_PACKAGE);
+    }
+
+    private void setVectorPackageScope(String packageName, boolean present,
+                                       String description) {
+        if (vectorScopeContainsPackageStrict(packageName) == present) {
+            return;
+        }
+        String verb = present ? "add" : "rm";
+        runVectorJson("scope " + verb + " " + AppConstants.APP_PACKAGE + " "
+                        + packageName + "/0", description);
+        if (vectorScopeContainsPackageStrict(packageName) != present) {
+            throw new IllegalStateException(
+                    "Vector لم يثبت حالة النطاق المطلوبة للحزمة " + packageName);
+        }
+    }
+
+    private boolean vectorScopeContainsPackageStrict(String packageName) {
         JSONObject result = runVectorJson("scope ls " + AppConstants.APP_PACKAGE,
                 "قراءة نطاق Vector");
         JSONArray data = result.optJSONArray("data");
         if (data == null) {
             throw new IllegalStateException("Vector أعاد قائمة نطاق غير صالحة");
         }
-        for (int index = 0; index < data.length(); index++) {
-            Object entry = data.opt(index);
-            if (entry != null && entry.toString().contains(AppConstants.QUICK_SEARCH_PACKAGE)) {
-                return true;
-            }
+        return VectorStateParser.scopeContains(data, packageName, 0);
+    }
+
+    private boolean vectorScopeHasAnyStrict() {
+        JSONObject result = runVectorJson("scope ls " + AppConstants.APP_PACKAGE,
+                "قراءة نطاق Vector");
+        JSONArray data = result.optJSONArray("data");
+        if (data == null) {
+            throw new IllegalStateException("Vector أعاد قائمة نطاق غير صالحة");
         }
-        return false;
+        return VectorStateParser.hasAnyScope(data);
     }
 
     private JSONObject runVectorJson(String arguments, String description) {
@@ -876,6 +993,28 @@ final class FixManager {
         if (RootShell.run("pm path " + AppConstants.QUICK_SEARCH_PACKAGE
                 + " >/dev/null 2>&1").ok()) {
             restartQuickSearchHome();
+        }
+    }
+
+    private void restartHeliBoardIfPresent() {
+        try {
+            context.getPackageManager().getApplicationInfo(AppConstants.HELIBOARD_PACKAGE, 0);
+        } catch (PackageManager.NameNotFoundException ignored) {
+            return;
+        }
+        RootShell.run("am force-stop --user 0 " + AppConstants.HELIBOARD_PACKAGE)
+                .requireSuccess("إعادة تشغيل HeliBoard");
+    }
+
+    private static void requireVectorScopeManagement(DiagnosticReport report) {
+        if (!report.root) {
+            throw new IllegalStateException("صلاحية Root غير متاحة");
+        }
+        if (!report.systemUser) {
+            throw new IllegalStateException("إدارة نطاق Vector تتطلب user 0");
+        }
+        if (!report.vectorReady) {
+            throw new IllegalStateException("Vector غير متاح");
         }
     }
 

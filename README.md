@@ -2,17 +2,18 @@
 
 [العربية](#العربية) · [English](#english) · [صفحة المشروع / Project page](https://akramx15.github.io/evox-quick-fix/) · [Releases](https://github.com/Akramx15/evox-quick-fix/releases)
 
-> **Root utility — read the risks before using it.** Installing or updating the APK never disables a package or edits a system setting. If Vector is already configured, the exact-build Quick Search hooks load when Quick Search next starts.
+> **Root utility — read the risks before using it.** Installing or updating the APK never disables a package or edits a system setting. An existing Vector Quick Search scope can load the exact-build hooks when Quick Search next starts. Optional OneBack loads only after its dedicated Enable action adds HeliBoard to this module's scope and HeliBoard restarts.
 
 ## العربية
 
-EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
+EvoX Quick Fix أداة مفتوحة المصدر لمعالجة ست مشكلات محددة في رومات Android 16 المخصصة على عائلة Galaxy S23، وإدارة دبلوت اختياري قابل للاسترجاع:
 
 - شفافية خلفية Recent Apps في الوضعين الداكن والفاتح.
 - منع زر Back من إخراج شاشة Home في نسخة Quick Search المجربة.
 - إصلاح آمن لفتح مجلدات التخزين الخارجي في نسخة Quick Search المطابقة، ومنها مجلد نتائج APK: يوجّهها إلى DocumentsUI بعد إزالة URI grant غير الصالح، ولا يثبت APK بصمت ولا يغيّر تطبيق الفتح الافتراضي.
 - تعريف ميزة Google Circle to Search المفقودة بصورة systemless.
 - إصلاح LE Audio على SM-S918B والروم المختبر: استماع ستيريو LC3 ‏48 kHz / 160 kbps، مع مايك السماعة ‏32 kHz في المكالمات؛ اختُبر مع WH-1000XM6 وDiscord.
+- **OneBack اختياري في v1.3.0-beta.1:** مع HeliBoard على Android 16، يمرر أول Back إلى التطبيق ليغادر الشاشة بدل أن يستهلكه الكيبورد لإخفاء نفسه فقط. يبقى زر إخفاء الكيبورد الطبيعي كما هو.
 - ملف دبلوت ثابت من 104 حزم، باختيار يدوي وLedger ملكية واسترجاع دقيق.
 
 ### للمبتدئ: ما الذي تحتاجه؟
@@ -21,7 +22,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 - **Magic Mount-rs:** تستخدمه الشفافية، ويحتاجه Circle فقط إذا كانت ميزة النظام مفقودة؛ لا تُثبت وحدة Circle زائدة إذا كانت الميزة أصلية في الروم.
 - **Launcher3 / Quickstep:** يوفر Recents وتكامل Circle.
 - **Quick Search:** تطبيق Home المستخدم في البيئة المجربة؛ مطلوب فقط لإصلاحي Quick Search المقفلين على الإصدار والبصمة المطابقين.
-- **Vector:** يحمّل Hookي Back Guard وفتح مجلد نتائج APK داخل عملية Quick Search فقط؛ غير مطلوب لـCircle أو الدبلوت.
+- **Vector / libxposed API 102:** يحمّل Hookي Back Guard وفتح مجلد نتائج APK داخل Quick Search، ويحمل OneBack الاختياري داخل HeliBoard فقط؛ غير مطلوب لـCircle أو الدبلوت.
 - **Google app:** مزود Circle to Search، وهو محمي دائمًا ولا يظهر كهدف دبلوت.
 
 ### التوافق
@@ -33,7 +34,7 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 | S23 FE / SM-S711* | غير مدعوم |
 | Magisk، ملفات العمل، المستخدمون الإضافيون | غير مدعوم |
 
-تبقى الشفافية وإصلاحات Quick Search مقفلة على بيئة SM-S918B ونسخة Quick Search المطابقة التي اختُبرت فعليًا. يصلح Hook المجلد محاولات Quick Search لفتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، ويوجّهها صراحة إلى DocumentsUI بعد إزالة URI grant غير الصالح؛ لا يغيّر أي Handler أو تطبيق افتراضي. يعمل Circle بصورة مستقلة على أجهزة S23 المتوافقة عند توفر Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُشترط Magic Mount-rs عند الحاجة إلى إضافة تعريف الميزة المفقود.
+تبقى الشفافية وإصلاحات Quick Search مقفلة على بيئة SM-S918B ونسخة Quick Search المطابقة التي اختُبرت فعليًا. يصلح Hook المجلد محاولات Quick Search لفتح مجلدات التخزين الخارجي المحتوية، ومنها نتائج APK، ويوجّهها صراحة إلى DocumentsUI بعد إزالة URI grant غير الصالح؛ لا يغيّر أي Handler أو تطبيق افتراضي. يعمل Circle بصورة مستقلة على أجهزة S23 المتوافقة عند توفر Launcher3 ومزود Google وخدمة contextual_search وKernelSU؛ ويُشترط Magic Mount-rs عند الحاجة إلى إضافة تعريف الميزة المفقود. أما OneBack فنطاقه HeliBoard فقط على Android 16؛ لا يعني ذلك توافقًا عامًا مع كل تطبيق، لأن تعامل التطبيق الأمامي مع Back قد يختلف.
 
 ### التثبيت
 
@@ -44,13 +45,17 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 5. نفّذ كل مجموعة إصلاح بصورة مستقلة؛ إصلاحا Quick Search يشتركان في زر Vector واحد. هذا الزر و«الإصلاحات الأربعة» يعيدان تشغيل Quick Search وينقلانك إلى Home عمدًا؛ هذا ليس crash.
 6. أعد فتح الأداة لرؤية نتيجة العملية المحفوظة وطلب Restart.
 
+### الانتقال إلى v1.3.0-beta.1
+
+يضيف هذا الإصدار OneBack كميزة اختيارية داخل EvoX Quick Fix عبر Vector / libxposed API 102. إذا كانت وحدة OneBack المستقلة بالحزمة `dev.oneback.ime` مفعلة، عطّلها قبل تفعيل OneBack المدمج لتجنب Hook مزدوج. استخدم زر OneBack المستقل لتفعيله أو تعطيله، ثم شغّل الاختبار الداخلي للتأكد من النطاق والسلوك.
+
 ### الانتقال إلى v1.2.0-beta.2
 
 يمكن تثبيت beta.2 مباشرة فوق beta.1 لأن مفتاح التوقيع نفسه. يضيف الإصدار وحدة LE Audio ‏1.2 لتشغيل الصوت ومايك السماعة معًا. ترقية وحدة 1.1 المعروفة تُجهّز عبر KernelSU وتحتاج إعادة تشغيل؛ تثبيت APK وحده لا يطبّق الإصلاح.
 
 ### الانتقال إلى v1.2.0-beta.1
 
-هذا الإصدار يستخدم مفتاح توقيع جديدًا؛ لا يمكن تثبيته كتحديث فوق APK بالإصدار السابق. قبل حذف النسخة القديمة، احفظ بيانات التطبيق وسجل ملكية الدبلوت وإعدادات Vector باستعمال نسخة احتياطية تدعم الروت. حذف التطبيق يمسح بياناته المحلية؛ وجود وحدات الإصلاح وحده لا يعيد سجل الملكية. بعد التثبيت الجديد، استرجع البيانات وأعد التحقق من صلاحية KernelSU وتفعيل Vector ونطاق Quick Search.
+هذا الإصدار يستخدم مفتاح توقيع جديدًا؛ لا يمكن تثبيته كتحديث فوق APK بالإصدار السابق. قبل حذف النسخة القديمة، احفظ بيانات التطبيق وسجل ملكية الدبلوت وإعدادات Vector باستعمال نسخة احتياطية تدعم الروت. حذف التطبيق يمسح بياناته المحلية؛ وجود وحدات الإصلاح وحده لا يعيد سجل الملكية. بعد التثبيت الجديد، استرجع البيانات وأعد التحقق من صلاحية KernelSU وتفعيل Vector ونطاق Quick Search، ونطاق HeliBoard إذا فعّلت OneBack المدمج لاحقًا.
 
 ### إصلاح LE Audio المستقل
 
@@ -61,6 +66,12 @@ EvoX Quick Fix أداة مفتوحة المصدر لمعالجة خمس مشكل
 الإصلاح يستخدم LC3 ومسارًا واحدًا: 150 بايت للصوت و60 بايت للمايك كل 7.5 مللي ثانية. لا يفعّل GMAP ولا يعدّل firmware السماعة أو تفضيلات الترميز المحفوظة. نجاحه على الجهاز والروم المختبرين لا يثبت إصلاح كل حالات تهيئة decoder في رومات أو تطبيقات أخرى.
 
 [تفاصيل اختبار LE Audio ونتيجة إعادة التشغيل](docs/LE_AUDIO.md).
+
+### OneBack الاختياري لـHeliBoard
+
+OneBack مستقل عن إصلاحات Quick Search وLE Audio والدبلوت. عند تفعيله، تضيف الأداة HeliBoard وحده إلى نطاق Vector وتحمّل Hook عبر libxposed API 102 داخل عملية HeliBoard؛ لا تستخدم `system_server` ولا تولّد ضغطة Back اصطناعية. عندما يكون الكيبورد ظاهرًا، يمر أول Back إلى التطبيق الأمامي كي ينفذ تنقله المعتاد بدل أن يستهلكه HeliBoard لإخفاء لوحة المفاتيح فقط. زر إخفاء الكيبورد الموجود في شريط التنقل يبقى طبيعيًا.
+
+للخيار زرا **تفعيل** و**تعطيل** واختبار داخلي مستقل. لا يدخل ضمن زر «الإصلاحات الأربعة»، ولا يزيله زر «استرجاع وضع الروم». تعطيله يزيل نطاق HeliBoard الخاص بهذه الوحدة فقط ولا يغيّر نطاق Quick Search. تم التحقق الحي من السلوك في وحدة OneBack المستقلة مع HeliBoard على Android 16؛ أما منفذ API 102 المدمج فيحتاج تحققًا حيًا على الجهاز قبل نشر APK موقع. وليس هذا ادعاءً بأن كل تطبيق يتعامل مع Back بالطريقة نفسها.
 
 ### Debloat Profiles
 
@@ -121,13 +132,14 @@ v1.0.1 APK SHA-256:
 
 ## English
 
-EvoX Quick Fix is an open-source root utility for five narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
+EvoX Quick Fix is an open-source root utility for six narrow Android 16 custom-ROM issues on the Galaxy S23 family, plus an optional recoverable debloat profile:
 
 - Transparent Recent Apps scrim in dark and light modes.
 - A narrowly scoped Back Guard for the verified Quick Search Home build.
 - A safe external-storage folder fix for the exact Quick Search build, including APK results: containing-folder intents are routed to DocumentsUI after the invalid URI grant is removed, with no silent APK installation and no default-handler change.
 - A systemless declaration for the missing Google Circle to Search feature.
 - A guarded LE Audio workaround for the tested SM-S918B ROM: LC3 stereo 48 kHz / 160 kbps playback with a 32 kHz headset microphone during calls, tested with WH-1000XM6 and Discord.
+- **Optional OneBack in v1.3.0-beta.1:** with HeliBoard on Android 16, the first Back is passed to the foreground app so it can leave the current screen instead of the keyboard consuming it only to hide the IME. The normal hide-keyboard button is unchanged.
 - A fixed 104-package debloat profile with explicit selection, ownership ledger and exact rollback.
 
 ### Beginner requirements
@@ -136,7 +148,7 @@ EvoX Quick Fix is an open-source root utility for five narrow Android 16 custom-
 - **Magic Mount-rs:** is used by transparency and is required by Circle only when the system feature is missing; no redundant Circle module is installed when the ROM already declares it.
 - **Launcher3 / Quickstep:** supplies Recents and Circle integration.
 - **Quick Search:** the Home app in the verified setup; only the exact-version/hash Quick Search hooks require it.
-- **Vector:** loads the Back Guard and APK-result folder hooks only inside Quick Search; Circle and Debloat do not require it.
+- **Vector / libxposed API 102:** loads the Back Guard and APK-result folder hooks inside Quick Search, and the optional OneBack hook inside HeliBoard only; Circle and Debloat do not require it.
 - **Google app:** the Circle provider. It is hard-protected and never offered as a debloat target.
 
 ### Compatibility
@@ -148,7 +160,7 @@ EvoX Quick Fix is an open-source root utility for five narrow Android 16 custom-
 | S23 FE / SM-S711* | Unsupported |
 | Magisk, work profiles, secondary users | Unsupported |
 
-Transparency and the Quick Search hooks remain locked to the exact verified SM-S918B/Quick Search environment. The folder hook repairs Quick Search external-storage containing-folder intents, including APK results, by routing them to DocumentsUI after removing the invalid URI grant; it changes no registered handler or default app. Circle is independent and can run on a compatible S23 with Launcher3, the Google provider, contextual_search and KernelSU; Magic Mount-rs is additionally required only when the missing feature declaration must be supplied.
+Transparency and the Quick Search hooks remain locked to the exact verified SM-S918B/Quick Search environment. The folder hook repairs Quick Search external-storage containing-folder intents, including APK results, by routing them to DocumentsUI after removing the invalid URI grant; it changes no registered handler or default app. Circle is independent and can run on a compatible S23 with Launcher3, the Google provider, contextual_search and KernelSU; Magic Mount-rs is additionally required only when the missing feature declaration must be supplied. OneBack is scoped only to HeliBoard on Android 16; this is not a claim of universal compatibility with every foreground app, whose Back handling may differ.
 
 ### Install
 
@@ -159,13 +171,17 @@ Transparency and the Quick Search hooks remain locked to the exact verified SM-S
 5. Apply each fix group independently; both Quick Search hooks share one Vector action. That action and “Apply the four fixes” intentionally restart Quick Search and switch to Home; that is not a crash.
 6. Reopen the app for the persisted result and restart prompt.
 
+### Migrating to v1.3.0-beta.1
+
+This release adds OneBack as an optional EvoX Quick Fix feature through Vector / libxposed API 102. If the standalone OneBack module (`dev.oneback.ime`) is enabled, disable it before enabling the integrated feature to avoid duplicate hooks. Use the dedicated OneBack enable or disable control, then run its built-in test to verify the scope and behavior.
+
 ### Migrating to v1.2.0-beta.2
 
 Beta.2 updates beta.1 directly using the same signing key. It bundles LE Audio module 1.2 for simultaneous headset playback and microphone use. An exact known v1.1 module is upgraded through KernelSU staging and requires a reboot; installing the APK alone does not apply the audio fix.
 
 ### Migrating to v1.2.0-beta.1
 
-This release uses a new signing key and cannot update an APK signed with the old key. Before uninstalling the old app, use a root-capable backup to preserve app data, the debloat ownership ledger and Vector configuration. Uninstalling erases local app data; installed fix modules do not reconstruct the ownership ledger. After reinstalling, restore the data and verify KernelSU authorization and Vector enablement/Quick Search scope.
+This release uses a new signing key and cannot update an APK signed with the old key. Before uninstalling the old app, use a root-capable backup to preserve app data, the debloat ownership ledger and Vector configuration. Uninstalling erases local app data; installed fix modules do not reconstruct the ownership ledger. After reinstalling, restore the data and verify KernelSU authorization and Vector enablement/Quick Search scope, plus HeliBoard scope if you later enable integrated OneBack.
 
 ### Independent LE Audio fix
 
@@ -176,6 +192,12 @@ Exact known v1.1 modules are offered an upgrade, and exact standalone v1.2 modul
 The workaround uses LC3 over one CIS: 150-byte playback and 60-byte microphone SDUs every 7.5 ms. It does not enable GMAP, flash headphone firmware or change stored codec preferences. Validation on the tested device/ROM does not establish that all decoder-initialization cases in other applications or ROMs are fixed.
 
 [LE Audio validation and reboot results](docs/LE_AUDIO.md).
+
+### Optional OneBack for HeliBoard
+
+OneBack is independent of the Quick Search fixes, LE Audio and Debloat. Enabling it adds only HeliBoard to this module's Vector scope and loads a libxposed API 102 hook inside the HeliBoard process; it does not hook `system_server` or synthesize a Back event. While the keyboard is visible, the first Back reaches the foreground app so the app can perform its normal navigation instead of HeliBoard consuming that Back only to hide the IME. The navigation bar's regular hide-keyboard button continues to work normally.
+
+Dedicated **Enable**, **Disable**, and built-in test controls are provided. OneBack is not part of “Apply the four fixes,” and **Restore ROM behavior** does not disable it. Disabling OneBack removes only the HeliBoard scope for this module and leaves the Quick Search scope intact. The behavior was validated live in the standalone OneBack module with HeliBoard on Android 16; the integrated API 102 port still needs live device validation before a signed APK is published. It does not promise identical Back behavior in every app.
 
 ### Debloat safety model
 

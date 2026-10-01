@@ -5,6 +5,7 @@
 *.prop text eol=lf
 *.marker text eol=lf
 *.list text eol=lf
+*.txt text eol=lf
 app/src/main/assets/**/skip_mount text eol=lf
 *.md text eol=lf
 *.yml text eol=lf

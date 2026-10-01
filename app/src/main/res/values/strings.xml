@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EvoX Quick Fix</string>
-    <string name="app_description">Recoverable KernelSU fixes and carefully controlled debloat profiles for Galaxy S23 devices</string>
+    <string name="app_description">Recoverable KernelSU and Vector fixes, optional HeliBoard OneBack, and controlled debloat profiles for Galaxy S23 devices</string>
 
-    <string name="home_subtitle">Independent, recoverable fixes for Recent Apps, Quick Search Back/APK results, Circle to Search and optional package controls.</string>
-    <string name="home_safety">Nothing is disabled by installing this update. Core fixes and Debloat Profiles are separate, and the app never deletes APKs or app data.</string>
+    <string name="home_subtitle">Independent, recoverable fixes for Recent Apps, Quick Search, Circle to Search, optional HeliBoard OneBack and package controls.</string>
+    <string name="home_safety">Nothing is disabled by installing this update. The four core fixes, optional OneBack, LE Audio and Debloat Profiles are independent, and the app never deletes APKs or app data.</string>
     <string name="first_run_title">Before you start</string>
-    <string name="first_run_message">Root gives an app full system access. EvoX Quick Fix supports KernelSU on Android 16 only. Launcher3 supplies Recents and Circle integration; Vector is needed only for the verified Quick Search fixes. The folder fix repairs Quick Search external-storage folder actions, including APK results, and never installs an APK silently. Debloat is optional: every package starts on Keep, and only packages you select are disabled for user 0. Read Help before changing anything and keep ADB/Recovery available.</string>
+    <string name="first_run_message">Root gives an app full system access. EvoX Quick Fix supports KernelSU on Android 16 only. Launcher3 supplies Recents and Circle integration. Vector loads the verified Quick Search hooks and, only when you enable it separately, OneBack inside HeliBoard. The folder fix never installs an APK silently. Debloat is optional: every package starts on Keep, and only packages you select are disabled for user 0. Read Help before changing anything and keep ADB/Recovery available.</string>
     <string name="open_help">Open Help</string>
     <string name="continue_label">Continue</string>
     <string name="section_diagnostics">Independent diagnostics</string>
     <string name="section_actions">Fixes</string>
+    <string name="section_one_back">OneBack for HeliBoard (optional)</string>
     <string name="section_recovery">Recovery</string>
     <string name="status_idle">Ready to inspect</string>
     <string name="status_inspecting">Inspecting the device and current state…</string>
@@ -30,6 +31,21 @@
     <string name="action_transparency">Recent Apps transparency</string>
     <string name="action_back_guard">Quick Search fixes: Back + APK results</string>
     <string name="action_circle">Enable Circle to Search</string>
+    <string name="action_one_back_enable">Enable OneBack for HeliBoard</string>
+    <string name="action_one_back_disable">Disable OneBack for HeliBoard</string>
+    <string name="action_one_back_test">Open the OneBack test</string>
+    <string name="one_back_description">When HeliBoard is open, OneBack lets the first system Back press or edge gesture leave the current screen instead of being consumed only to hide the keyboard. HeliBoard’s own hide-key still hides it normally. This hook is scoped only to helium314.keyboard.</string>
+    <string name="one_back_status_heliboard_missing">Unavailable: HeliBoard (helium314.keyboard) is not installed.</string>
+    <string name="one_back_status_unavailable">Unavailable: review the Android 16, root, user 0 and Vector checks.</string>
+    <string name="one_back_status_standalone_conflict">Conflict: the standalone dev.oneback.ime module is enabled in Vector. Disable it before enabling or testing integrated OneBack.</string>
+    <string name="one_back_status_module_disabled">Configured for HeliBoard, but the EvoX Quick Fix module is disabled in Vector. Enable OneBack to turn it back on.</string>
+    <string name="one_back_status_active">Active: HeliBoard is the default keyboard and its Vector scope is enabled. The built-in test is ready.</string>
+    <string name="one_back_status_active_not_default">Enabled for HeliBoard, but HeliBoard is not the current default keyboard. Select it before testing.</string>
+    <string name="one_back_status_ready">Ready but off: HeliBoard is the default keyboard. Enable OneBack when you want this behavior.</string>
+    <string name="one_back_status_ready_not_default">Ready but off: HeliBoard is installed but is not the current default keyboard.</string>
+    <string name="one_back_test_title">OneBack test</string>
+    <string name="one_back_test_instructions">HeliBoard should open automatically below. With the keyboard visible, press the system Back button or use one edge-back gesture once. Success means this screen closes immediately and returns to EvoX Quick Fix. HeliBoard’s own hide-key should still hide only the keyboard.</string>
+    <string name="one_back_test_hint">Type anything here, then test Back once…</string>
     <string name="action_debloat">Debloat Profiles</string>
     <string name="action_help">Help &amp; About</string>
     <string name="action_reboot">Restart device</string>
@@ -39,7 +55,7 @@
     <string name="dialog_departure_title">Expected switch to Home</string>
     <string name="dialog_departure_message">The Quick Search fixes restart Quick Search and intentionally send you to Home. This is not a crash. Open EvoX Quick Fix again to see the stored result and restart prompt.</string>
     <string name="dialog_restore_title">Restore ROM behavior</string>
-    <string name="dialog_restore_message">This restores only transparency, the Quick Search hooks and Circle settings owned by the core fixes. Debloat has its own separate ledger and restore button.</string>
+    <string name="dialog_restore_message">This restores only transparency, the Quick Search hooks and Circle settings owned by the four core fixes. It does not change optional OneBack, LE Audio or Debloat; each has separate controls.</string>
     <string name="dialog_reboot_title">Restart device</string>
     <string name="dialog_reboot_message">Save your work first. Restart now?</string>
     <string name="dialog_reboot_now">Restart</string>
@@ -60,13 +76,14 @@
     <string name="error_quicksearch_requirements">The Quick Search hooks require the verified SM-S918B/Android 16/user 0 build, HOME role, DocumentsUI and Vector.</string>
     <string name="error_vector_scope_confirmation">Vector did not confirm the module and Quick Search scope.</string>
     <string name="result_quicksearch_hooks_applied">Back Guard and Quick Search file-folder routing are enabled through Vector.</string>
-    <string name="emergency_core">If Android does not boot, disable the two systemless modules from ADB/Recovery and restart:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nThe Quick Search Back/APK-result hooks are removed by disabling EvoX Quick Fix in Vector and restarting Quick Search.</string>
-    <string name="footer_version">Version 1.2.0-beta.2 • no INTERNET permission</string>
+    <string name="emergency_core">If Android does not boot, disable the two systemless modules from ADB/Recovery and restart:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nQuick Search hooks are removed by disabling EvoX Quick Fix in Vector and restarting Quick Search. To remove only OneBack, remove HeliBoard from this module’s Vector scope and restart HeliBoard.</string>
+    <string name="footer_version">Version 1.3.0-beta.1 • no INTERNET permission</string>
 
     <string name="feature_transparency">Recent Apps transparency</string>
     <string name="feature_back_guard">Back Guard</string>
     <string name="feature_apk_results">Quick Search APK/file folders</string>
     <string name="feature_circle">Circle to Search</string>
+    <string name="feature_one_back">OneBack for HeliBoard (optional)</string>
     <string name="feature_debloat">Debloat Profiles</string>
     <string name="check_root">Root access</string>
     <string name="check_device">Galaxy S23 family / Android 16 / user 0</string>
@@ -77,6 +94,10 @@
     <string name="check_quicksearch_home">Quick Search holds HOME</string>
     <string name="check_documentsui">System Files app for Quick Search folders</string>
     <string name="check_vector">Vector API 102</string>
+    <string name="check_heliboard">HeliBoard installed</string>
+    <string name="check_heliboard_default">HeliBoard is the default keyboard</string>
+    <string name="check_one_back_scope">Vector HeliBoard hook scope</string>
+    <string name="check_one_back_standalone_disabled">Standalone OneBack module disabled</string>
     <string name="check_magic_mount">Magic Mount-rs (when the Circle feature is missing)</string>
     <string name="check_google_provider">Google contextual provider</string>
     <string name="check_contextual_service">contextual_search service</string>
@@ -93,11 +114,11 @@
 
     <string name="help_title">Help &amp; About</string>
     <string name="help_beginner_title">What each component does</string>
-    <string name="help_beginner_body">KernelSU grants controlled root access. Magic Mount-rs lets a small module add a missing system feature without editing /system. Launcher3 provides Quickstep/Recents. Quick Search is your HOME app. Vector loads two exact-build hooks only inside Quick Search: Back Guard and a router that repairs external-storage containing-folder actions, including the “Unable to open Download” APK-result case, through the system Files app. It never installs an APK silently. Google provides Circle to Search. Debloat Profiles only disable selected packages for user 0 and keep an ownership ledger for exact rollback.</string>
+    <string name="help_beginner_body">KernelSU grants controlled root access. Magic Mount-rs lets a small module add a missing system feature without editing /system. Launcher3 provides Quickstep/Recents. Quick Search is your HOME app. Vector loads exact-build hooks inside their scoped apps: Back Guard and folder routing only in Quick Search, plus optional OneBack only in HeliBoard. OneBack lets the first system Back press or edge gesture reach the app while the keyboard is visible; HeliBoard’s own hide-key remains unchanged. It does not hook system_server or synthesize a Back event. Google provides Circle to Search. Debloat only disables selected packages for user 0 and keeps a ledger for exact rollback.</string>
     <string name="help_compat_title">Compatibility</string>
-    <string name="help_compat_body">Fully tested: SM-S918B on Android 16, user 0, KernelSU. Experimental: SM-S911* and SM-S916*. S23 FE, Magisk, work profiles and secondary users are not supported. Transparency and the Quick Search hooks stay locked to the verified SM-S918B environment and Quick Search 4.1.1 (78) APK hash.</string>
+    <string name="help_compat_body">Fully tested: SM-S918B on Android 16, user 0, KernelSU. Experimental: SM-S911* and SM-S916*. S23 FE, Magisk, work profiles and secondary users are not supported. Transparency and Quick Search hooks stay locked to the verified SM-S918B environment and Quick Search 4.1.1 (78) APK hash. OneBack additionally requires HeliBoard (helium314.keyboard), Vector API 102 and HeliBoard as the active keyboard for the built-in test.</string>
     <string name="help_risk_title">Risk and recovery</string>
-    <string name="help_risk_body">Root and package disabling can break boot, calls, emergency alerts or apps. Start with one optional package. The app never runs Disable All, never uses pm uninstall and never clears data. Keep a real backup and ADB/Recovery access.</string>
+    <string name="help_risk_body">Root and package disabling can break boot, calls, emergency alerts or apps. Start with one optional package. OneBack can be removed without disabling the Quick Search hooks by using its own Disable button. The app never runs Disable All, never uses pm uninstall and never clears data. Keep a real backup and ADB/Recovery access.</string>
     <string name="help_language_title">Language</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>

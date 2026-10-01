@@ -45,6 +45,10 @@ public final class MainActivity extends Activity {
     private Button backButton;
     private Button circleButton;
     private Button debloatButton;
+    private Button oneBackEnableButton;
+    private Button oneBackDisableButton;
+    private Button oneBackTestButton;
+    private TextView oneBackStatus;
     private Button leAudioButton;
     private Button leAudioDisableButton;
     private TextView leAudioStatus;
@@ -144,6 +148,23 @@ public final class MainActivity extends Activity {
                 view -> runOperation(OperationStateStore.OP_CIRCLE,
                         R.string.action_circle, fixes::applyCircleToSearch, false));
         root.addView(circleButton);
+
+        root.addView(sectionTitle(getString(R.string.section_one_back)));
+        root.addView(cardText(getString(R.string.one_back_description)), cardParams());
+        oneBackStatus = cardText(getString(R.string.status_inspecting));
+        root.addView(oneBackStatus, cardParams());
+        oneBackEnableButton = actionButton(getString(R.string.action_one_back_enable),
+                view -> runOperation(OperationStateStore.OP_ONE_BACK,
+                        R.string.action_one_back_enable, fixes::enableOneBack, false));
+        root.addView(oneBackEnableButton);
+        oneBackDisableButton = actionButton(getString(R.string.action_one_back_disable),
+                view -> runOperation(OperationStateStore.OP_ONE_BACK_DISABLE,
+                        R.string.action_one_back_disable, fixes::disableOneBack, false));
+        oneBackDisableButton.setTextColor(DANGER);
+        root.addView(oneBackDisableButton);
+        oneBackTestButton = actionButton(getString(R.string.action_one_back_test),
+                view -> startActivity(new Intent(this, ImeBackTestActivity.class)));
+        root.addView(oneBackTestButton);
 
         root.addView(sectionTitle(getString(R.string.feature_le_audio)));
         root.addView(cardText(getString(R.string.le_audio_description)), cardParams());
@@ -278,6 +299,7 @@ public final class MainActivity extends Activity {
                     featureStatus.setText(featureCards(report));
                     operationStatus.setText(report.transparencySupported
                             || report.backGuardSupported || report.circleSupported
+                            || report.oneBackSupported
                             || report.debloatSupported
                             || report.leAudio.canApply() || report.leAudio.canDisable()
                             ? R.string.status_device_ready : R.string.status_review);
@@ -297,6 +319,7 @@ public final class MainActivity extends Activity {
                 + "\n" + featureLine(R.string.feature_apk_results,
                 report.backGuardSupported)
                 + "\n" + featureLine(R.string.feature_circle, report.circleSupported)
+                + "\n" + featureLine(R.string.feature_one_back, report.oneBackSupported)
                 + "\n" + featureLine(R.string.feature_debloat, report.debloatSupported);
     }
 
@@ -312,6 +335,14 @@ public final class MainActivity extends Activity {
         backButton.setEnabled(report.backGuardSupported);
         circleButton.setEnabled(report.circleSupported);
         debloatButton.setEnabled(report.debloatSupported || report.debloatRestoreSupported);
+        boolean oneBackActive = report.vectorModuleEnabled && report.vectorImeScopeReady;
+        oneBackEnableButton.setEnabled(report.oneBackSupported && !oneBackActive
+                && !report.standaloneOneBackEnabled);
+        oneBackDisableButton.setEnabled(report.root && report.vectorReady
+                && report.vectorImeScopeReady);
+        oneBackTestButton.setEnabled(oneBackActive && report.heliBoardPresent
+                && report.heliBoardDefaultIme && !report.standaloneOneBackEnabled);
+        oneBackStatus.setText(oneBackStatus(report));
         leAudioButton.setEnabled(report.leAudio.canApply());
         leAudioDisableButton.setEnabled(report.leAudio.canDisable());
         leAudioStatus.setText(report.leAudio.state().label);
@@ -386,8 +417,33 @@ public final class MainActivity extends Activity {
             case OperationStateStore.OP_RESTORE -> R.string.action_restore;
             case OperationStateStore.OP_LE_AUDIO -> R.string.action_le_audio;
             case OperationStateStore.OP_LE_AUDIO_DISABLE -> R.string.action_le_audio_disable;
+            case OperationStateStore.OP_ONE_BACK -> R.string.action_one_back_enable;
+            case OperationStateStore.OP_ONE_BACK_DISABLE -> R.string.action_one_back_disable;
             default -> R.string.app_name;
         });
+    }
+
+    private String oneBackStatus(DiagnosticReport report) {
+        if (!report.heliBoardPresent) {
+            return getString(R.string.one_back_status_heliboard_missing);
+        }
+        if (!report.oneBackSupported) {
+            return getString(R.string.one_back_status_unavailable);
+        }
+        if (report.standaloneOneBackEnabled) {
+            return getString(R.string.one_back_status_standalone_conflict);
+        }
+        if (report.vectorImeScopeReady && !report.vectorModuleEnabled) {
+            return getString(R.string.one_back_status_module_disabled);
+        }
+        if (report.vectorImeScopeReady) {
+            return getString(report.heliBoardDefaultIme
+                    ? R.string.one_back_status_active
+                    : R.string.one_back_status_active_not_default);
+        }
+        return getString(report.heliBoardDefaultIme
+                ? R.string.one_back_status_ready
+                : R.string.one_back_status_ready_not_default);
     }
 
     private void showRestartPrompt() {

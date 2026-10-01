@@ -9,7 +9,7 @@ This project changes rooted Android systems, so small and auditable pull request
 5. Run:
 
    ~~~sh
-   ./gradlew testDebugUnitTest lintDebug assembleDebug
+   ./gradlew testDebugUnitTest lintRelease assembleRelease
    ~~~
 
 6. Never submit signing files, passwords, local.properties, device state, or generated root ledgers.

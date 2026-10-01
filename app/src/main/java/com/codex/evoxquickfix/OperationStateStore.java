@@ -12,6 +12,8 @@ final class OperationStateStore {
     static final String OP_RESTORE = "restore";
     static final String OP_LE_AUDIO = "le_audio_music";
     static final String OP_LE_AUDIO_DISABLE = "le_audio_disable";
+    static final String OP_ONE_BACK = "one_back";
+    static final String OP_ONE_BACK_DISABLE = "one_back_disable";
 
     enum State {
         NONE,
@@ -96,6 +98,18 @@ final class OperationStateStore {
                 case DISABLE_PENDING, REMOVING -> State.REBOOT_REQUIRED;
                 default -> State.FAILED;
             };
+            case OP_ONE_BACK -> report.oneBackSupported
+                    && report.vectorScopeObserved
+                    && report.vectorModuleEnabled
+                    && report.vectorImeScopeReady
+                    && !report.standaloneOneBackEnabled
+                    ? State.APPLIED : State.FAILED;
+            case OP_ONE_BACK_DISABLE -> report.root
+                    && report.systemUser
+                    && report.vectorReady
+                    && report.vectorScopeObserved
+                    && !report.vectorImeScopeReady
+                    ? State.APPLIED : State.FAILED;
             case OP_BACK -> backApplied ? State.APPLIED : State.FAILED;
             case OP_ALL -> transparencyApplied && backApplied
                     && circleState != State.FAILED ? circleState : State.FAILED;

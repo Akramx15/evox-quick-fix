@@ -57,4 +57,57 @@ public final class OperationStateStoreTest {
         assertEquals(OperationStateStore.State.REBOOT_REQUIRED,
                 OperationStateStore.reconcileState(OperationStateStore.OP_RESTORE, report));
     }
+
+    @Test
+    public void oneBackEnableRequiresItsScopeAndTheSharedModule() {
+        DiagnosticReport report = new DiagnosticReport();
+        report.android16 = true;
+        report.root = true;
+        report.systemUser = true;
+        report.vectorReady = true;
+        report.vectorModulesObserved = true;
+        report.vectorScopeObserved = true;
+        report.heliBoardPresent = true;
+        report.oneBackSupported = DeviceDiagnostics.supportsOneBack(report);
+        report.vectorModuleEnabled = true;
+        assertEquals(OperationStateStore.State.FAILED,
+                OperationStateStore.reconcileState(OperationStateStore.OP_ONE_BACK, report));
+
+        report.vectorImeScopeReady = true;
+        assertEquals(OperationStateStore.State.APPLIED,
+                OperationStateStore.reconcileState(OperationStateStore.OP_ONE_BACK, report));
+
+        report.vectorScopeObserved = false;
+        assertEquals(OperationStateStore.State.FAILED,
+                OperationStateStore.reconcileState(OperationStateStore.OP_ONE_BACK, report));
+        report.vectorScopeObserved = true;
+        report.standaloneOneBackEnabled = true;
+        assertEquals(OperationStateStore.State.FAILED,
+                OperationStateStore.reconcileState(OperationStateStore.OP_ONE_BACK, report));
+    }
+
+    @Test
+    public void oneBackDisableOnlyRequiresItsOwnScopeToBeAbsent() {
+        DiagnosticReport report = new DiagnosticReport();
+        report.root = true;
+        report.systemUser = true;
+        report.vectorReady = true;
+        report.vectorScopeObserved = true;
+        report.vectorModuleEnabled = true;
+        report.vectorScopeReady = true;
+        report.vectorImeScopeReady = true;
+        assertEquals(OperationStateStore.State.FAILED,
+                OperationStateStore.reconcileState(
+                        OperationStateStore.OP_ONE_BACK_DISABLE, report));
+
+        report.vectorImeScopeReady = false;
+        assertEquals(OperationStateStore.State.APPLIED,
+                OperationStateStore.reconcileState(
+                        OperationStateStore.OP_ONE_BACK_DISABLE, report));
+
+        report.vectorScopeObserved = false;
+        assertEquals(OperationStateStore.State.FAILED,
+                OperationStateStore.reconcileState(
+                        OperationStateStore.OP_ONE_BACK_DISABLE, report));
+    }
 }

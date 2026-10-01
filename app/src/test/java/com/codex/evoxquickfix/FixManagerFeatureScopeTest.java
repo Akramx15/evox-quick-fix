@@ -27,4 +27,12 @@ public class FixManagerFeatureScopeTest {
         assertTrue(FixManager.ALL_SCOPE.back());
         assertTrue(FixManager.ALL_SCOPE.circle());
     }
+
+    @Test
+    public void quickSearchRestoreKeepsSharedModuleForEveryRemainingScope() {
+        assertFalse(FixManager.vectorModuleRequiredAfterScopeRestore(false, false));
+        assertTrue(FixManager.vectorModuleRequiredAfterScopeRestore(true, false));
+        assertTrue(FixManager.vectorModuleRequiredAfterScopeRestore(false, true));
+        assertTrue(FixManager.vectorModuleRequiredAfterScopeRestore(true, true));
+    }
 }

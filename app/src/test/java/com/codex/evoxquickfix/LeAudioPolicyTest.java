@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,6 +18,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.junit.Rule;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -155,8 +157,8 @@ public final class LeAudioPolicyTest {
                 java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         assertFalse(verify(current) == 0);
         String state = LeAudioPolicy.verificationFunctions() + "fail() { exit 41; }\ncurrent="
-                + ShellEscaper.quote(current.toString()) + "\nupdate="
-                + ShellEscaper.quote(update.toString()) + "\n" + LeAudioPolicy.moduleState();
+                + quoteShellPath(current) + "\nupdate="
+                + quoteShellPath(update) + "\n" + LeAudioPolicy.moduleState();
         assertFalse(run(state) == 0);
         Files.createFile(current.resolve("update"));
         assertEquals(0, run(state + "[ \"$current_version\" = legacy ] && [ \"$update_version\" = current ]\n"));
@@ -168,8 +170,8 @@ public final class LeAudioPolicyTest {
         assertFalse(run(state) == 0);
         writeText(current.resolve("mode.txt"), "music\n");
         assertEquals(0, run(state));
-        String absent = state.replace("update=" + ShellEscaper.quote(update.toString()),
-                "update=" + ShellEscaper.quote(update.resolve("missing").toString()));
+        String absent = state.replace("update=" + quoteShellPath(update),
+                "update=" + quoteShellPath(update.resolve("missing")));
         assertFalse(run(absent) == 0);
     }
 
@@ -206,9 +208,9 @@ public final class LeAudioPolicyTest {
             if (scenario == 1) writeText(update.resolve("service.sh"), "modified\n");
             Path enabled = temporary.getRoot().toPath().resolve("enabled-" + scenario);
             String script = LeAudioPolicy.verificationFunctions()
-                    + "fail() { exit 41; }\nksud() { : > " + ShellEscaper.quote(enabled.toString())
-                    + "; }\ncurrent=" + ShellEscaper.quote(current.toString())
-                    + "\nupdate=" + ShellEscaper.quote(update.toString())
+                    + "fail() { exit 41; }\nksud() { : > " + quoteShellPath(enabled)
+                    + "; }\ncurrent=" + quoteShellPath(current)
+                    + "\nupdate=" + quoteShellPath(update)
                     + "\ninstall_result=" + (scenario == 0 ? 12 : 0) + "\n"
                     + LeAudioManager.finishFreshInstallScript();
             int result = run(script);
@@ -237,9 +239,9 @@ public final class LeAudioPolicyTest {
             before.put(file, Files.readAllBytes(current.resolve(file)));
         Path enabled = temporary.getRoot().toPath().resolve("migration-enabled");
         String script = LeAudioPolicy.verificationFunctions()
-                + "fail() { exit 41; }\nksud() { : > " + ShellEscaper.quote(enabled.toString())
-                + "; }\ncurrent=" + ShellEscaper.quote(current.toString())
-                + "\nupdate=" + ShellEscaper.quote(update.toString()) + "\ninstall_result=0\n"
+                + "fail() { exit 41; }\nksud() { : > " + quoteShellPath(enabled)
+                + "; }\ncurrent=" + quoteShellPath(current)
+                + "\nupdate=" + quoteShellPath(update) + "\ninstall_result=0\n"
                 + LeAudioManager.finishFreshInstallScript();
         assertEquals(0, run(script));
         assertTrue(Files.isRegularFile(enabled));
@@ -249,14 +251,29 @@ public final class LeAudioPolicyTest {
                     Files.readAllBytes(current.resolve(entry.getKey())));
     }
 
-    @Test public void unknownFilesAndSymlinksAreRejectedWithoutWriting() throws Exception {
+    @Test public void unknownFilesAreRejected() throws Exception {
         Path module = copyModule();
         writeText(module.resolve("extra-service.sh"), "exit 0\n");
         assertFalse(verify(module) == 0);
         Files.delete(module.resolve("extra-service.sh"));
-        writeText(module.resolve("extra\nfile"), "keep\n");
+        assertEquals(0, verify(module));
+    }
+
+    @Test public void newlineFileNamesAreRejectedWhenSupported() throws Exception {
+        Path module = copyModule();
+        Assume.assumeTrue("filesystem cannot represent newline file names",
+                canRepresentNewlineFileName(module));
+        Path newline = module.resolve("extra\nfile");
+        writeText(newline, "keep\n");
         assertFalse(verify(module) == 0);
-        Files.delete(module.resolve("extra\nfile"));
+        Files.delete(newline);
+        assertEquals(0, verify(module));
+    }
+
+    @Test public void symlinksAreRejectedWithoutWritingWhenSupported() throws Exception {
+        Assume.assumeTrue("filesystem or account cannot create symbolic links",
+                symbolicLinksSupported());
+        Path module = copyModule();
         Path external = temporary.newFile("external").toPath();
         writeText(external, "keep me\n");
         Files.createSymbolicLink(module.resolve("status.txt"), external);
@@ -278,8 +295,8 @@ public final class LeAudioPolicyTest {
         Files.createFile(current.resolve("update"));
         Path update = copyModule();
         Files.delete(update.resolve("customize.sh"));
-        String script = "fail() { exit 41; }\ncurrent=" + ShellEscaper.quote(current.toString())
-                + "\nupdate=" + ShellEscaper.quote(update.toString()) + "\n"
+        String script = "fail() { exit 41; }\ncurrent=" + quoteShellPath(current)
+                + "\nupdate=" + quoteShellPath(update) + "\n"
                 + LeAudioPolicy.moduleState();
         assertEquals(0, run(LeAudioPolicy.verificationFunctions() + script));
         assertEquals(0, run(LeAudioPolicy.verificationFunctions() + script
@@ -355,11 +372,52 @@ public final class LeAudioPolicyTest {
 
     private int verify(Path module) throws Exception {
         return run(LeAudioPolicy.verificationFunctions() + "verify_module "
-                + ShellEscaper.quote(module.toString()));
+                + quoteShellPath(module));
+    }
+
+    private static String quoteShellPath(Path path) {
+        String value = path.toAbsolutePath().normalize().toString();
+        if (value.length() >= 3 && Character.isLetter(value.charAt(0))
+                && value.charAt(1) == ':'
+                && (value.charAt(2) == '\\' || value.charAt(2) == '/')) {
+            value = "/" + Character.toLowerCase(value.charAt(0))
+                    + value.substring(2).replace('\\', '/');
+        } else if (value.startsWith("\\\\")) {
+            value = value.replace('\\', '/');
+        }
+        return ShellEscaper.quote(value);
+    }
+
+    private static boolean canRepresentNewlineFileName(Path directory) {
+        try {
+            directory.resolve("capability\nprobe");
+            return true;
+        } catch (InvalidPathException unsupported) {
+            return false;
+        }
+    }
+
+    private boolean symbolicLinksSupported() throws Exception {
+        Path root = temporary.getRoot().toPath();
+        Path target = Files.createTempFile(root, "symlink-target-", ".tmp");
+        Path link = root.resolve("symlink-capability-" + java.util.UUID.randomUUID());
+        try {
+            Files.createSymbolicLink(link, target.getFileName());
+            return Files.isSymbolicLink(link);
+        } catch (java.nio.file.FileSystemException | UnsupportedOperationException
+                | SecurityException unsupported) {
+            return false;
+        } finally {
+            Files.deleteIfExists(link);
+            Files.deleteIfExists(target);
+        }
     }
 
     private int run(String script) throws Exception {
-        Process process = new ProcessBuilder("sh", "-c", script).redirectErrorStream(true).start();
+        Process process = new ProcessBuilder("sh").redirectErrorStream(true).start();
+        try (var input = process.getOutputStream()) {
+            input.write(script.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
         boolean finished = process.waitFor(10, TimeUnit.SECONDS);
         if (!finished) process.destroyForcibly();
         assertTrue("guard timed out", finished);

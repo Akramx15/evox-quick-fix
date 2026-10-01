@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EvoX Quick Fix</string>
-    <string name="app_description">إصلاحات KernelSU قابلة للاسترجاع وخيارات دبلوت مضبوطة لأجهزة Galaxy S23</string>
+    <string name="app_description">إصلاحات KernelSU وVector قابلة للاسترجاع، وOneBack اختياري لـHeliBoard، وخيارات دبلوت مضبوطة لأجهزة Galaxy S23</string>
 
-    <string name="home_subtitle">إصلاحات مستقلة وقابلة للاسترجاع لـRecent Apps وBack ونتائج APK في Quick Search وCircle to Search، مع تحكم اختياري بالحزم.</string>
-    <string name="home_safety">تثبيت هذا التحديث لا يعطل أي حزمة. إصلاحات النظام والدبلوت منفصلان، والتطبيق لا يحذف APK أو بيانات التطبيقات.</string>
+    <string name="home_subtitle">إصلاحات مستقلة وقابلة للاسترجاع لـRecent Apps وQuick Search وCircle to Search، مع OneBack اختياري لـHeliBoard وتحكم بالحزم.</string>
+    <string name="home_safety">تثبيت هذا التحديث لا يعطل أي حزمة. الإصلاحات الأربعة وOneBack وLE Audio والدبلوت خيارات مستقلة، والتطبيق لا يحذف APK أو بيانات التطبيقات.</string>
     <string name="first_run_title">قبل أن تبدأ</string>
-    <string name="first_run_message">صلاحية Root تمنح التطبيق وصولًا كاملًا للنظام. تدعم الأداة KernelSU على Android 16 فقط. Launcher3 يوفر Recents وتكامل Circle، وVector مطلوب فقط لإصلاحات Quick Search المجربة. يصلح فتح مجلدات التخزين الخارجي من Quick Search، ومنها مجلد نتائج APK، ولا يثبت أي APK بصمت. الدبلوت اختياري: كل حزمة تبدأ على Keep، ولا تُعطل إلا ما تختاره للمستخدم 0. اقرأ المساعدة واحتفظ بوصول ADB/Recovery.</string>
+    <string name="first_run_message">صلاحية Root تمنح التطبيق وصولًا كاملًا للنظام. تدعم الأداة KernelSU على Android 16 فقط. يوفر Launcher3 ‏Recents وتكامل Circle. يحمّل Vector خطافات Quick Search المتحقق منها، وعند تفعيله منفصلًا فقط، يحمّل OneBack داخل HeliBoard. إصلاح المجلدات لا يثبت أي APK بصمت. الدبلوت اختياري: كل حزمة تبدأ على Keep، ولا تُعطل إلا ما تختاره للمستخدم 0. اقرأ المساعدة واحتفظ بوصول ADB/Recovery.</string>
     <string name="open_help">فتح المساعدة</string>
     <string name="continue_label">متابعة</string>
     <string name="section_diagnostics">فحوص مستقلة</string>
     <string name="section_actions">الإصلاحات</string>
+    <string name="section_one_back">OneBack لـHeliBoard (اختياري)</string>
     <string name="section_recovery">الاسترجاع</string>
     <string name="status_idle">جاهز للفحص</string>
     <string name="status_inspecting">جارٍ فحص الجهاز والحالة الحالية…</string>
@@ -30,6 +31,21 @@
     <string name="action_transparency">شفافية Recent Apps</string>
     <string name="action_back_guard">إصلاح Quick Search: ‏Back ونتائج APK</string>
     <string name="action_circle">تفعيل Circle to Search</string>
+    <string name="action_one_back_enable">تفعيل OneBack لـHeliBoard</string>
+    <string name="action_one_back_disable">تعطيل OneBack لـHeliBoard</string>
+    <string name="action_one_back_test">فتح اختبار OneBack</string>
+    <string name="one_back_description">عندما يكون HeliBoard ظاهرًا، يجعل OneBack أول ضغطة Back من النظام أو أول إيماءة رجوع من الحافة تخرج من الشاشة الحالية بدل أن يستهلكها الكيبورد لإخفاء نفسه فقط. يبقى زر الإخفاء داخل HeliBoard طبيعيًا. نطاق الخطاف محصور في helium314.keyboard.</string>
+    <string name="one_back_status_heliboard_missing">غير متاح: ‏HeliBoard ‏(helium314.keyboard) غير مثبت.</string>
+    <string name="one_back_status_unavailable">غير متاح: راجع فحوص Android 16 وRoot والمستخدم 0 وVector.</string>
+    <string name="one_back_status_standalone_conflict">تعارض: وحدة dev.oneback.ime المستقلة مفعلة في Vector. عطّلها قبل تفعيل OneBack المدمج أو اختباره.</string>
+    <string name="one_back_status_module_disabled">تم إعداد نطاق HeliBoard، لكن وحدة EvoX Quick Fix معطلة في Vector. فعّل OneBack لتشغيلها مجددًا.</string>
+    <string name="one_back_status_active">مفعّل: ‏HeliBoard هو الكيبورد الافتراضي ونطاقه مفعّل في Vector. الاختبار المدمج جاهز.</string>
+    <string name="one_back_status_active_not_default">مفعّل لـHeliBoard، لكنه ليس الكيبورد الافتراضي حاليًا. اختره قبل الاختبار.</string>
+    <string name="one_back_status_ready">جاهز لكنه متوقف: ‏HeliBoard هو الكيبورد الافتراضي. فعّل OneBack عندما تريد هذا السلوك.</string>
+    <string name="one_back_status_ready_not_default">جاهز لكنه متوقف: ‏HeliBoard مثبت لكنه ليس الكيبورد الافتراضي حاليًا.</string>
+    <string name="one_back_test_title">اختبار OneBack</string>
+    <string name="one_back_test_instructions">يفترض أن يظهر HeliBoard تلقائيًا بالأسفل. والكيبورد ظاهر، اضغط زر Back من النظام أو نفّذ إيماءة رجوع واحدة من الحافة. ينجح الاختبار إذا أُغلقت هذه الشاشة فورًا وعدت إلى EvoX Quick Fix. يجب أن يستمر زر الإخفاء داخل HeliBoard في إخفاء الكيبورد فقط.</string>
+    <string name="one_back_test_hint">اكتب أي شيء هنا، ثم اختبر Back مرة واحدة…</string>
     <string name="action_debloat">خيارات الدبلوت</string>
     <string name="action_help">المساعدة وحول التطبيق</string>
     <string name="action_reboot">إعادة تشغيل الجهاز</string>
@@ -39,7 +55,7 @@
     <string name="dialog_departure_title">الانتقال إلى Home متوقع</string>
     <string name="dialog_departure_message">تعيد إصلاحات Quick Search تشغيله وتنقلك إلى Home عمدًا. هذا ليس crash. افتح EvoX Quick Fix مرة أخرى لرؤية النتيجة المحفوظة وطلب إعادة التشغيل.</string>
     <string name="dialog_restore_title">استرجاع وضع الروم</string>
-    <string name="dialog_restore_message">يسترجع هذا فقط الشفافية وHooks ‏Quick Search وإعدادات Circle التي تملكها الإصلاحات الأساسية. للدبلوت Ledger وزر استرجاع مستقلان.</string>
+    <string name="dialog_restore_message">يسترجع هذا فقط الشفافية وHooks ‏Quick Search وإعدادات Circle التي تملكها الإصلاحات الأربعة. لا يغير OneBack أو LE Audio أو الدبلوت؛ لكل منها تحكم مستقل.</string>
     <string name="dialog_reboot_title">إعادة تشغيل الجهاز</string>
     <string name="dialog_reboot_message">احفظ عملك أولًا. هل تريد إعادة التشغيل الآن؟</string>
     <string name="dialog_reboot_now">إعادة التشغيل</string>
@@ -60,13 +76,14 @@
     <string name="error_quicksearch_requirements">تتطلب Hooks ‏Quick Search بيئة SM-S918B وAndroid 16 والمستخدم 0 ونسخة Quick Search المطابقة ودور HOME وDocumentsUI وVector.</string>
     <string name="error_vector_scope_confirmation">لم يؤكد Vector تفعيل الوحدة ونطاق Quick Search.</string>
     <string name="result_quicksearch_hooks_applied">تم تفعيل منع Back وإصلاح فتح مجلدات الملفات في Quick Search عبر Vector.</string>
-    <string name="emergency_core">إذا لم يقلع Android، عطّل وحدتي systemless من ADB/Recovery ثم أعد التشغيل:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nتزول Hooks ‏Back ونتائج APK بتعطيل EvoX Quick Fix من Vector وإعادة تشغيل Quick Search.</string>
-    <string name="footer_version">الإصدار 1.2.0-beta.2 • بلا صلاحية INTERNET</string>
+    <string name="emergency_core">إذا لم يقلع Android، عطّل وحدتي systemless من ADB/Recovery ثم أعد التشغيل:\n\nadb shell su -c \'touch /data/adb/modules/evox_contextual_search_fix/disable; touch /data/adb/modules/evox_overview_transparency/disable; reboot\'\n\nتزول Hooks ‏Quick Search بتعطيل EvoX Quick Fix من Vector وإعادة تشغيل Quick Search. لإزالة OneBack فقط، احذف HeliBoard من نطاق هذه الوحدة في Vector ثم أعد تشغيل HeliBoard.</string>
+    <string name="footer_version">الإصدار 1.3.0-beta.1 • بلا صلاحية INTERNET</string>
 
     <string name="feature_transparency">شفافية Recent Apps</string>
     <string name="feature_back_guard">Back Guard</string>
     <string name="feature_apk_results">فتح مجلد نتائج APK والملفات في Quick Search</string>
     <string name="feature_circle">Circle to Search</string>
+    <string name="feature_one_back">OneBack لـHeliBoard (اختياري)</string>
     <string name="feature_debloat">خيارات الدبلوت</string>
     <string name="check_root">صلاحية Root</string>
     <string name="check_device">عائلة Galaxy S23 / Android 16 / المستخدم 0</string>
@@ -77,6 +94,10 @@
     <string name="check_quicksearch_home">Quick Search يحمل دور HOME</string>
     <string name="check_documentsui">تطبيق الملفات لفتح مجلدات Quick Search</string>
     <string name="check_vector">Vector API 102</string>
+    <string name="check_heliboard">HeliBoard مثبت</string>
+    <string name="check_heliboard_default">HeliBoard هو الكيبورد الافتراضي</string>
+    <string name="check_one_back_scope">نطاق HeliBoard في Vector</string>
+    <string name="check_one_back_standalone_disabled">وحدة OneBack المستقلة معطلة</string>
     <string name="check_magic_mount">Magic Mount-rs (عند غياب ميزة Circle)</string>
     <string name="check_google_provider">مزود Google Contextual Search</string>
     <string name="check_contextual_service">خدمة contextual_search</string>
@@ -93,11 +114,11 @@
 
     <string name="help_title">المساعدة وحول التطبيق</string>
     <string name="help_beginner_title">وظيفة كل مكوّن</string>
-    <string name="help_beginner_body">يمنح KernelSU وصول Root مضبوطًا. يسمح Magic Mount-rs لوحدة صغيرة بإضافة ميزة نظام مفقودة دون تعديل /system. يوفر Launcher3 ‏Quickstep وRecents. تطبيق Quick Search هو HOME. يحمّل Vector خطافين مقفلين على النسخة المجربة داخل Quick Search فقط: منع Back، وإصلاح فتح مجلدات التخزين الخارجي، ومنها حالة «تعذر فتح Download» في نتائج APK، عبر تطبيق الملفات. لا يثبت الإصلاح أي APK بصمت. يوفر Google خدمة Circle to Search. يعطل الدبلوت الحزم المختارة للمستخدم 0 فقط ويحفظ Ledger ملكية للاسترجاع الدقيق.</string>
+    <string name="help_beginner_body">يمنح KernelSU وصول Root مضبوطًا. يسمح Magic Mount-rs لوحدة صغيرة بإضافة ميزة نظام مفقودة دون تعديل /system. يوفر Launcher3 ‏Quickstep وRecents. تطبيق Quick Search هو HOME. يحمّل Vector خطافات دقيقة داخل التطبيقات الموجودة في النطاق فقط: منع Back وإصلاح فتح المجلدات داخل Quick Search، وOneBack الاختياري داخل HeliBoard فقط. يجعل OneBack أول ضغطة Back من النظام أو أول إيماءة حافة تصل إلى التطبيق والكيبورد ظاهر، ولا يغير زر إخفاء HeliBoard. لا يربط system_server ولا يصنع ضغطة Back وهمية. يوفر Google خدمة Circle to Search. يعطل الدبلوت الحزم المختارة للمستخدم 0 فقط ويحفظ Ledger للاسترجاع الدقيق.</string>
     <string name="help_compat_title">التوافق</string>
-    <string name="help_compat_body">مجرب بالكامل: SM-S918B على Android 16 والمستخدم 0 وKernelSU. تجريبي: SM-S911* وSM-S916*. لا ندعم S23 FE أو Magisk أو ملفات العمل أو المستخدمين الإضافيين. تبقى الشفافية وHooks ‏Quick Search مقفلة على بيئة SM-S918B المجربة وعلى بصمة APK لـQuick Search 4.1.1 (78).</string>
+    <string name="help_compat_body">مجرب بالكامل: SM-S918B على Android 16 والمستخدم 0 وKernelSU. تجريبي: SM-S911* وSM-S916*. لا ندعم S23 FE أو Magisk أو ملفات العمل أو المستخدمين الإضافيين. تبقى الشفافية وHooks ‏Quick Search مقفلة على بيئة SM-S918B المجربة وعلى بصمة APK لـQuick Search 4.1.1 (78). يتطلب OneBack أيضًا HeliBoard ‏(helium314.keyboard) وVector API 102، وأن يكون HeliBoard هو الكيبورد الحالي للاختبار المدمج.</string>
     <string name="help_risk_title">المخاطر والاسترجاع</string>
-    <string name="help_risk_body">قد يكسر Root أو تعطيل الحزم الإقلاع أو المكالمات أو تنبيهات الطوارئ أو التطبيقات. ابدأ بحزمة اختيارية واحدة. لا يوجد Disable All، ولا pm uninstall، ولا مسح بيانات. احتفظ بنسخة احتياطية حقيقية ووصول ADB/Recovery.</string>
+    <string name="help_risk_body">قد يكسر Root أو تعطيل الحزم الإقلاع أو المكالمات أو تنبيهات الطوارئ أو التطبيقات. ابدأ بحزمة اختيارية واحدة. يمكن إزالة OneBack من دون تعطيل Hooks ‏Quick Search باستخدام زر التعطيل المستقل. لا يوجد Disable All، ولا pm uninstall، ولا مسح بيانات. احتفظ بنسخة احتياطية حقيقية ووصول ADB/Recovery.</string>
     <string name="help_language_title">اللغة</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>

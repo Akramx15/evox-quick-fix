@@ -6,6 +6,7 @@
         <package android:name="com.android.documentsui" />
         <package android:name="com.android.launcher3" />
         <package android:name="com.google.android.googlequicksearchbox" />
+        <package android:name="helium314.keyboard" />
     </queries>
 
     <application
@@ -26,6 +27,11 @@
         <activity
             android:name=".DebloatActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ImeBackTestActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
 
         <activity
             android:name=".MainActivity"

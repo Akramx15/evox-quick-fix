@@ -15,13 +15,13 @@ public final class LibXposedMetadataTest {
             "src", "main", "resources", "META-INF", "xposed", "module.prop");
 
     @Test
-    public void moduleTargetsThePinnedApi101Contract() throws Exception {
+    public void moduleTargetsThePinnedApi102Contract() throws Exception {
         byte[] data = Files.readAllBytes(MODULE_PROP);
         Properties properties = new Properties();
         properties.load(new ByteArrayInputStream(data));
 
-        assertEquals("101", properties.getProperty("minApiVersion"));
-        assertEquals("101", properties.getProperty("targetApiVersion"));
+        assertEquals("102", properties.getProperty("minApiVersion"));
+        assertEquals("102", properties.getProperty("targetApiVersion"));
         assertEquals("true", properties.getProperty("staticScope"));
         assertEquals("protective", properties.getProperty("exceptionMode"));
         assertFalse(properties.containsKey("autoHotReload"));

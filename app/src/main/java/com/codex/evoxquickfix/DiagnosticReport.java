@@ -19,6 +19,8 @@ final class DiagnosticReport {
     boolean quickSearchPresent;
     boolean quickSearchCompatible;
     boolean quickSearchIsHome;
+    boolean heliBoardPresent;
+    boolean heliBoardDefaultIme;
     boolean documentsUiReady;
     boolean googleProvider;
     boolean vectorReady;
@@ -29,8 +31,12 @@ final class DiagnosticReport {
     boolean lightResource;
     boolean darkTransparent;
     boolean lightTransparent;
+    boolean vectorModulesObserved;
     boolean vectorModuleEnabled;
+    boolean standaloneOneBackEnabled;
+    boolean vectorScopeObserved;
     boolean vectorScopeReady;
+    boolean vectorImeScopeReady;
     boolean overviewModuleInstalled;
     boolean circleModuleInstalled;
     boolean overviewModuleRemovalPending;
@@ -39,6 +45,7 @@ final class DiagnosticReport {
     boolean navbarLongPressEnabled;
     boolean transparencySupported;
     boolean backGuardSupported;
+    boolean oneBackSupported;
     boolean circleSupported;
     boolean debloatSupported;
     boolean debloatRestoreSupported;
@@ -66,6 +73,14 @@ final class DiagnosticReport {
         append(text, quickSearchIsHome, context.getString(R.string.check_quicksearch_home));
         append(text, documentsUiReady, context.getString(R.string.check_documentsui));
         append(text, vectorReady, context.getString(R.string.check_vector));
+        appendOptional(text, heliBoardPresent,
+                context.getString(R.string.check_heliboard));
+        appendOptional(text, heliBoardDefaultIme,
+                context.getString(R.string.check_heliboard_default));
+        appendOptional(text, vectorModuleEnabled && vectorImeScopeReady,
+                context.getString(R.string.check_one_back_scope));
+        appendOptional(text, vectorModulesObserved && !standaloneOneBackEnabled,
+                context.getString(R.string.check_one_back_standalone_disabled));
         append(text, magicMountReady || contextualFeature,
                 context.getString(R.string.check_magic_mount));
         append(text, googleProvider, context.getString(R.string.check_google_provider));
@@ -91,6 +106,8 @@ final class DiagnosticReport {
                 context.getString(R.string.feature_apk_results));
         appendFeature(context, text, circleSupported,
                 context.getString(R.string.feature_circle));
+        appendFeature(context, text, oneBackSupported,
+                context.getString(R.string.feature_one_back));
         appendFeature(context, text, debloatSupported,
                 context.getString(R.string.feature_debloat));
         for (String note : notes) {

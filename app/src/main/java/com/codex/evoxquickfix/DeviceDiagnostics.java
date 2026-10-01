@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.os.Build;
 import android.os.UserManager;
+import android.provider.Settings;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,6 +61,11 @@ final class DeviceDiagnostics {
         report.launcherPresent = packageEnabled(pm, AppConstants.LAUNCHER_PACKAGE);
         report.quickSearchPresent = packageEnabled(pm, AppConstants.QUICK_SEARCH_PACKAGE);
         report.quickSearchIsHome = isQuickSearchHome();
+        report.heliBoardPresent = packageInstalled(pm, AppConstants.HELIBOARD_PACKAGE);
+        report.heliBoardDefaultIme = isPackageDefaultIme(
+                Settings.Secure.getString(context.getContentResolver(),
+                        Settings.Secure.DEFAULT_INPUT_METHOD),
+                AppConstants.HELIBOARD_PACKAGE);
         report.documentsUiReady = DocumentsUiTarget.isEligible(pm,
                 AppConstants.QUICK_SEARCH_PACKAGE, new ComponentName(
                         AppConstants.DOCUMENTS_UI_PACKAGE,
@@ -136,18 +142,30 @@ final class DeviceDiagnostics {
             report.navbarLongPressEnabled = settingEnabled(
                     "system", "navbar_long_press_gesture");
 
-            CommandResult modules = RootShell.run(AppConstants.VECTOR_CLI + " modules ls");
-            report.vectorModuleEnabled = modules.ok()
-                    && modules.output.lines().anyMatch(line -> line.contains(AppConstants.APP_PACKAGE)
-                    && line.toLowerCase(Locale.ROOT).contains("enabled"));
-            CommandResult scope = RootShell.run(AppConstants.VECTOR_CLI + " scope ls "
-                    + AppConstants.APP_PACKAGE);
-            report.vectorScopeReady = scope.ok()
-                    && scope.output.contains(AppConstants.QUICK_SEARCH_PACKAGE);
+            CommandResult modules = RootShell.run(
+                    AppConstants.VECTOR_CLI + " --json modules ls");
+            JSONArray moduleData = modules.ok()
+                    ? VectorStateParser.successfulData(modules.output) : null;
+            report.vectorModulesObserved = moduleData != null;
+            report.vectorModuleEnabled = VectorStateParser.moduleEnabled(
+                    moduleData, AppConstants.APP_PACKAGE);
+            report.standaloneOneBackEnabled = VectorStateParser.moduleEnabled(
+                    moduleData, AppConstants.STANDALONE_ONE_BACK_PACKAGE);
+
+            CommandResult scope = RootShell.run(AppConstants.VECTOR_CLI
+                    + " --json scope ls " + AppConstants.APP_PACKAGE);
+            JSONArray scopeData = scope.ok()
+                    ? VectorStateParser.successfulData(scope.output) : null;
+            report.vectorScopeObserved = scopeData != null;
+            report.vectorScopeReady = VectorStateParser.scopeContains(
+                    scopeData, AppConstants.QUICK_SEARCH_PACKAGE, 0);
+            report.vectorImeScopeReady = VectorStateParser.scopeContains(
+                    scopeData, AppConstants.HELIBOARD_PACKAGE, 0);
         }
 
         report.transparencySupported = supportsTransparency(report);
         report.backGuardSupported = supportsBackGuard(report);
+        report.oneBackSupported = supportsOneBack(report);
         report.circleSupported = supportsCircle(report);
         report.debloatSupported = supportsDebloat(report);
         // Recovery deliberately survives ROM/profile compatibility changes. New mutations do not.
@@ -186,6 +204,12 @@ final class DeviceDiagnostics {
                 && report.vectorReady;
     }
 
+    static boolean supportsOneBack(DiagnosticReport report) {
+        return report.android16 && report.root && report.systemUser
+                && report.vectorReady && report.vectorModulesObserved
+                && report.vectorScopeObserved && report.heliBoardPresent;
+    }
+
     static boolean supportsCircle(DiagnosticReport report) {
         return report.root && report.deviceGate && report.kernelSuReady
                 && !report.magiskPresent && report.launcherPresent && report.googleProvider
@@ -217,6 +241,24 @@ final class DeviceDiagnostics {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    private boolean packageInstalled(PackageManager pm, String packageName) {
+        try {
+            pm.getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    static boolean isPackageDefaultIme(String flattenedComponent, String packageName) {
+        if (flattenedComponent == null || packageName == null) {
+            return false;
+        }
+        String value = flattenedComponent.trim();
+        int separator = value.indexOf('/');
+        return separator > 0 && packageName.equals(value.substring(0, separator));
     }
 
     private String contextualProvider(PackageManager pm) {
